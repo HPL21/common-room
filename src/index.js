@@ -22,6 +22,8 @@ import {
 
 import './styles.css';
 
+import './canvas.js'
+
 const firebaseConfig = {
   apiKey: "AIzaSyCDbQxGk2gMb8GHlSAsTj2QQzvIE5izQJs",
   authDomain: "commonroom-d0a42.firebaseapp.com",
@@ -63,7 +65,6 @@ const createAccount = async () => {
   } 
 }
 
-// Monitor auth state
 const monitorAuthState = async () => {
   onAuthStateChanged(auth, user => {
     if (user) {
@@ -72,7 +73,6 @@ const monitorAuthState = async () => {
       showLoginState(user)
 
       hideLoginError()
-      hideLinkError()
     }
     else {
       showLoginForm()
@@ -81,7 +81,6 @@ const monitorAuthState = async () => {
   })
 }
 
-// Log out
 const logout = async () => {
   await signOut(auth);
 }
@@ -94,3 +93,16 @@ const auth = getAuth(firebaseApp);
 connectAuthEmulator(auth, "http://localhost:9099");
 
 monitorAuthState();
+
+(function() {
+  let userID;
+  let userRef;
+  let users = {};
+
+  function initGame() {
+    //todo
+  }
+
+  initGame();
+
+})();

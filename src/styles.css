@@ -249,3 +249,7 @@ footer img {
 footer img:hover { opacity: .83; }
 
 footer img:focus , footer a:focus { outline: none; }
+
+canvas {
+    border: 1px solid black;
+}
