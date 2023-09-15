@@ -1,38 +1,75 @@
-const canvas = document.getElementById("paintCanvas");
-const ctx = canvas.getContext("2d");
+import p5 from "p5";
+import db from './firebase.js';
+import { playerRef, userID } from "./firebase.js";
+import { onValue, push, ref, set, get } from "firebase/database";
 
-let painting = false;
+const paths = [];
+const currentPath = [];
+const currentPath2 = [];
 
-function startPosition(e) {
-    painting = true;
-    draw(e);
+const pencilColor = 'black';
+const canvasColor = 'white';
+const pencilSize = 5;
+
+let pathsRef;
+let allPlayersRef = ref(db, 'players');
+let allPlayers;
+let temp;
+let temp2;
+
+export function initCanvas(){
+    new p5((p) => {
+        
+        p.setup = () => {
+            p.createCanvas(p.windowWidth * 0.6, p.windowHeight * 0.6);
+            p.background(canvasColor);
+
+            onValue(allPlayersRef, (snapshot) => {
+                allPlayers = Object.keys(snapshot.val());
+                allPlayers.forEach((player) => {
+                    temp2 = Object.values(snapshot.val()[player]);
+                    console.log(temp2.paths);
+                    if(temp2.paths != undefined && player != userID){
+                        currentPath2.length = 0;
+                        currentPath2.push(Object.values(temp2.paths));
+                        paths.push(currentPath2);
+                    }
+                });
+                console.log(paths);
+
+            })
+        };
+
+        p.draw = () => {
+            if (p.mouseIsPressed) {
+                const point = {
+                x: p.mouseX,
+                y: p.mouseY,
+                color: pencilColor,
+                size: pencilSize,
+                };
+                currentPath.push(point);
+
+                pathsRef = ref(db, 'players/' + userID +'/paths');
+                push(pathsRef, point);
+            }
+            
+            paths.forEach((path) => {
+                p.beginShape();
+                path.forEach(({ x, y, color, size }) => {
+                p.vertex(x, y);
+                p.strokeWeight(size);
+                p.stroke(color);
+                });
+                p.endShape();
+            });
+            
+            p.noFill();
+        };
+
+        p.mousePressed = () => {
+            currentPath.length = 0;
+            paths.push(currentPath);
+        }
+    });
 }
-
-function endPosition() {
-    painting = false;
-    ctx.beginPath();
-}
-
-function draw(e) {
-    if (!painting) return;
-
-    ctx.lineWidth = 5;
-    ctx.lineCap = "round";
-    ctx.strokeStyle = "black";
-
-    ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
-    saveCanvasToFirebase();
-    updateCanvasFromFirebase();
-}
-
-canvas.addEventListener("mousedown", startPosition);
-canvas.addEventListener("mouseup", endPosition);
-canvas.addEventListener("mousemove", draw);
-
-
-
-
-

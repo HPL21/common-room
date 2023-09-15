@@ -9,7 +9,8 @@
   "author": "Jakub Kopacki",
   "license": "ISC",
   "dependencies": {
-    "firebase": "^10.3.1"
+    "firebase": "^10.3.1",
+    "p5": "^1.7.0"
   },
   "devDependencies": {
     "css-loader": "^6.8.1",

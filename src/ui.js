@@ -17,13 +17,11 @@ export const lblLoginErrorMessage = document.querySelector('#lblLoginErrorMessag
 export const showLoginForm = () => {
   login.style.display = 'block'
   app.style.display = 'none'  
-  paintCanvas.style.display = 'none'
 }
 
 export const showApp = () => {
   login.style.display = 'none'
   app.style.display = 'block'
-  paintCanvas.style.display = 'block'
 }
 
 export const hideLoginError = () => {
