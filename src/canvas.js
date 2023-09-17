@@ -1,4 +1,5 @@
 import p5 from "p5";
+import { POINTS } from "p5";
 import db from './firebase.js';
 import { playerRef, userID } from "./firebase.js";
 import { onValue, push, ref, set, get } from "firebase/database";
@@ -27,12 +28,13 @@ export function initCanvas(){
             onValue(allPlayersRef, (snapshot) => {
                 allPlayers = Object.keys(snapshot.val());
                 allPlayers.forEach((player) => {
-                    temp2 = Object.values(snapshot.val()[player]);
-                    console.log(temp2.paths);
-                    if(temp2.paths != undefined && player != userID){
-                        currentPath2.length = 0;
-                        currentPath2.push(Object.values(temp2.paths));
-                        paths.push(currentPath2);
+                    temp2 = snapshot.val()[player].paths;
+                    if(temp2 != undefined && player != userID){
+                        //currentPath2.length = 0;
+                        //currentPath2.push(Object.values(temp2));
+                        paths.push(Object.values(temp2));
+                        //console.log(currentPath2);
+                        console.log(Object.values(temp2));
                     }
                 });
                 console.log(paths);
@@ -55,11 +57,12 @@ export function initCanvas(){
             }
             
             paths.forEach((path) => {
-                p.beginShape();
+                //console.log(path);
+                p.beginShape(POINTS);
                 path.forEach(({ x, y, color, size }) => {
-                p.vertex(x, y);
-                p.strokeWeight(size);
-                p.stroke(color);
+                    p.vertex(x, y);
+                    p.strokeWeight(size);
+                    p.stroke(color);
                 });
                 p.endShape();
             });
