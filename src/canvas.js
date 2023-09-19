@@ -6,9 +6,9 @@ import { onValue, push, ref, set, get } from "firebase/database";
 const paths = [];
 const currentPath = [];
 
-const pencilColor = 'black';
-const canvasColor = 'white';
-const pencilSize = 5;
+let pencilColor = 'black';
+let canvasColor = 'white';
+let pencilSize = 5;
 
 let pathsRef;
 let allPlayersRef = ref(db, 'players');
@@ -77,12 +77,23 @@ export function initCanvas(){
         }
 
         let btnClear = document.getElementById('btnClear');
+        let btnColor = document.getElementById('btnColor');
+        let btnSize = document.getElementById('btnSize');
+
         btnClear.addEventListener('click', () => {
             set(ref(db, 'players/' + userID + '/paths'), null);
             p.background(canvasColor);
             paths.length = 0;
             currentPath.length = 0;
-            console.log('cleared');
+            console.log('Canvas cleared');
+        });
+
+        btnColor.addEventListener('change', () => {
+            pencilColor = btnColor.value;
+        });
+
+        btnSize.addEventListener('change', () => {
+            pencilSize = btnSize.value;
         });
     });
 }
