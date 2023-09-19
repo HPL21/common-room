@@ -59,12 +59,16 @@ const createAccount = async () => {
     const password = txtPassword.value;
 
     try {
-        await createUserWithEmailAndPassword(auth, email, password);
+        await createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
+            playerRef = ref(db, 'players/' + userCredential.user.uid);
+            set(playerRef, {email: email});
+        });
     }
     catch (error) {
         console.log(`There was an error: ${error}`);
         showLoginError(error);
     }
+
 }
 
 const monitorAuthState = async () => {
@@ -77,8 +81,6 @@ const monitorAuthState = async () => {
             hideLoginError();
 
             userID = user.uid;
-            playerRef = ref(db, 'players/' + userID);
-            set(playerRef, {email: user.email});
         }
         else {
             showLoginForm();
