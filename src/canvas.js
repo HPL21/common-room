@@ -79,6 +79,7 @@ export function initCanvas(){
         let btnClear = document.getElementById('btnClear');
         let btnColor = document.getElementById('btnColor');
         let btnSize = document.getElementById('btnSize');
+        let btnUndo = document.getElementById('btnUndo');
 
         btnClear.addEventListener('click', () => {
             set(ref(db, 'players/' + userID + '/paths'), null);
@@ -94,6 +95,17 @@ export function initCanvas(){
 
         btnSize.addEventListener('change', () => {
             pencilSize = btnSize.value;
+        });
+
+        btnUndo.addEventListener('click', () => {
+            if (paths.length > 0){
+                paths.pop();
+                set(ref(db, 'players/' + userID + '/paths/' + pathID), null);
+                console.log('Undo successful');
+            }
+            else {
+                console.log('Nothing to undo');
+            }
         });
     });
 }
