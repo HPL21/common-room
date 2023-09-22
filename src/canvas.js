@@ -21,7 +21,7 @@ export function initCanvas(){
     new p5((p) => {
         
         p.setup = () => {
-            let canvas = p.createCanvas(p.windowWidth * 0.6, p.windowHeight * 0.6);
+            p.createCanvas(p.windowWidth * 0.6, p.windowHeight * 0.6);
             p.background(canvasColor);
 
             onValue(allPlayersRef, (snapshot) => {
@@ -75,14 +75,30 @@ export function initCanvas(){
                 set(pathsRef, {...currentPath});
             }
         }
+        
+        function closeCanvas(){
+            p.remove();
+        }
 
+        let btnLogout = document.getElementById('btnLogout');
         let btnClear = document.getElementById('btnClear');
         let btnColor = document.getElementById('btnColor');
         let btnSize = document.getElementById('btnSize');
+        let btnEraser = document.getElementById('btnEraser');
         let btnUndo = document.getElementById('btnUndo');
 
+        let previousColor = pencilColor;
+        let isEraser = false;
+
+        btnLogout.addEventListener('click', () => {
+            closeCanvas();
+        });
+
         btnClear.addEventListener('click', () => {
-            set(ref(db, 'players/' + userID + '/paths'), null);
+            allPlayers.forEach((player) => {
+                set(ref(db, 'players/' + player + '/paths'), null);
+            });
+            p.clear();
             p.background(canvasColor);
             paths.length = 0;
             currentPath.length = 0;
@@ -97,6 +113,18 @@ export function initCanvas(){
             pencilSize = btnSize.value;
         });
 
+        btnEraser.addEventListener('click', () => {
+            if (isEraser){
+                pencilColor = previousColor;
+                isEraser = false;
+            }
+            else {
+                previousColor = pencilColor;
+                pencilColor = canvasColor;
+                isEraser = true;
+            }
+        });
+
         btnUndo.addEventListener('click', () => {
             if (paths.length > 0){
                 paths.pop();
@@ -109,16 +137,4 @@ export function initCanvas(){
         });
     });
 }
-
-
-
-// let test1 = document.getElementById('test1');
-// test1.addEventListener('click', () => {
-//     console.log(paths);
-// });
-
-// let test2 = document.getElementById('test2');
-// test2.addEventListener('click', () => {
-//     console.log(currentPath);
-// });
 

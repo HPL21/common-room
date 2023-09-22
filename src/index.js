@@ -1,4 +1,5 @@
 import './firebase.js';
+import { auth } from './firebase.js';
 
 import './styles.css';
 
@@ -7,20 +8,20 @@ import { initCanvas } from './canvas.js';
 
 
 (function() {
-  let userID;
   let userRef;
   let users = {};
 
   function initGame() {
-    // if (userID){
-    //   initCanvas();
-    // }
-    // else {
-    //   console.log('no user');
-    // }
     initCanvas();
   }
 
-  initGame();
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      initGame();
+    }
+    else {
+      console.log('You are not logged in.');
+    }
+  })
 
 })();

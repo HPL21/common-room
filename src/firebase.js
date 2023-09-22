@@ -7,12 +7,11 @@ import {
     signOut,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
-    connectAuthEmulator
 } from 'firebase/auth';
 
 import {
     hideLoginError,
-    showLoginState,
+    //showLoginState,
     showLoginForm,
     showApp,
     showLoginError,
@@ -38,7 +37,7 @@ const db = getDatabase();
 
 export default db;
 
-export let userID;
+
 export let playerRef;
 
 const loginEmailPassword = async () => {
@@ -76,15 +75,14 @@ const monitorAuthState = async () => {
         if (user) {
             console.log(user);
             showApp();
-            showLoginState(user);
+            //showLoginState(user);
 
             hideLoginError();
-
             userID = user.uid;
         }
         else {
             showLoginForm();
-            lblAuthState.innerHTML = `You're not logged in.`;
+            //lblAuthState.innerHTML = `You're not logged in.`;
         }
     })
 }
@@ -97,7 +95,8 @@ btnLogin.addEventListener("click", loginEmailPassword);
 btnSignup.addEventListener("click", createAccount);
 btnLogout.addEventListener("click", logout);
 
-const auth = getAuth(firebaseApp);
+export const auth = getAuth(firebaseApp);
+export let userID;
 
 monitorAuthState();
 
