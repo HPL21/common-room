@@ -464,3 +464,34 @@ canvas {
 	height: 100%;
 	vertical-align: middle;
 }
+
+
+.content .card {
+	background: none;
+	border: none;
+	height: 35vh;
+	width: 25vw;
+	transition-duration: 0.6s;
+	position: relative;
+}
+
+.content .card img {
+	image-rendering: pixelated;
+	width: 100%;
+	height: 100%;
+	vertical-align: middle;
+}
+
+.content .card:hover {
+	cursor: pointer;
+	transform: scale(1.1) rotate(-5deg);
+}
+
+.content .card .card-text {
+	position: absolute;
+	top: 40%;
+  	left: 50%;
+  	transform: translate(-50%, -50%);
+	font-family: 'Public Pixel Font', monospace;
+	font-size: 2em;
+}

@@ -7,7 +7,6 @@ import './canvas.js'
 import { initCanvas } from './canvas.js';
 
 import './lobby.js'
-import { menu } from './lobby.js';
 
 (function() {
   let userRef;
@@ -21,8 +20,10 @@ import { menu } from './lobby.js';
 
   function menu() {
     let content = document.getElementById('content');
-    content.innerHTML = `<button id="modeCanvas" type="button" class="">Canvas</button>`;
-    let modeCanvas = document.getElementById('modeCanvas');
+    content.innerHTML = `<div class="card-container"><button id="card1" type="button" class="card"><img src="./assets/images/card.png"><div class="card-text">Canvas</div></button>
+                          <button id="card2" type="button" class="card"><img src="./assets/images/card.png"></button>
+                          <button id="card3" type="button" class="card"><img src="./assets/images/card.png"></button></div>`;
+    let modeCanvas = document.getElementById('card1');
     modeCanvas.addEventListener('click', () => {
       initCanvas();
     });
