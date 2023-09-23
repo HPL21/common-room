@@ -15,13 +15,31 @@ let allPlayersRef = ref(db, 'players');
 let allPlayers;
 let temp;
 let pathID;
+let content = document.getElementById('content');
 
 
 export function initCanvas(){
+    content.innerHTML = `<div id="canvasContainer" class="canvas-container"></div>
+    <div id="toolbox" class="toolbox">
+        <button id="btnClear" type="button" class="toolbox-button"><img src="./assets/images/clear.png" alt="CLEAR"></button>
+        <div id="colorPicker" class="color-picker">
+            <input id="btnColor" type="color" class="color-picker-input" value="#ffffff">
+            <button class="color-picker-button"><img src="assets/images/choose_color.png"></button>
+        </div>
+        <div id="sizePicker" class="size-picker">
+            Size<input id="btnSize" type="range" min="1" max="50" value="5" class="">
+        </div>
+        <button id="btnEraser" type="button" class="toolbox-button"><img src="./assets/images/eraser.png" alt="ERASER"></button>
+        <button id="btnUndo" type="button" class="toolbox-button"><img src="./assets/images/undo.png" alt="UNDO"></button>
+    </div>`
+
+    let canvasContainer = document.getElementById('canvasContainer');
+
     new p5((p) => {
         
         p.setup = () => {
-            p.createCanvas(p.windowWidth * 0.6, p.windowHeight * 0.6);
+            let canvas = p.createCanvas(p.windowWidth * 0.6, p.windowHeight * 0.6);
+            canvas.parent(canvasContainer);
             p.background(canvasColor);
 
             onValue(allPlayersRef, (snapshot) => {
@@ -34,6 +52,7 @@ export function initCanvas(){
                         });
                     }
                 });
+                //console.log(paths);
             })
         };
 
@@ -117,11 +136,13 @@ export function initCanvas(){
             if (isEraser){
                 pencilColor = previousColor;
                 isEraser = false;
+                btnEraser.classList.remove('button-pressed');
             }
             else {
                 previousColor = pencilColor;
                 pencilColor = canvasColor;
                 isEraser = true;
+                btnEraser.classList.add('button-pressed');
             }
         });
 
