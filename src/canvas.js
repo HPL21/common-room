@@ -2,6 +2,7 @@ import p5 from "p5";
 import db from './firebase.js';
 import { playerRef, userID } from "./firebase.js";
 import { onValue, push, ref, set, get } from "firebase/database";
+import { dict } from './lang.js';
 
 const paths = [];
 const currentPath = [];
@@ -19,18 +20,21 @@ let content = document.getElementById('content');
 
 
 export function initCanvas(){
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+
     content.innerHTML = `<div id="canvasContainer" class="canvas-container"></div>
     <div id="toolbox" class="toolbox">
-        <button id="btnClear" type="button" class="toolbox-button"><img src="./assets/images/clear.png" alt="CLEAR"></button>
-        <div id="colorPicker" class="color-picker">
+        <button id="btnClear" type="button" class="toolbox-button"><img src="./assets/images/clear.png" alt="${dictLang.clear}" title="${dictLang.clear}"></button>
+        <div id="colorPicker" class="color-picker" title="${dictLang.color}">
             <input id="btnColor" type="color" class="color-picker-input" value="#ffffff">
             <button class="color-picker-button"><img src="assets/images/choose_color.png"></button>
         </div>
         <div id="sizePicker" class="size-picker">
-            Size<input id="btnSize" type="range" min="1" max="50" value="5" class="">
+            ${dictLang.size}<input id="btnSize" type="range" min="1" max="50" value="5" class="">
         </div>
-        <button id="btnEraser" type="button" class="toolbox-button"><img src="./assets/images/eraser.png" alt="ERASER"></button>
-        <button id="btnUndo" type="button" class="toolbox-button"><img src="./assets/images/undo.png" alt="UNDO"></button>
+        <button id="btnEraser" type="button" class="toolbox-button"><img src="./assets/images/eraser.png" alt="${dictLang.eraser}" title="${dictLang.eraser}"></button>
+        <button id="btnUndo" type="button" class="toolbox-button"><img src="./assets/images/undo.png" alt="${dictLang.undo}" title="${dictLang.undo}"></button>
     </div>`
 
     let canvasContainer = document.getElementById('canvasContainer');
@@ -105,6 +109,7 @@ export function initCanvas(){
         let btnSize = document.getElementById('btnSize');
         let btnEraser = document.getElementById('btnEraser');
         let btnUndo = document.getElementById('btnUndo');
+        let canvasContainer = document.getElementById('canvasContainer');
 
         let previousColor = pencilColor;
         let isEraser = false;
