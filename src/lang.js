@@ -10,7 +10,8 @@ export const dict = {
         color: "Color",
         size: "Size",
         eraser: "Eraser",
-        undo: "Undo"
+        undo: "Undo",
+        save: "Save"
     },
     pl: {
         login: "Zaloguj się",
@@ -23,6 +24,7 @@ export const dict = {
         color: "Kolor",
         size: "Rozmiar",
         eraser: "Gumka",  
-        undo: "Cofnij"
+        undo: "Cofnij",
+        save: "Zapisz"
     }
 };

@@ -16,33 +16,16 @@ let allPlayersRef = ref(db, 'players');
 let allPlayers;
 let temp;
 let pathID;
-let content = document.getElementById('content');
-
 
 export function initCanvas(){
-    let lang = localStorage.getItem('lang') || 'en';
-    let dictLang = dict[lang];
 
-    content.innerHTML = `<div id="canvasContainer" class="canvas-container"></div>
-    <div id="toolbox" class="toolbox">
-        <button id="btnClear" type="button" class="toolbox-button"><img src="./assets/images/clear.png" alt="${dictLang.clear}" title="${dictLang.clear}"></button>
-        <div id="colorPicker" class="color-picker" title="${dictLang.color}">
-            <input id="btnColor" type="color" class="color-picker-input" value="#ffffff">
-            <button class="color-picker-button"><img src="assets/images/choose_color.png"></button>
-        </div>
-        <div id="sizePicker" class="size-picker">
-            ${dictLang.size}<input id="btnSize" type="range" min="1" max="50" value="5" class="">
-        </div>
-        <button id="btnEraser" type="button" class="toolbox-button"><img src="./assets/images/eraser.png" alt="${dictLang.eraser}" title="${dictLang.eraser}"></button>
-        <button id="btnUndo" type="button" class="toolbox-button"><img src="./assets/images/undo.png" alt="${dictLang.undo}" title="${dictLang.undo}"></button>
-    </div>`
-
+    let canvas;
     let canvasContainer = document.getElementById('canvasContainer');
 
     new p5((p) => {
         
         p.setup = () => {
-            let canvas = p.createCanvas(p.windowWidth * 0.6, p.windowHeight * 0.6);
+            canvas = p.createCanvas(p.windowWidth * 0.6, p.windowHeight * 0.6);
             canvas.parent(canvasContainer);
             p.background(canvasColor);
 
@@ -109,6 +92,7 @@ export function initCanvas(){
         let btnSize = document.getElementById('btnSize');
         let btnEraser = document.getElementById('btnEraser');
         let btnUndo = document.getElementById('btnUndo');
+        let btnSave = document.getElementById('btnSave');
         let canvasContainer = document.getElementById('canvasContainer');
 
         let previousColor = pencilColor;
@@ -161,6 +145,11 @@ export function initCanvas(){
                 console.log('Nothing to undo');
             }
         });
+
+        btnSave.addEventListener('click', () => {
+            p.saveCanvas(canvas, 'canvas', 'png');
+        });
+
     });
 }
 

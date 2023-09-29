@@ -10,6 +10,8 @@ import './lobby.js'
 
 import { dict } from './lang.js';
 
+import { loadCanvas } from './contentloader.js';
+
 (function() {
   let userRef;
   let users = {};
@@ -41,6 +43,7 @@ import { dict } from './lang.js';
                           <button id="card3" type="button" class="card"><img src="./assets/images/card.png"></button></div>`;
     let modeCanvas = document.getElementById('card1');
     modeCanvas.addEventListener('click', () => {
+      loadCanvas();
       initCanvas();
     });
   }
