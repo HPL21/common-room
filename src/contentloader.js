@@ -27,7 +27,11 @@ export function loadCanvas() {
         <button id="btnEraser" type="button" class="toolbox-button"><img src="./assets/images/eraser.png" alt="${dictLang.eraser}" title="${dictLang.eraser}"></button>
         <button id="btnUndo" type="button" class="toolbox-button"><img src="./assets/images/undo.png" alt="${dictLang.undo}" title="${dictLang.undo}"></button>
         <button id="btnSave" type="button" class="toolbox-button"><img src="./assets/images/save.png" alt="${dictLang.save}" title="${dictLang.save}"></button>
+
+        <button id="btnPaths" type="button" class="toolbox-button"></button>
+        <button id="btnPathsIDs" type="button" class="toolbox-button"></button>
+        
     </div>`;
 
-    
+
 }

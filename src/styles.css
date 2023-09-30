@@ -470,7 +470,7 @@ canvas {
 	background: none;
 	border: none;
 	height: 35vh;
-	width: 25vw;
+	width: 35vh;
 	transition-duration: 0.6s;
 	position: relative;
 }

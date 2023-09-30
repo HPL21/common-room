@@ -5,6 +5,7 @@ import { onValue, push, ref, set, get } from "firebase/database";
 import { dict } from './lang.js';
 
 const paths = [];
+const pathsIDs = [];
 const currentPath = [];
 
 let pencilColor = 'black';
@@ -30,16 +31,19 @@ export function initCanvas(){
             p.background(canvasColor);
 
             onValue(allPlayersRef, (snapshot) => {
+                p.background(canvasColor);
                 allPlayers = Object.keys(snapshot.val());
+                paths.length = 0;
+                pathsIDs.length = 0;
                 allPlayers.forEach((player) => {
                     temp = snapshot.val()[player].paths;
-                    if(temp != undefined && (player != userID || pathID == undefined)){
+                    if(temp != undefined){
+                        pathsIDs.push(Object.keys(temp));
                         Object.values(temp).forEach((path) => {
                             paths.push(Object.values(path));
                         });
                     }
                 });
-                //console.log(paths);
             })
         };
 
@@ -136,9 +140,11 @@ export function initCanvas(){
         });
 
         btnUndo.addEventListener('click', () => {
-            if (paths.length > 0){
+            if (paths.length > 0){;
                 paths.pop();
-                set(ref(db, 'players/' + userID + '/paths/' + pathID), null);
+                pathID = pathsIDs[0].pop();
+                set(ref(db, 'players/' + pathID.substr(0,28) + '/paths/' + pathID), null);
+                p.background(canvasColor);
                 console.log('Undo successful');
             }
             else {
@@ -148,6 +154,17 @@ export function initCanvas(){
 
         btnSave.addEventListener('click', () => {
             p.saveCanvas(canvas, 'canvas', 'png');
+        });
+
+        let btnPaths = document.getElementById('btnPaths');
+        let btnPathsIDs = document.getElementById('btnPathsIDs');
+
+        btnPaths.addEventListener('click', () => {
+            console.log(paths);
+        });
+
+        btnPathsIDs.addEventListener('click', () => {
+            console.log(pathsIDs);
         });
 
     });
