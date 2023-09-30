@@ -73,7 +73,7 @@ const createAccount = async () => {
 const monitorAuthState = async () => {
     onAuthStateChanged(auth, user => {
         if (user) {
-            console.log(user);
+            //console.log(user);
             showApp();
             //showLoginState(user);
 

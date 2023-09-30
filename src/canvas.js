@@ -15,7 +15,6 @@ let pencilSize = 5;
 let pathsRef;
 let allPlayersRef = ref(db, 'players');
 let allPlayers;
-let temp;
 let pathID;
 
 export function initCanvas(){
@@ -26,27 +25,52 @@ export function initCanvas(){
     new p5((p) => {
         
         p.setup = () => {
+
+            // Create canvas with dimensions 
+            // TODO: user input for canvas size
             canvas = p.createCanvas(p.windowWidth * 0.6, p.windowHeight * 0.6);
             canvas.parent(canvasContainer);
+
+            // Set canvas background color
+            // TODO: user input for canvas color
             p.background(canvasColor);
 
             onValue(allPlayersRef, (snapshot) => {
+
+                // Clear canvas and load paths from database
                 p.background(canvasColor);
                 allPlayers = Object.keys(snapshot.val());
+
+                // Load paths from database on every change
                 paths.length = 0;
                 pathsIDs.length = 0;
+
+                // TODO: push pathsIDs to array one by one, sort them and sort paths accordingly
+                // Get all paths from database and assign them to 'temp' object 
+                let temp = {}, temp2;
                 allPlayers.forEach((player) => {
-                    temp = snapshot.val()[player].paths;
-                    if(temp != undefined){
-                        pathsIDs.push(Object.keys(temp));
-                        Object.values(temp).forEach((path) => {
-                            paths.push(Object.values(path));
-                        });
+                    temp2 = snapshot.val()[player].paths;
+                    if(temp2 != undefined){
+                        Object.assign(temp, temp2);
                     }
                 });
+
+                // Convert object to array of arrays
+                const pathPairs = Object.entries(temp);
+
+                // Sort the array based on keys
+                pathPairs.sort((a, b) => a[0].localeCompare(b[0]));
+
+                // Extract the sorted paths and IDs
+                const sortedPaths = pathPairs.map((pair) => pair[1]);
+                pathsIDs.push(...pathPairs.map((pair) => pair[0]));
+
+                // Push the sorted paths into the 'paths' array
+                paths.push(...sortedPaths); 
             })
         };
 
+        // If mouse is pressed on canvas, draw line between previous and current mouse position
         p.draw = () => {
             if (p.mouseIsPressed && p.mouseX >= 0 && p.mouseX < p.width && p.mouseY >= 0 && p.mouseY < p.height) {
                 const point = {
@@ -71,6 +95,7 @@ export function initCanvas(){
             p.noFill();
         };
 
+        // If mouse is pressed on canvas, create new path
         p.mousePressed = () => {
             if (p.mouseX >= 0 && p.mouseX < p.width && p.mouseY >= 0 && p.mouseY < p.height){
                 currentPath.length = 0;
@@ -78,18 +103,21 @@ export function initCanvas(){
             }
         }
 
+        // If mouse is released on canvas, save path to database
         p.mouseReleased = () => {
             if (p.mouseX >= 0 && p.mouseX < p.width && p.mouseY >= 0 && p.mouseY < p.height){
-                pathID = userID + Date.now();
+                pathID = Date.now() + userID;
                 pathsRef = ref(db, 'players/' + userID +'/paths/' + pathID);
                 set(pathsRef, {...currentPath});
             }
         }
         
+        // TODO: close canvas whenever user leaves canvas page, not only on logout
         function closeCanvas(){
             p.remove();
         }
 
+        // Handling buttons
         let btnLogout = document.getElementById('btnLogout');
         let btnClear = document.getElementById('btnClear');
         let btnColor = document.getElementById('btnColor');
@@ -106,6 +134,7 @@ export function initCanvas(){
             closeCanvas();
         });
 
+        // Clears everything from canvas and database
         btnClear.addEventListener('click', () => {
             allPlayers.forEach((player) => {
                 set(ref(db, 'players/' + player + '/paths'), null);
@@ -117,14 +146,17 @@ export function initCanvas(){
             console.log('Canvas cleared');
         });
 
+        // Changes pencil color
         btnColor.addEventListener('change', () => {
             pencilColor = btnColor.value;
         });
 
+        // Changes pencil size
         btnSize.addEventListener('change', () => {
             pencilSize = btnSize.value;
         });
 
+        // Changes pencil color to canvas color and vice versa
         btnEraser.addEventListener('click', () => {
             if (isEraser){
                 pencilColor = previousColor;
@@ -139,11 +171,12 @@ export function initCanvas(){
             }
         });
 
+        // Removes last path from canvas and database
         btnUndo.addEventListener('click', () => {
             if (paths.length > 0){;
                 paths.pop();
-                pathID = pathsIDs[0].pop();
-                set(ref(db, 'players/' + pathID.substr(0,28) + '/paths/' + pathID), null);
+                pathID = pathsIDs.pop();
+                set(ref(db, 'players/' + pathID.substr(13,41) + '/paths/' + pathID), null);
                 p.background(canvasColor);
                 console.log('Undo successful');
             }
@@ -152,10 +185,12 @@ export function initCanvas(){
             }
         });
 
+        // Saves canvas as png
         btnSave.addEventListener('click', () => {
             p.saveCanvas(canvas, 'canvas', 'png');
         });
 
+        // Debugging buttons
         let btnPaths = document.getElementById('btnPaths');
         let btnPathsIDs = document.getElementById('btnPathsIDs');
 
