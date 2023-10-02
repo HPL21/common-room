@@ -119,6 +119,7 @@ export function initCanvas(){
 
         // Handling buttons
         let btnLogout = document.getElementById('btnLogout');
+        let btnMenu = document.getElementById('btnMenu');
         let btnClear = document.getElementById('btnClear');
         let btnColor = document.getElementById('btnColor');
         let btnSize = document.getElementById('btnSize');
@@ -134,6 +135,10 @@ export function initCanvas(){
             closeCanvas();
         });
 
+        btnMenu.addEventListener('click', () => {
+            closeCanvas();
+        })
+
         // Clears everything from canvas and database
         btnClear.addEventListener('click', () => {
             allPlayers.forEach((player) => {
@@ -148,7 +153,12 @@ export function initCanvas(){
 
         // Changes pencil color
         btnColor.addEventListener('change', () => {
-            pencilColor = btnColor.value;
+            if (isEraser){
+                previousColor = btnColor.value;
+            }
+            else {
+                pencilColor = btnColor.value;
+            }
         });
 
         // Changes pencil size
@@ -191,16 +201,16 @@ export function initCanvas(){
         });
 
         // Debugging buttons
-        let btnPaths = document.getElementById('btnPaths');
-        let btnPathsIDs = document.getElementById('btnPathsIDs');
+        // let btnPaths = document.getElementById('btnPaths');
+        // let btnPathsIDs = document.getElementById('btnPathsIDs');
 
-        btnPaths.addEventListener('click', () => {
-            console.log(paths);
-        });
+        // btnPaths.addEventListener('click', () => {
+        //     console.log(paths);
+        // });
 
-        btnPathsIDs.addEventListener('click', () => {
-            console.log(pathsIDs);
-        });
+        // btnPathsIDs.addEventListener('click', () => {
+        //     console.log(pathsIDs);
+        // });
 
     });
 }

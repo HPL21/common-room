@@ -10,12 +10,12 @@ import './lobby.js'
 
 import { dict } from './lang.js';
 
-import { loadCanvas } from './contentloader.js';
+import { loadMenu, loadCanvas } from './contentloader.js';
 
 (function() {
   let userRef;
   let users = {};
-  let mode;
+  let gamemode = 0;
   let lang = localStorage.getItem('lang') || 'en';
   let dictLang = dict[lang];
 
@@ -28,21 +28,33 @@ import { loadCanvas } from './contentloader.js';
   btnEng.addEventListener('click', () => {
     localStorage.setItem('lang', 'en');
     dictLang = dict['en'];
+    reloadLanguage();
   });
 
   let btnPl = document.getElementById('btnPl');
   btnPl.addEventListener('click', () => {
     localStorage.setItem('lang', 'pl');
     dictLang = dict['pl'];
+    reloadLanguage();
   });
 
+  function reloadLanguage() {
+    switch(gamemode) {
+      case 0:
+        loadMenu();
+        break;
+      case 1:
+        loadCanvas();
+        initCanvas();
+        break;
+    }
+  }
+
   function menu() {
-    let content = document.getElementById('content');
-    content.innerHTML = `<div class="card-container"><button id="card1" type="button" class="card"><img src="./assets/images/card.png"><div class="card-text">${dictLang.canvas}</div></button>
-                          <button id="card2" type="button" class="card"><img src="./assets/images/card.png"></button>
-                          <button id="card3" type="button" class="card"><img src="./assets/images/card.png"></button></div>`;
-    let modeCanvas = document.getElementById('card1');
-    modeCanvas.addEventListener('click', () => {
+    loadMenu();
+    let cardCanvas = document.getElementById('card1');
+    cardCanvas.addEventListener('mouseup', () => {
+      gamemode = 1;
       loadCanvas();
       initCanvas();
     });

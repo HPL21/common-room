@@ -330,11 +330,11 @@ canvas {
 }
 
 .nav-bar-center {
-	width: 50%;
+	width: 30%;
 }
 
 .nav-bar-right {
-	width: 30%;
+	width: 50%;
 	display: flex;
 	justify-content: right;
 	align-items: center;

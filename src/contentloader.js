@@ -7,13 +7,19 @@ import eraserPNG from './assets/images/eraser.png';
 import savePNG from './assets/images/save.png';
 import undoPNG from './assets/images/undo.png';
 
-
-let lang = localStorage.getItem('lang') || 'en';
-let dictLang = dict[lang];
+export function loadMenu() {
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+    let content = document.getElementById('content');
+    content.innerHTML = `<div class="card-container"><button id="card1" type="button" class="card"><img src="./assets/images/card.png"><div class="card-text">${dictLang.canvas}</div></button>
+                          <button id="card2" type="button" class="card"><img src="./assets/images/card.png"></button>
+                          <button id="card3" type="button" class="card"><img src="./assets/images/card.png"></button></div>`;
+}
 
 export function loadCanvas() {
     let content = document.getElementById('content');
-
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
     content.innerHTML = `<div id="canvasContainer" class="canvas-container"></div>
     <div id="toolbox" class="toolbox">
         <button id="btnClear" type="button" class="toolbox-button"><img src="./assets/images/clear.png" alt="${dictLang.clear}" title="${dictLang.clear}"></button>
@@ -27,10 +33,6 @@ export function loadCanvas() {
         <button id="btnEraser" type="button" class="toolbox-button"><img src="./assets/images/eraser.png" alt="${dictLang.eraser}" title="${dictLang.eraser}"></button>
         <button id="btnUndo" type="button" class="toolbox-button"><img src="./assets/images/undo.png" alt="${dictLang.undo}" title="${dictLang.undo}"></button>
         <button id="btnSave" type="button" class="toolbox-button"><img src="./assets/images/save.png" alt="${dictLang.save}" title="${dictLang.save}"></button>
-
-        <button id="btnPaths" type="button" class="toolbox-button"></button>
-        <button id="btnPathsIDs" type="button" class="toolbox-button"></button>
-        
     </div>`;
 
 
