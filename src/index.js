@@ -53,7 +53,7 @@ import { loadMenu, loadCanvas } from './contentloader.js';
   function menu() {
     loadMenu();
     let cardCanvas = document.getElementById('card1');
-    cardCanvas.addEventListener('mouseup', () => {
+    cardCanvas.addEventListener('click', () => {
       gamemode = 1;
       loadCanvas();
       initCanvas();

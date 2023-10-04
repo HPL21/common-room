@@ -14,18 +14,18 @@
         </div>
         <form>
             <div class="group">
-                <input id="txtEmail" type="email" class="input-text">
+                <input id="txtEmail" type="email" class="">
                 <label>Email</label>
             </div>
             <div class="group">
-                <input id="txtPassword" type="password" class="input-text">
+                <input id="txtPassword" type="password" class="">
                 <label>Password</label>
             </div>
             <div id="divLoginError" class="group">
-                <div id="lblLoginErrorMessage" class="errorlabel">Error message</div>
+                <div id="lblLoginErrorMessage" class="">Error message</div>
             </div>
-            <button id="btnLogin" type="button" class="button buttonBlue">Log in</button>
-            <button id="btnSignup" type="button" class="button buttonBlue">Sign up</button>
+            <button id="btnLogin" type="button" class="">Log in</button>
+            <button id="btnSignup" type="button" class="">Sign up</button>
         </form>
     </div>
 
@@ -45,6 +45,43 @@
         </div>
         <div class="content" id="content">
             
+        </div>
+        <div id="test" class="content">
+            <div id="roomCreator" class="room-creator">
+                <div id="roomCreatorHeader" class="room-creator-header">
+                    <h2>Stwórz pokój</h2>
+                </div>
+                <div id="roomNameInput" class="room-name-input">
+                    <input id="txtRoomName" type="text" class="input-text">
+                    <label>Nazwa pokoju</label>
+                </div>
+                <div id="roomPasswordInput" class="room-password-input">
+                    <input id="txtRoomPassword" type="password" class="input-text">
+                    <label>Hasło</label>
+                </div>
+                <div id="roomDescriptionInput" class="room-description-input">
+                    <input id="txtRoomDescription" type="text" class="input-text">
+                    <label>Opis</label>
+                </div>
+                <div id="roomAddUsers" class="room-add-users">
+                    <div id="addedUsers"></div>
+                    <div id="addUserInput" class="add-user-input">
+                        <input id="txtAddUser" type="text" class="input-text">
+                        <label>Dodaj użytkownika</label>
+                    </div>
+                    <div id="addUserError" class="add-user-error">
+                        <div id="lblAddUserErrorMessage" class="">Error message</div>
+                    </div>
+                    <button id="btnAddUser" type="button" class="">Dodaj</button>
+                </div>
+                <div id="roomCreatorError" class="room-creator-error">
+                    <div id="lblRoomCreatorErrorMessage" class="">Error message</div>
+                </div>
+                <div id="roomCreatorButtons" class="room-creator-buttons">
+                    <button id="btnCreateRoom" type="button" class="">Stwórz</button>
+                    <button id="btnCancelRoom" type="button" class="">Anuluj</button>
+                </div>
+            </div>
         </div>
     </div>
 </body>
