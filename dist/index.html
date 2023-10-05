@@ -51,23 +51,24 @@
                 <div id="roomCreatorHeader" class="room-creator-header">
                     <h2>Stwórz pokój</h2>
                 </div>
-                <div id="roomNameInput" class="room-name-input">
-                    <input id="txtRoomName" type="text" class="input-text">
+                <div id="roomNameInput" class="room-input">
                     <label>Nazwa pokoju</label>
+                    <input id="txtRoomName" type="text" class="input-text">
                 </div>
-                <div id="roomPasswordInput" class="room-password-input">
-                    <input id="txtRoomPassword" type="password" class="input-text">
+                <div id="roomPasswordInput" class="room-input">
                     <label>Hasło</label>
+                    <input id="txtRoomPassword" type="password" class="input-text">
                 </div>
-                <div id="roomDescriptionInput" class="room-description-input">
-                    <input id="txtRoomDescription" type="text" class="input-text">
+                <div id="roomDescriptionInput" class="room-input ">
                     <label>Opis</label>
+                    <textarea id="txtRoomDescription" rows="3" class="input-text description-input"></textarea>
                 </div>
                 <div id="roomAddUsers" class="room-add-users">
                     <div id="addedUsers"></div>
                     <div id="addUserInput" class="add-user-input">
-                        <input id="txtAddUser" type="text" class="input-text">
                         <label>Dodaj użytkownika</label>
+                        <input id="txtAddUser" type="text" class="input-text">
+                        <button id="btnAddUser" type="button" class="">+</button>
                     </div>
                     <div id="addUserError" class="add-user-error">
                         <div id="lblAddUserErrorMessage" class="">Error message</div>

@@ -482,8 +482,52 @@ canvas {
 }
 
 .room-creator {
+	display: flex;
+	flex-direction: column;
 	background-color: #ebebeb;
 	border: 4px solid black;
-	height: 60vh;
+	height: 70vh;
 	width: 60vh;
+}
+
+.room-creator-header {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-bottom: 4px solid black;
+}
+
+.room-input {
+	display: flex;
+	flex-direction: column;
+	margin: 1vh 1vh 1vh 1vh;
+}
+
+.room-input input {
+	margin: 1vh 0 0 0;
+	height: 5vh;
+	font-size: 3vh;
+}
+
+.description-input {
+	height: 8vh !important;
+	font-size: 2vh !important;
+	margin: 1vh 0 0 0;
+}
+
+.add-user-input {
+	margin: 1vh 1vh 1vh 1vh;
+}
+
+.add-user-error {
+	margin: 1vh 1vh 1vh 1vh;
+}
+
+.room-creator-error {
+	margin: 1vh 1vh 1vh 1vh;
+}
+
+.room-creator button {
+	margin: 1vh 1vh 1vh 1vh;
+	font-size: 2.5vh;
 }
