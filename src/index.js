@@ -12,6 +12,8 @@ import { dict } from './lang.js';
 
 import { loadMenu, loadCanvas } from './contentloader.js';
 
+import './room.js'
+
 (function() {
   let userRef;
   let users = {};
