@@ -12,8 +12,11 @@ let pencilColor = 'black';
 let canvasColor = 'white';
 let pencilSize = 5;
 
+let roomName;
 let pathsRef;
+let pathRef;
 let allPlayersRef = ref(db, 'players');
+
 let allPlayers;
 let pathID;
 
@@ -21,7 +24,8 @@ export function initCanvas(){
 
     let canvas;
     let canvasContainer = document.getElementById('canvasContainer');
-
+    localStorage.setItem('currentPlace', 'canvas');
+    
     new p5((p) => {
         
         p.setup = () => {
@@ -35,25 +39,21 @@ export function initCanvas(){
             // TODO: user input for canvas color
             p.background(canvasColor);
 
-            onValue(allPlayersRef, (snapshot) => {
+            roomName = localStorage.getItem('roomName');
+
+            pathsRef = ref(db, 'rooms/' + roomName + '/paths');
+
+            onValue(pathsRef, (snapshot) => {
 
                 // Clear canvas and load paths from database
                 p.background(canvasColor);
-                allPlayers = Object.keys(snapshot.val());
 
                 // Load paths from database on every change
                 paths.length = 0;
                 pathsIDs.length = 0;
 
-                // TODO: push pathsIDs to array one by one, sort them and sort paths accordingly
                 // Get all paths from database and assign them to 'temp' object 
-                let temp = {}, temp2;
-                allPlayers.forEach((player) => {
-                    temp2 = snapshot.val()[player].paths;
-                    if(temp2 != undefined){
-                        Object.assign(temp, temp2);
-                    }
-                });
+                let temp = snapshot.val() || {};
 
                 // Convert object to array of arrays
                 const pathPairs = Object.entries(temp);
@@ -107,8 +107,8 @@ export function initCanvas(){
         p.mouseReleased = () => {
             if (p.mouseX >= 0 && p.mouseX < p.width && p.mouseY >= 0 && p.mouseY < p.height){
                 pathID = Date.now() + userID;
-                pathsRef = ref(db, 'players/' + userID +'/paths/' + pathID);
-                set(pathsRef, {...currentPath});
+                pathRef = ref(db, 'rooms/' + roomName +'/paths/' + pathID);
+                set(pathRef, {...currentPath});
             }
         }
         
@@ -118,7 +118,8 @@ export function initCanvas(){
         }
 
         // Handling buttons
-        let btnLogout = document.getElementById('btnLogout');
+        //let btnLogout = document.getElementById('btnLogout');
+        let btnChangeRoom = document.getElementById('btnChangeRoom');
         let btnMenu = document.getElementById('btnMenu');
         let btnClear = document.getElementById('btnClear');
         let btnColor = document.getElementById('btnColor');
@@ -131,19 +132,21 @@ export function initCanvas(){
         let previousColor = pencilColor;
         let isEraser = false;
 
-        btnLogout.addEventListener('click', () => {
-            closeCanvas();
-        });
+        // btnLogout.addEventListener('click', () => {
+        //     closeCanvas();
+        // });
 
         btnMenu.addEventListener('click', () => {
             closeCanvas();
         })
 
+        btnChangeRoom.addEventListener('click', () => {
+            closeCanvas();
+        });
+
         // Clears everything from canvas and database
         btnClear.addEventListener('click', () => {
-            allPlayers.forEach((player) => {
-                set(ref(db, 'players/' + player + '/paths'), null);
-            });
+            set(ref(db, 'rooms/' + roomName + '/paths'), null);
             p.clear();
             p.background(canvasColor);
             paths.length = 0;
@@ -186,7 +189,7 @@ export function initCanvas(){
             if (paths.length > 0){;
                 paths.pop();
                 pathID = pathsIDs.pop();
-                set(ref(db, 'players/' + pathID.substr(13,41) + '/paths/' + pathID), null);
+                set(ref(db, 'rooms/' + roomName + '/paths/' + pathID), null);
                 p.background(canvasColor);
                 console.log('Undo successful');
             }

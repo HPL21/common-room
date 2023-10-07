@@ -11,7 +11,16 @@ export const dict = {
         size: "Size",
         eraser: "Eraser",
         undo: "Undo",
-        save: "Save"
+        save: "Save",
+        createroom: "Create room",
+        roomname: "Room name",
+        desc: "Description",
+        adduser: "Add user",
+        add: "Add",
+        create: "Create",
+        cancel: "Cancel",
+        room: "Room",
+        join: "Join"
     },
     pl: {
         login: "Zaloguj się",
@@ -25,6 +34,15 @@ export const dict = {
         size: "Rozmiar",
         eraser: "Gumka",  
         undo: "Cofnij",
-        save: "Zapisz"
+        save: "Zapisz",
+        createroom: "Stwórz pokój",
+        roomname: "Nazwa pokoju",
+        desc: "Opis",
+        adduser: "Dodaj użytkownika",
+        add: "Dodaj",
+        create: "Stwórz",
+        cancel: "Anuluj",
+        room: "Pokój",
+        join: "Dołącz"
     }
 };

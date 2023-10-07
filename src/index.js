@@ -10,9 +10,11 @@ import './lobby.js'
 
 import { dict } from './lang.js';
 
-import { loadMenu, loadCanvas } from './contentloader.js';
+import { loadMenu, loadCanvas, loadLobby, loadRoomCreator, loadRoomJoin} from './contentloader.js';
 
 import './room.js'
+
+import { handleRoomCreator, handleRoomJoin } from './room.js';
 
 (function() {
   let userRef;
@@ -20,10 +22,12 @@ import './room.js'
   let gamemode = 0;
   let lang = localStorage.getItem('lang') || 'en';
   let dictLang = dict[lang];
+  let roomName = localStorage.getItem('roomName');
 
   let btnMenu = document.getElementById('btnMenu');
   btnMenu.addEventListener('click', () => {
     menu();
+    localStorage.setItem('currentPlace', 'menu');
   });
 
   let btnEng = document.getElementById('btnEng');
@@ -38,6 +42,12 @@ import './room.js'
     localStorage.setItem('lang', 'pl');
     dictLang = dict['pl'];
     reloadLanguage();
+  });
+
+  let btnChangeRoom = document.getElementById('btnChangeRoom');
+  btnChangeRoom.addEventListener('click', () => {
+    lobby();
+    localStorage.setItem('currentPlace', 'lobby');
   });
 
   function reloadLanguage() {
@@ -62,8 +72,31 @@ import './room.js'
     });
   }
 
+  function lobby() {
+    loadLobby();
+    let btnCreateRoom = document.getElementById('btnCreate');
+    btnCreateRoom.addEventListener('click', () => {
+      localStorage.setItem('currentPlace', 'roomCreator');
+      loadRoomCreator();
+      handleRoomCreator().then((result) => {if(!result) lobby(); else menu();});
+    });
+    let btnJoinRoom = document.getElementById('btnJoin');
+    btnJoinRoom.addEventListener('click', () => {
+      localStorage.setItem('currentPlace', 'roomJoin');
+      loadRoomJoin();
+      handleRoomJoin().then((result) => {if(!result) lobby(); else menu();});
+    });
+  }
+
   function initGame() {
-    menu();
+    if (roomName) {
+      menu();
+      localStorage.setItem('currentPlace', 'menu');
+    }
+    else {
+      lobby();
+      localStorage.setItem('currentPlace', 'lobby');
+    }
   }
 
   auth.onAuthStateChanged((user) => {
@@ -72,6 +105,7 @@ import './room.js'
     }
     else {
       console.log('You are not logged in.');
+      localStorage.setItem('currentPlace', 'login');
     }
   })
 

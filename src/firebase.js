@@ -93,7 +93,7 @@ const logout = async () => {
 
 btnLogin.addEventListener("click", loginEmailPassword);
 btnSignup.addEventListener("click", createAccount);
-btnLogout.addEventListener("click", logout);
+//btnLogout.addEventListener("click", logout);
 
 export const auth = getAuth(firebaseApp);
 export let userID;

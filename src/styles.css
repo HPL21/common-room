@@ -306,6 +306,7 @@ canvas {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	margin: 8vh 0 0 0;
 }
 
 .logout {
@@ -457,28 +458,39 @@ canvas {
 	font-size: 2em;
 }
 
-.lang-button {
-	height: 5vh;
-	width: 8vh;
+.img-button {
 	transition-duration: 0.4s;
 	background: none;
 	border: none;
 }
 
-.lang-button:hover {
+.img-button:hover {
 	cursor: pointer;
 	background-color: #7c7c7c;
 }
 
-.lang-button:active {
+.img-button:active {
 	position: relative;
 	top: 1px;
 }
 
-.lang-button img {
-	width: 100%;
+.img-button img {
 	height: 100%;
 	vertical-align: middle;
+}
+
+.lang-button {
+	height: 5vh;
+}
+
+.square-button {
+	height: 5vh;
+	image-rendering: pixelated;
+}
+
+.header2 {
+	font-size: 3vh;
+	padding: 3vh 0 3vh 0;
 }
 
 .room-creator {
@@ -486,7 +498,6 @@ canvas {
 	flex-direction: column;
 	background-color: #ebebeb;
 	border: 4px solid black;
-	height: 70vh;
 	width: 60vh;
 }
 
@@ -497,47 +508,75 @@ canvas {
 	border-bottom: 4px solid black;
 }
 
+.room-creator-content {
+	padding: 2vh 2vh 2vh 2vh;
+}
+
+.room-creator-item {
+	margin: 1vh 0 1vh 0;
+}
+
 .room-input {
 	display: flex;
 	flex-direction: column;
-	margin: 1vh 1vh 1vh 1vh;
 }
 
 .input-text {
-	margin: 1vh 0 0 0;
 	height: 5vh;
 	font-size: 3vh;
+	border: 2px solid black;
+	margin: 1vh 0 1vh 0;
 }
 
 .description-input {
 	height: 8vh !important;
 	font-size: 2vh !important;
-	margin: 1vh 0 0 0;
 }
 
 .add-user-input {
-	margin: 1vh 1vh 1vh 1vh;
-}
-
-.add-user-error {
-	margin: 1vh 1vh 1vh 1vh;
-}
-
-.room-creator-error {
-	margin: 1vh 1vh 1vh 1vh;
+	display: flex;
+	flex-direction: row;
 }
 
 .white-button {
-	margin: 1vh 1vh 1vh 1vh;
 	font-size: 2.5vh;
+	border: 2px solid black;
+	transition: all 0.2s ease;
+	margin: 1vh 0 1vh 0;
+}
+
+.white-button:hover {
+	cursor: pointer;
+	background-color: #7c7c7c;
+}
+
+.white-button:active {
+	position: relative;
+	top: 1px;
+}
+
+.big-button {
+	width: 35vw;
+	height: 20vh;
+	border: 8px solid black;
+	font-size: 8vh;
 }
 
 .error-message {
 	color: red;
+	display: none;
 }
 
 .plus-button {
 	height: 5vh;
 	width: 5vh;
 	font-size: 4vh;
+}
+
+.lobby {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin: 10vh 0 0 0;
 }
