@@ -13,6 +13,7 @@ export const dict = {
         undo: "Undo",
         save: "Save",
         createroom: "Create room",
+        joinroom: "Join room",
         roomname: "Room name",
         desc: "Description",
         adduser: "Add user",
@@ -20,7 +21,16 @@ export const dict = {
         create: "Create",
         cancel: "Cancel",
         room: "Room",
-        join: "Join"
+        join: "Join",
+        welcome: "Welcome to CommonRoom!",
+        email: "Email",
+        username: "Username",
+        login: "Log in",
+        logout: "Log out",
+        signup: "Sign up",
+        lobbytext: "Create room or join to existing room",
+        changeusername: "Change username",
+        update: "Update"
     },
     pl: {
         login: "Zaloguj się",
@@ -36,6 +46,7 @@ export const dict = {
         undo: "Cofnij",
         save: "Zapisz",
         createroom: "Stwórz pokój",
+        joinroom: "Dołącz do pokoju",
         roomname: "Nazwa pokoju",
         desc: "Opis",
         adduser: "Dodaj użytkownika",
@@ -43,6 +54,15 @@ export const dict = {
         create: "Stwórz",
         cancel: "Anuluj",
         room: "Pokój",
-        join: "Dołącz"
+        join: "Dołącz",
+        welcome: "Witaj w CommonRoom!",
+        email: "Email",
+        username: "Nazwa użytkownika",
+        login: "Zaloguj się",
+        logout: "Wyloguj się",
+        signup: "Zarejestruj się",
+        lobbytext: "Stwórz pokój lub dołącz do istniejącego",
+        changeusername: "Zmień nazwę użytkownika",
+        update: "Zaktualizuj"
     }
 };

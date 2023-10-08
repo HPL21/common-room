@@ -1,4 +1,5 @@
 import { dict } from './lang.js';
+import { AuthErrorCodes } from 'firebase/auth';
 
 import cardPNG from './assets/images/card.png';
 import clearPNG from './assets/images/clear.png';
@@ -6,6 +7,41 @@ import chooseColorPNG from './assets/images/choose_color.png';
 import eraserPNG from './assets/images/eraser.png';
 import savePNG from './assets/images/save.png';
 import undoPNG from './assets/images/undo.png';
+
+export function loadLogin() {
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+    let login = document.getElementById('login');
+    login.innerHTML = `<div class="header1">${dictLang.welcome}</div>
+                        <form>
+                            <div class="group">
+                                <label class="d-block">${dictLang.email}</label>
+                                <input id="txtEmail" type="email" class="input-text">
+                            </div>
+                            <div class="group">
+                                <label class="d-block">${dictLang.password}</label>
+                                <input id="txtPassword" type="password" class="input-text">
+                            </div>
+                            <button id="btnLogin" type="button" class="white-button">${dictLang.login}</button>
+                            <button id="btnSignup" type="button" class="white-button">${dictLang.signup}</button>
+                        </form>`;
+}
+
+export const showApp = () => {
+    login.style.display = 'none'
+    app.style.display = 'block'
+}
+
+export const showLogin = () => {
+    login.style.display = 'flex';
+    app.style.display = 'none';
+}
+
+export function loadSettings() {
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+    document.getElementById('logoutText').innerHTML = dictLang.logout;
+}
 
 export function loadMenu() {
     let lang = localStorage.getItem('lang') || 'en';
@@ -88,20 +124,20 @@ export function loadRoomJoin() {
     let dictLang = dict[lang];
     content.innerHTML = `<div id="roomJoin" class="room-creator">
                             <div id="roomJoinHeader" class="room-creator-header">
-                                <div class="header2">Stwórz pokój</div>
+                                <div class="header2">${dictLang.joinroom}</div>
                             </div>
                             <div id="roomJoinContent" class="room-creator-content">
                                 <div id="roomNameInput" class="room-input room-creator-item">
-                                    <label>Nazwa pokoju</label>
+                                    <label>${dictLang.roomname}</label>
                                     <input id="txtRoomName" type="text" class="input-text">
                                 </div>
                                 <div id="roomPasswordInput" class="room-input room-creator-item">
-                                    <label>Hasło</label>
+                                    <label>${dictLang.password}</label>
                                     <input id="txtRoomPassword" type="password" class="input-text">
                                 </div>
                                 <div id="roomJoinButtons" class="room-creator-buttons room-creator-item">
-                                    <button id="btnJoinRoom" type="button" class="white-button">Dołącz</button>
-                                    <button id="btnCancelJoinRoom" type="button" class="white-button">Anuluj</button>
+                                    <button id="btnJoinRoom" type="button" class="white-button">${dictLang.join}</button>
+                                    <button id="btnCancelJoinRoom" type="button" class="white-button">${dictLang.cancel}</button>
                                 </div>
                             </div>
                         </div>`;
@@ -112,10 +148,21 @@ export function loadLobby() {
     let lang = localStorage.getItem('lang') || 'en';
     let dictLang = dict[lang];
     content.innerHTML = `<div id="lobby" class="lobby">
-                            <div id="choiceText" class="header2">Create room or join to existing room</div>
+                            <div id="choiceText" class="header2">${dictLang.lobbytext}</div>
                             <div id="choiceButtons">
-                                <button id="btnCreate" class="white-button big-button">Create</button>
-                                <button id="btnJoin" class="white-button big-button">Join</button>
+                                <button id="btnCreate" class="white-button big-button">${dictLang.create}</button>
+                                <button id="btnJoin" class="white-button big-button">${dictLang.join}</button>
                             </div>
+                        </div>`;
+}
+
+export function loadProfileSettings() {
+    let content = document.getElementById('content');
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+    content.innerHTML = `<div id="profileSettings" class="profile-settings">
+                            <label class="d-block">${dictLang.changeusername}</label>
+                            <input id="usernameInput" type="text" class="input-text">
+                            <button id="btnUpdate" class="white-button">${dictLang.update}</button>
                         </div>`;
 }

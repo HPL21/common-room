@@ -10,24 +10,33 @@ import './lobby.js'
 
 import { dict } from './lang.js';
 
-import { loadMenu, loadCanvas, loadLobby, loadRoomCreator, loadRoomJoin} from './contentloader.js';
+import { loadLogin, loadMenu, loadCanvas, loadLobby, loadRoomCreator, loadRoomJoin, loadSettings, loadProfileSettings} from './contentloader.js';
 
 import './room.js'
 
 import { handleRoomCreator, handleRoomJoin } from './room.js';
 
+import './user.js'
+import { handleProfileSettings } from './user.js';
+
 (function() {
   let userRef;
   let users = {};
-  let gamemode = 0;
   let lang = localStorage.getItem('lang') || 'en';
   let dictLang = dict[lang];
   let roomName = localStorage.getItem('roomName');
 
   let btnMenu = document.getElementById('btnMenu');
   btnMenu.addEventListener('click', () => {
-    menu();
-    localStorage.setItem('currentPlace', 'menu');
+    roomName = localStorage.getItem('roomName');
+    if(roomName) {
+      menu();
+      localStorage.setItem('currentPlace', 'menu');
+    }
+    else {
+      lobby();
+      localStorage.setItem('currentPlace', 'lobby');
+    }
   });
 
   let btnEng = document.getElementById('btnEng');
@@ -50,14 +59,48 @@ import { handleRoomCreator, handleRoomJoin } from './room.js';
     localStorage.setItem('currentPlace', 'lobby');
   });
 
+  let btnSettings = document.getElementById('btnSettings');
+  let settings = document.getElementById('settings');
+  settings.style.display = 'none';
+  let isSettingsOpen = false;
+  btnSettings.addEventListener('click', () => {
+    settings.style.display = isSettingsOpen ? 'none' : 'block';
+    isSettingsOpen = !isSettingsOpen;
+  });
+
+  let btnProfileSettings = document.getElementById('btnProfile');
+  btnProfileSettings.addEventListener('click', () => {
+    loadProfileSettings();
+    handleProfileSettings();
+    localStorage.setItem('currentPlace', 'profileSettings');
+  });
+
   function reloadLanguage() {
-    switch(gamemode) {
-      case 0:
-        loadMenu();
+    loadSettings();
+
+    let currentPlace = localStorage.getItem('currentPlace') || 'login';
+    switch(currentPlace) {
+      case 'menu':
+        menu();
         break;
-      case 1:
+      case 'canvas':
         loadCanvas();
         initCanvas();
+        break;
+      case 'lobby':
+        lobby();
+        break;
+      case 'roomCreator':
+        loadRoomCreator();
+        handleRoomCreator().then((result) => {if(!result) lobby(); else menu();});
+        break;
+      case 'roomJoin':
+        loadRoomJoin();
+        handleRoomJoin().then((result) => {if(!result) lobby(); else menu();});
+        break;
+      case 'profileSettings':
+        loadProfileSettings();
+        handleProfileSettings();
         break;
     }
   }
@@ -66,7 +109,6 @@ import { handleRoomCreator, handleRoomJoin } from './room.js';
     loadMenu();
     let cardCanvas = document.getElementById('card1');
     cardCanvas.addEventListener('click', () => {
-      gamemode = 1;
       loadCanvas();
       initCanvas();
     });
@@ -89,6 +131,7 @@ import { handleRoomCreator, handleRoomJoin } from './room.js';
   }
 
   function initGame() {
+    loadSettings();
     if (roomName) {
       menu();
       localStorage.setItem('currentPlace', 'menu');

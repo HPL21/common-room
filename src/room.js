@@ -18,11 +18,8 @@ export async function handleRoomCreator() {
             let roomPassword = document.getElementById("txtRoomPassword").value;
             let roomDescription = document.getElementById("txtRoomDescription").value;
 
-            console.log(roomName, roomPassword, roomDescription);
-
             if (roomName == "" || roomPassword == "" || roomDescription == "") {
                 alert("Please fill in all fields");
-                reject("Please fill in all fields");
             } else {
                 createRoom(roomName, roomPassword, roomDescription)
                     .then(() => {
@@ -71,8 +68,6 @@ export async function handleRoomJoin() {
         function checkInput() {
             let roomName = document.getElementById("txtRoomName").value;
             let roomPassword = document.getElementById("txtRoomPassword").value;
-
-            console.log(roomName, roomPassword);
 
             if (roomName == "" || roomPassword == "") {
                 alert("Please fill in all fields");

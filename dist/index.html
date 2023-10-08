@@ -8,25 +8,7 @@
 <script defer src="bundle.js"></script></head>
 
 <body>
-    <div id="login" style="display: none;">
-        <div class="header">
-            <h1>Witamy</h1>
-        </div>
-        <form>
-            <div class="group">
-                <input id="txtEmail" type="email" class="">
-                <label>Email</label>
-            </div>
-            <div class="group">
-                <input id="txtPassword" type="password" class="">
-                <label>Password</label>
-            </div>
-            <div id="divLoginError" class="group">
-                <div id="lblLoginErrorMessage" class="">Error message</div>
-            </div>
-            <button id="btnLogin" type="button" class="">Log in</button>
-            <button id="btnSignup" type="button" class="">Sign up</button>
-        </form>
+    <div id="login" class="login">
     </div>
 
     <div id="app" style="display: none;">
@@ -39,16 +21,26 @@
             </div>
             <div id="nav-bar-right" class="nav-bar-right">
                 <button id="btnChangeRoom" class="img-button square-button"><img src="assets/images/changeroom2.png"></button>
+                
+                <button id="btnSettings" type="button" class="img-button square-button"><img src="assets/images/settings.png"></button>
+            </div>
+        </div>
+        <div id="settings" class="settings">
+            <div class="profile">
+                <button id="btnProfile" class="img-button square-button text-button flex-button"><img src="assets/images/profile.png"><div id="username"></div></button>
+            </div>
+            <div class="logout">
+                <button id="btnLogout" class="img-button square-button text-button flex-button"><img src="assets/images/logout.png"><div id="logoutText"></div></button>
+            </div>
+            <div class="lang-buttons">
                 <button id="btnEng" class="img-button lang-button"><img src="assets/images/eng.png"></button>
                 <button id="btnPl" class="img-button lang-button"><img src="assets/images/pl.png"></button>
-                <button id="btnSettings" type="button" class="img-button square-button"><img src="assets/images/settings.png"></button>
             </div>
         </div>
         <div class="content" id="content">
             
         </div>
         <div id="test" class="content">
-            
         </div>
     </div>
 </body>

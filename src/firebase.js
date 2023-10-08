@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, ref, set, get, onValue } from "firebase/database";
 
 import {
     getAuth,
@@ -9,16 +9,7 @@ import {
     signInWithEmailAndPassword,
 } from 'firebase/auth';
 
-import {
-    hideLoginError,
-    //showLoginState,
-    showLoginForm,
-    showApp,
-    showLoginError,
-    btnLogin,
-    btnSignup,
-    btnLogout
-} from './ui';
+import { loadLogin, showApp, showLoginError, hideLoginError, showLogin } from "./contentloader";
 
 export const firebaseConfig = {
     apiKey: "AIzaSyCDbQxGk2gMb8GHlSAsTj2QQzvIE5izQJs",
@@ -39,6 +30,7 @@ export default db;
 
 
 export let playerRef;
+export let userName;
 
 const loginEmailPassword = async () => {
     const loginEmail = txtEmail.value;
@@ -49,7 +41,6 @@ const loginEmailPassword = async () => {
     }
     catch (error) {
         console.log(`There was an error: ${error}`);
-        showLoginError(error);
     }
 }
 
@@ -65,7 +56,6 @@ const createAccount = async () => {
     }
     catch (error) {
         console.log(`There was an error: ${error}`);
-        showLoginError(error);
     }
 
 }
@@ -73,16 +63,30 @@ const createAccount = async () => {
 const monitorAuthState = async () => {
     onAuthStateChanged(auth, user => {
         if (user) {
-            //console.log(user);
             showApp();
-            //showLoginState(user);
 
-            hideLoginError();
             userID = user.uid;
+            playerRef = ref(db, 'players/' + userID);
+
+            onValue(ref(db, 'players/' + userID), (snapshot) => {
+                userName = snapshot.val().username;
+                localStorage.setItem('username', userName);
+            });
+            localStorage.setItem('userID', userID);
+            let btnLogout = document.getElementById('btnLogout');
+            btnLogout.addEventListener("click", logout);
         }
         else {
-            showLoginForm();
-            //lblAuthState.innerHTML = `You're not logged in.`;
+            loadLogin();
+            showLogin();
+            let btnLogin = document.getElementById('btnLogin');
+            let btnSignup = document.getElementById('btnSignup');
+            btnLogin.addEventListener("click", loginEmailPassword);
+            btnSignup.addEventListener("click", createAccount);
+            
+            localStorage.removeItem('username');
+            localStorage.removeItem('userID');
+            localStorage.removeItem('roomName');
         }
     })
 }
@@ -91,12 +95,9 @@ const logout = async () => {
     await signOut(auth);
 }
 
-btnLogin.addEventListener("click", loginEmailPassword);
-btnSignup.addEventListener("click", createAccount);
-//btnLogout.addEventListener("click", logout);
-
 export const auth = getAuth(firebaseApp);
 export let userID;
+
 
 monitorAuthState();
 

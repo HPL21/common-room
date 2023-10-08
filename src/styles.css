@@ -11,6 +11,10 @@ body {
 	font-family: 'Public Pixel Font', monospace;
 	background: #4381C1;
 	-webkit-font-smoothing: antialiased;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 
 /* .header {
@@ -301,18 +305,26 @@ canvas {
 	align-items: center;
 }
 
+.settings {
+	display: none;
+	position: absolute;
+	z-index: 2;
+	top: 6vh;
+	right: 0;
+	background-color: #BDADEA;
+	border: 4px solid black;
+	border-top: none;
+	height: 40vh;	
+	width: 25vh;
+	
+}
+
 .content {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	margin: 8vh 0 0 0;
-}
-
-.logout {
-	width: 50%;
-	right: 0;
-	margin: 0 0.5vw 0 0;
 }
 
 .toolbox {
@@ -481,11 +493,25 @@ canvas {
 
 .lang-button {
 	height: 5vh;
+	margin: 0 0.5vw 0 0.5vw;
+}
+
+.lang-buttons {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
 }
 
 .square-button {
 	height: 5vh;
 	image-rendering: pixelated;
+}
+
+.header1 {
+	font-size: 3vh;
+	padding: 3vh 0 3vh 0;
+	text-align: center;
 }
 
 .header2 {
@@ -579,4 +605,67 @@ canvas {
 	justify-content: center;
 	align-items: center;
 	margin: 10vh 0 0 0;
+}
+
+.logout {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+	margin: 1vh 0 1vh 0;
+}
+
+.text-button {
+	font-size: 3vh;
+	
+}
+
+.profile {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+	margin: 1vh 0 1vh 0;
+}
+
+.flex-button {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+	width: 100%;
+}
+
+.login {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin: 10vh 0 0 0;
+	background-color: #ebebeb;
+	border: 4px solid black;
+	width: 60vh;
+}
+
+.container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.d-block {
+	display: block;
+}
+
+.profile-settings {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin: 10vh 0 0 0;
+	padding: 2vh 2vh 2vh 2vh;
+	background-color: #ebebeb;
+	border: 4px solid black;
+	width: 60vh;
 }
