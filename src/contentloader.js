@@ -1,5 +1,8 @@
 import { dict } from './lang.js';
 import { AuthErrorCodes } from 'firebase/auth';
+import db from './firebase.js';
+import { getDatabase, ref, set, get, onValue } from "firebase/database";
+import { monitorAuthState } from "./firebase.js";
 
 import cardPNG from './assets/images/card.png';
 import clearPNG from './assets/images/clear.png';
@@ -7,6 +10,25 @@ import chooseColorPNG from './assets/images/choose_color.png';
 import eraserPNG from './assets/images/eraser.png';
 import savePNG from './assets/images/save.png';
 import undoPNG from './assets/images/undo.png';
+
+document.addEventListener('DOMContentLoaded', () => {
+    let profilePic = new Image();
+    
+    monitorAuthState().then((userID) => {
+        get(ref(db, 'players/' + userID + '/canvas')).then((snapshot) => {
+            console.log(snapshot.val());
+            if (snapshot.val() != null) {
+                profilePic.src = snapshot.val().data;
+                console.log(profilePic.src);
+            }
+        });
+        profilePic.onload = () => {
+            document.getElementById('profilePic').src = profilePic.src;
+            console.log("test");
+        }
+    
+    });
+});
 
 export function loadLogin() {
     let lang = localStorage.getItem('lang') || 'en';
@@ -164,5 +186,11 @@ export function loadProfileSettings() {
                             <label class="d-block">${dictLang.changeusername}</label>
                             <input id="usernameInput" type="text" class="input-text">
                             <button id="btnUpdate" class="white-button">${dictLang.update}</button>
+                            <canvas id="pixelCanvas" class="pixel-canvas" width="320" height="320"></canvas>
+                            <div id="colorPicker" class="color-picker" title="${dictLang.color}">
+                                <input id="btnColor" type="color" class="color-picker-input" value="#ffffff">
+                                <button class="color-picker-button"><img src="assets/images/choose_color.png"></button>
+                            </div>
+                            <button id="btnSave" type="button">${dictLang.save}</button>
                         </div>`;
 }

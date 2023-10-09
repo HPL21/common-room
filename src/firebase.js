@@ -51,7 +51,7 @@ const createAccount = async () => {
     try {
         await createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
             playerRef = ref(db, 'players/' + userCredential.user.uid);
-            set(playerRef, {email: email});
+            set(playerRef, { email: email });
         });
     }
     catch (error) {
@@ -60,35 +60,41 @@ const createAccount = async () => {
 
 }
 
-const monitorAuthState = async () => {
-    onAuthStateChanged(auth, user => {
-        if (user) {
-            showApp();
+export const monitorAuthState = async () => {
+    return new Promise((resolve, reject) => {
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                showApp();
 
-            userID = user.uid;
-            playerRef = ref(db, 'players/' + userID);
+                userID = user.uid;
+                playerRef = ref(db, 'players/' + userID);
 
-            onValue(ref(db, 'players/' + userID), (snapshot) => {
-                userName = snapshot.val().username;
-                localStorage.setItem('username', userName);
-            });
-            localStorage.setItem('userID', userID);
-            let btnLogout = document.getElementById('btnLogout');
-            btnLogout.addEventListener("click", logout);
-        }
-        else {
-            loadLogin();
-            showLogin();
-            let btnLogin = document.getElementById('btnLogin');
-            let btnSignup = document.getElementById('btnSignup');
-            btnLogin.addEventListener("click", loginEmailPassword);
-            btnSignup.addEventListener("click", createAccount);
-            
-            localStorage.removeItem('username');
-            localStorage.removeItem('userID');
-            localStorage.removeItem('roomName');
-        }
-    })
+                onValue(ref(db, 'players/' + userID), (snapshot) => {
+                    userName = snapshot.val().username;
+                    localStorage.setItem('username', userName);
+                });
+                localStorage.setItem('userID', userID);
+                let btnLogout = document.getElementById('btnLogout');
+                btnLogout.addEventListener("click", logout);
+
+                resolve(userID); // Resolve the Promise with the userID
+            }
+            else {
+                loadLogin();
+                showLogin();
+                let btnLogin = document.getElementById('btnLogin');
+                let btnSignup = document.getElementById('btnSignup');
+                btnLogin.addEventListener("click", loginEmailPassword);
+                btnSignup.addEventListener("click", createAccount);
+
+                localStorage.removeItem('username');
+                localStorage.removeItem('userID');
+                localStorage.removeItem('roomName');
+
+                reject("User is not authenticated"); // Reject the Promise if user is not authenticated
+            }
+        })
+    });
 }
 
 const logout = async () => {

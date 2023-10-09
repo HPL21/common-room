@@ -17,7 +17,7 @@ import './room.js'
 import { handleRoomCreator, handleRoomJoin } from './room.js';
 
 import './user.js'
-import { handleProfileSettings } from './user.js';
+import { handleProfilePicCreator, handleProfileSettings } from './user.js';
 
 (function() {
   let userRef;
@@ -72,6 +72,7 @@ import { handleProfileSettings } from './user.js';
   btnProfileSettings.addEventListener('click', () => {
     loadProfileSettings();
     handleProfileSettings();
+    handleProfilePicCreator();
     localStorage.setItem('currentPlace', 'profileSettings');
   });
 

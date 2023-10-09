@@ -27,7 +27,7 @@
         </div>
         <div id="settings" class="settings">
             <div class="profile">
-                <button id="btnProfile" class="img-button square-button text-button flex-button"><img src="assets/images/profile.png"><div id="username"></div></button>
+                <button id="btnProfile" class="img-button square-button text-button flex-button"><img id="profilePic" src="assets/images/profile.png"><div id="username"></div></button>
             </div>
             <div class="logout">
                 <button id="btnLogout" class="img-button square-button text-button flex-button"><img src="assets/images/logout.png"><div id="logoutText"></div></button>
@@ -41,6 +41,23 @@
             
         </div>
         <div id="test" class="content">
+            <div id="canvasChat" class="canvas-chat">
+                <div id="messagesContainer" class="messages-container">
+                    <div id="message" class="message">
+                        <div class="message-pic"><img src="assets/images/profile.png"></div>
+                        <div class="message-username">TEST</div>
+                        <div class="message-text">Wiadomość eirrsgreisg ipeursgh speiru iueghisuerh iugehiu jsglsier uliseru hliu esrgli userhiugliu eshuh leriu</div>
+                    </div>
+                    <div id="message" class="message">
+                        <div class="message-pic"><img src="assets/images/profile.png"></div>
+                        <div class="message-username">TEST</div>
+                        <div class="message-text">Wiadomość</div>
+                    </div>
+                </div>
+                <div id="chatInput" class="chat-input">
+                    <input id="inputMessage" class="input-text input-message" type="text" placeholder="Type a message...">
+                    <button id="btnSend" class="img-button square-button"><img src="assets/images/send.png"></button>
+            </div>
         </div>
     </div>
 </body>
