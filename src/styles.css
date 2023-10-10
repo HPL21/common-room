@@ -684,13 +684,19 @@ canvas {
 	border-bottom: none;
 	background-color: #ebebeb;
 	display: flex;
-	justify-content: center;
+	flex-direction: column;
+	justify-content: flex-start;
 	align-items: center;
 	height: 40vh;
 	width: 40vh;
 	position: absolute;
 	bottom: 0;
 	right: 2vw;
+}
+
+.chat-header {
+	height: 2vh;
+	width: 100%;
 }
 
 .chat-input {
@@ -714,14 +720,17 @@ canvas {
 }
 
 .messages-container {
+	margin-top: 1vh;
 	width: 100%;
+	height: 30vh;
+	overflow-y: auto;
 }
 
 .message {
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
-	align-items: center;
+	align-items: flex-start;
 	width: 100%;
 	height: 6vh;
 	margin-bottom: 0.5vh;
@@ -732,10 +741,28 @@ canvas {
 	width: 4vh;
 	image-rendering: pixelated;
 	margin-left: 0.5vh;
+	margin-right: 1vh;
 }
+
+
 
 .message-text {
 	height: 100%;
 	margin-left: 1vh;
-	overflow: auto;
+	overflow-y: auto;
+	overflow-wrap: break-word;
+}
+
+.chat-header-buttons {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	align-items: center;
+	width: 100%;
+	height: 100%;	
+}
+
+.chat-header-button {
+	height: 2vh;
+	image-rendering: pixelated;
 }

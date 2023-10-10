@@ -15,20 +15,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let profilePic = new Image();
     
     monitorAuthState().then((userID) => {
-        get(ref(db, 'players/' + userID + '/canvas')).then((snapshot) => {
-            console.log(snapshot.val());
+        get(ref(db, 'players/' + userID)).then((snapshot) => {
             if (snapshot.val() != null) {
-                profilePic.src = snapshot.val().data;
-                console.log(profilePic.src);
+                profilePic.src = snapshot.val().profilePic;
+            }
+            else {
+                profilePic.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFFJREFUOE9jZKAQMOLR/x9NDqtaXAaga4aZhaEemwG4NGM1BN0AQpoxDBmGBoD8SCgcULxNk2iEhTRFCYnoBA7zAiF/4zKQEWQAuZrBhg68AQB0Wg4O59TPLQAAAABJRU5ErkJggg==";
             }
         });
         profilePic.onload = () => {
             document.getElementById('profilePic').src = profilePic.src;
-            console.log("test");
+            localStorage.setItem('profilePic', profilePic.src);
         }
     
     });
 });
+
 
 export function loadLogin() {
     let lang = localStorage.getItem('lang') || 'en';
@@ -50,8 +52,8 @@ export function loadLogin() {
 }
 
 export const showApp = () => {
-    login.style.display = 'none'
-    app.style.display = 'block'
+    login.style.display = 'none';
+    app.style.display = 'block';
 }
 
 export const showLogin = () => {

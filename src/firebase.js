@@ -104,6 +104,19 @@ const logout = async () => {
 export const auth = getAuth(firebaseApp);
 export let userID;
 
+export async function getUserID() {
+    return new Promise((resolve, reject) => {
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                userID = user.uid;
+                resolve(userID);
+            }
+            else {
+                reject("User is not authenticated");
+            }
+        })
+    });
+}
 
 monitorAuthState();
 

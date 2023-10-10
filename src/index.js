@@ -19,6 +19,8 @@ import { handleRoomCreator, handleRoomJoin } from './room.js';
 import './user.js'
 import { handleProfilePicCreator, handleProfileSettings } from './user.js';
 
+import './chat.js'
+
 (function() {
   let userRef;
   let users = {};

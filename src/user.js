@@ -1,6 +1,6 @@
 import db from './firebase.js';
 import { playerRef, userID } from "./firebase.js";
-import { onValue, push, ref, set, get } from "firebase/database";
+import { onValue, push, ref, set, get, update } from "firebase/database";
 
 document.getElementById('username').innerHTML = localStorage.getItem('username');
 
@@ -13,7 +13,7 @@ export function handleProfileSettings() {
             return;
         }
         localStorage.setItem('username', username);
-        set(playerRef, { username: username });
+        update(playerRef, { username: username });
         document.getElementById('username').innerHTML = username;
     });
 }
@@ -68,16 +68,14 @@ export function handleProfilePicCreator() {
 
     function saveCanvas() {
         //Save canvas to firebase
-        let canvasRef = ref(db, 'players/' + userID + '/canvas');
         let canvasData = canvas.toDataURL();
-        set(canvasRef, { data: canvasData });
+        update(playerRef, { profilePic: canvasData });
     }
 
     function loadCanvas() {
         //Load canvas from firebase
-        let canvasRef = ref(db, 'players/' + userID + '/canvas');
-        get(canvasRef).then((snapshot) => {
-            let canvasData = snapshot.val().data;
+        get(playerRef).then((snapshot) => {
+            let canvasData = snapshot.val().profilePic;
             let image = new Image();
             image.src = canvasData;
             image.onload = () => {
