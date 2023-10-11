@@ -697,6 +697,10 @@ canvas {
 .chat-header {
 	height: 2vh;
 	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .chat-input {
@@ -758,11 +762,15 @@ canvas {
 	flex-direction: row;
 	justify-content: flex-end;
 	align-items: center;
-	width: 100%;
 	height: 100%;	
 }
 
 .chat-header-button {
 	height: 2vh;
 	image-rendering: pixelated;
+}
+
+#chatTitle {
+	margin-left: 0.5vh;
+	font-size: 1.5vh;
 }

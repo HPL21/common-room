@@ -30,7 +30,8 @@ export const dict = {
         signup: "Sign up",
         lobbytext: "Create room or join to existing room",
         changeusername: "Change username",
-        update: "Update"
+        update: "Update",
+        chattitle: "Chat in room: "
     },
     pl: {
         login: "Zaloguj się",
@@ -63,6 +64,7 @@ export const dict = {
         signup: "Zarejestruj się",
         lobbytext: "Stwórz pokój lub dołącz do istniejącego",
         changeusername: "Zmień nazwę użytkownika",
-        update: "Zaktualizuj"
+        update: "Zaktualizuj",
+        chattitle: "Czat w pokoju: "
     }
 };

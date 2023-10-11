@@ -1,6 +1,7 @@
 import db, { userName } from './firebase.js';
 import { getUserID } from "./firebase.js";
 import { onValue, push, ref, set, get, child } from "firebase/database";
+import { dict } from './lang.js';
 
 function handleChat () {
 
@@ -83,6 +84,10 @@ function handleChat () {
         chatInput.style.display = "none";
         chatContainer.style.height = "3vh";
     });
+
+    let chatTitle = document.getElementById('chatTitle');
+    let dictLang = dict[localStorage.getItem('lang') || 'en'];
+    chatTitle.innerHTML = dictLang.chattitle + localStorage.getItem('roomName');
 }
 
 handleChat();
