@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set, get, onValue } from "firebase/database";
+import { getDatabase, ref, set, get, onValue, onDisconnect, push } from "firebase/database";
 
 import {
     getAuth,
@@ -31,6 +31,11 @@ export default db;
 
 export let playerRef;
 export let userName;
+let roomName;
+let roomRef;
+let allPlayersRoomRef;
+let playerRoomRef;
+let allPlayersRoom = {};
 
 const loginEmailPassword = async () => {
     const loginEmail = txtEmail.value;
@@ -70,13 +75,28 @@ export const monitorAuthState = async () => {
                 playerRef = ref(db, 'players/' + userID);
 
                 onValue(ref(db, 'players/' + userID), (snapshot) => {
-                    userName = snapshot.val().username;
+                    userName = snapshot.val().username || "Anonymous";
                     localStorage.setItem('username', userName);
+
+                    // TODO: do it better
+                    roomName = localStorage.getItem('roomName');
+                    if(roomName) {
+                        roomRef = ref(db, 'rooms/' + roomName);
+                        allPlayersRoomRef = ref(db, 'rooms/' + roomName + '/players');
+                        playerRoomRef = ref(db, 'rooms/' + roomName + '/players/' + userID);
+                        set(playerRoomRef, { username: userName });
+                        onDisconnect(playerRoomRef).remove();
+
+                        onValue(allPlayersRoomRef, (snapshot) => {
+                            allPlayersRoom = snapshot.val();
+                            console.log(allPlayersRoom);
+                        });
+                    }
                 });
                 localStorage.setItem('userID', userID);
                 let btnLogout = document.getElementById('btnLogout');
                 btnLogout.addEventListener("click", logout);
-
+                
                 resolve(userID); // Resolve the Promise with the userID
             }
             else {

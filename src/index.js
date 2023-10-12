@@ -22,6 +22,7 @@ import { handleProfilePicCreator, handleProfileSettings } from './user.js';
 import './chat.js'
 
 (function() {
+  let userID;
   let userRef;
   let users = {};
   let lang = localStorage.getItem('lang') || 'en';
@@ -33,6 +34,7 @@ import './chat.js'
     roomName = localStorage.getItem('roomName');
     if(roomName) {
       menu();
+
       localStorage.setItem('currentPlace', 'menu');
     }
     else {
@@ -148,6 +150,7 @@ import './chat.js'
   auth.onAuthStateChanged((user) => {
     if (user) {
       initGame();
+      userID = user.uid;
     }
     else {
       console.log('You are not logged in.');
