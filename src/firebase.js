@@ -77,21 +77,6 @@ export const monitorAuthState = async () => {
                 onValue(ref(db, 'players/' + userID), (snapshot) => {
                     userName = snapshot.val().username || "Anonymous";
                     localStorage.setItem('username', userName);
-
-                    // TODO: do it better
-                    roomName = localStorage.getItem('roomName');
-                    if(roomName) {
-                        roomRef = ref(db, 'rooms/' + roomName);
-                        allPlayersRoomRef = ref(db, 'rooms/' + roomName + '/players');
-                        playerRoomRef = ref(db, 'rooms/' + roomName + '/players/' + userID);
-                        set(playerRoomRef, { username: userName });
-                        onDisconnect(playerRoomRef).remove();
-
-                        onValue(allPlayersRoomRef, (snapshot) => {
-                            allPlayersRoom = snapshot.val();
-                            console.log(allPlayersRoom);
-                        });
-                    }
                 });
                 localStorage.setItem('userID', userID);
                 let btnLogout = document.getElementById('btnLogout');

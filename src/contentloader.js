@@ -72,8 +72,8 @@ export function loadMenu() {
     let dictLang = dict[lang];
     let content = document.getElementById('content');
     content.innerHTML = `<div class="card-container"><button id="card1" type="button" class="card"><img src="./assets/images/card.png"><div class="card-text">${dictLang.canvas}</div></button>
-                          <button id="card2" type="button" class="card"><img src="./assets/images/card.png"></button>
-                          <button id="card3" type="button" class="card"><img src="./assets/images/card.png"></button></div>`;
+                          <button id="card2" type="button" class="card"><img src="./assets/images/card.png"><div class="card-text">${dictLang.shuffle}</div></button>
+                          <button id="card3" type="button" class="card"><img src="./assets/images/card.png"><div class="card-text"></div></button></div>`;
 }
 
 export function loadCanvas() {

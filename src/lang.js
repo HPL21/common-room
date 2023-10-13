@@ -31,7 +31,8 @@ export const dict = {
         lobbytext: "Create room or join to existing room",
         changeusername: "Change username",
         update: "Update",
-        chattitle: "Chat in room: "
+        chattitle: "Chat in room: ",
+        shuffle: "Shuffle"
     },
     pl: {
         login: "Zaloguj się",
@@ -39,7 +40,7 @@ export const dict = {
         signUp: "Zarejestruj się",
         passwordError: "Błędne hasło, spróbuj ponownie.",
         logout: "Wyloguj się",
-        canvas: "Płótno",
+        canvas: "Tablica",
         clear: "Wyczyść",
         color: "Kolor",
         size: "Rozmiar",
@@ -65,6 +66,7 @@ export const dict = {
         lobbytext: "Stwórz pokój lub dołącz do istniejącego",
         changeusername: "Zmień nazwę użytkownika",
         update: "Zaktualizuj",
-        chattitle: "Czat w pokoju: "
+        chattitle: "Czat w pokoju: ",
+        shuffle: "Podaj dalej"
     }
 };
