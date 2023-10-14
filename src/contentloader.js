@@ -196,3 +196,17 @@ export function loadProfileSettings() {
                             <button id="btnSave" type="button">${dictLang.save}</button>
                         </div>`;
 }
+
+export function loadShuffleCreator() {
+    let content = document.getElementById('content');
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+    content.innerHTML = `TEST`;
+}
+
+export function loadShuffle() {
+    let content = document.getElementById('content');
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+    content.innerHTML = `TEST`;
+}

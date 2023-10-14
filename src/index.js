@@ -10,7 +10,7 @@ import './lobby.js'
 
 import { dict } from './lang.js';
 
-import { loadLogin, loadMenu, loadCanvas, loadLobby, loadRoomCreator, loadRoomJoin, loadSettings, loadProfileSettings} from './contentloader.js';
+import { loadLogin, loadMenu, loadCanvas, loadLobby, loadRoomCreator, loadRoomJoin, loadSettings, loadProfileSettings, loadShuffle, loadShuffleCreator} from './contentloader.js';
 
 import './room.js'
 
@@ -20,6 +20,9 @@ import './user.js'
 import { handleProfilePicCreator, handleProfileSettings } from './user.js';
 
 import './chat.js'
+
+import './shuffle.js'
+import { handleShuffleCreator, initShuffle } from './shuffle.js';
 
 (function() {
   let userID;
@@ -92,6 +95,10 @@ import './chat.js'
         loadCanvas();
         initCanvas();
         break;
+      case 'shuffle':
+        loadShuffleCreator();
+        handleShuffleCreator().then((result) => {if(!result) menu(); else {loadShuffle(); initShuffle();}});
+        break;
       case 'lobby':
         lobby();
         break;
@@ -113,9 +120,14 @@ import './chat.js'
   function menu() {
     loadMenu();
     let cardCanvas = document.getElementById('card1');
+    let cardShuffle = document.getElementById('card2');
     cardCanvas.addEventListener('click', () => {
       loadCanvas();
       initCanvas();
+    });
+    cardShuffle.addEventListener('click', () => {
+      loadShuffleCreator();
+      handleShuffleCreator().then((result) => {if(!result) menu(); else {loadShuffle(); initShuffle();}});
     });
   }
 
