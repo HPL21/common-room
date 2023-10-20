@@ -31,6 +31,8 @@ export async function handleRoomCreator() {
             }
         }
 
+        //TODO: prevent from creating room with the same name as existing room
+
         async function createRoom(roomName, roomPassword, roomDescription) {
             let roomRef = ref(db, 'rooms/' + roomName);
             try {

@@ -45,7 +45,6 @@ export function handleProfilePicCreator() {
         const cellY = Math.floor(y / cellPixelLength);
 
         fillCell(cellX, cellY);
-        console.log(colorHistory);
     }
 
     function handleClearButtonClick() {

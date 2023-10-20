@@ -20,13 +20,17 @@ let allPlayersRef = ref(db, 'players');
 let allPlayers;
 let pathID;
 
+let canvasObject;
+
+//TODO: generalize this
+
 export function initCanvas(){
 
     let canvas;
     let canvasContainer = document.getElementById('canvasContainer');
     localStorage.setItem('currentPlace', 'canvas');
     
-    new p5((p) => {
+    canvasObject = new p5((p) => {
         
         p.setup = () => {
 
@@ -216,5 +220,11 @@ export function initCanvas(){
         // });
 
     });
+
+}
+
+export function closeCanvas(){
+    canvasObject.remove();
+    console.log('Canvas closed inside');
 }
 

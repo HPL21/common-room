@@ -3,7 +3,7 @@ import { getUserID } from "./firebase.js";
 import { onValue, push, ref, set, get, child } from "firebase/database";
 import { dict } from './lang.js';
 
-function handleChat () {
+export function handleChat () {
 
     let userID;
     getUserID().then((_userID) => {
@@ -71,7 +71,7 @@ function handleChat () {
     let btnMin = document.getElementById('btnMin');
     let messagesContainer = document.getElementById('messagesContainer');
     let chatInput = document.getElementById('chatInput');
-    let chatContainer = document.getElementById('canvasChat');
+    let chatContainer = document.getElementById('chatContainer');
 
     btnMax.addEventListener('click', () => {
         messagesContainer.style.display = "block";
@@ -89,5 +89,3 @@ function handleChat () {
     let dictLang = dict[localStorage.getItem('lang') || 'en'];
     chatTitle.innerHTML = dictLang.chattitle + localStorage.getItem('roomName');
 }
-
-handleChat();

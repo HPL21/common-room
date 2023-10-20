@@ -679,7 +679,7 @@ canvas {
 	height: 320px;
 }
 
-.canvas-chat {
+.chat-container {
 	border: 4px solid black;
 	border-bottom: none;
 	background-color: #ebebeb;

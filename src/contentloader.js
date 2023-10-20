@@ -197,6 +197,28 @@ export function loadProfileSettings() {
                         </div>`;
 }
 
+export function loadChat() {
+    let chatDiv = document.getElementById('chat');
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+
+    chatDiv.innerHTML  = `<div id="chatContainer" class="chat-container" style="height: 3vh;">
+                            <div id="chatHeader" class="chat-header">
+                                <div id="chatTitle"></div>
+                                <div class="chat-header-buttons">
+                                    <button id="btnMax" class="img-button chat-header-button"><img src="./assets/images/maximize.png"></button>
+                                    <button id="btnMin" class="img-button chat-header-button"><img src="./assets/images/minimize.png"></button>
+                                </div>
+                            </div>
+                            <div id="messagesContainer" class="messages-container" style="display: none;">
+                            </div>
+                            <div id="chatInput" class="chat-input" style="display: none;">
+                                <input id="inputMessage" class="input-text input-message" type="text" placeholder="Type a message...">
+                                <button id="btnSend" class="img-button square-button"><img src="./assets/images/send.png"></button>
+                            </div>
+                        </div>`;
+}
+
 export function loadShuffleCreator() {
     let content = document.getElementById('content');
     let lang = localStorage.getItem('lang') || 'en';
