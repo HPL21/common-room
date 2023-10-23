@@ -1,7 +1,44 @@
 import { ref, onDisconnect, onValue, set } from 'firebase/database';
 
-export function handleShuffleCreator() {
-    console.log('Shuffle creator loaded.');
+export async function handleShuffleCreator() {
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+
+    return new Promise((resolve, reject) => {
+
+        let startButton = document.getElementById("btnShuffleStart");
+        startButton.addEventListener("click", startGame);
+
+        async function startGame() {
+            let roomName = localStorage.getItem('roomName');
+            let roomRef = ref(db, 'rooms/' + roomName);
+            let roomSettingsRef = ref(db, 'rooms/' + roomName + '/shuffleSettings');
+            let snapshot = await get(roomRef);
+            if (snapshot.exists()) {
+                alert(dictLang.alertroomexists);
+            } else {
+                createRoom(roomName)
+                    .then(() => {
+                        resolve(dictLang.roomcreated);
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    });
+            }
+        }
+
+        let cancelButton = document.getElementById("btnShuffleCancel");
+        cancelButton.addEventListener("click", returnToLobby);
+
+        function returnToLobby() {
+            localStorage.setItem('currentPlace', 'lobby');
+            result = false;
+            resolve(result); // Resolve with false
+        }
+
+
+    });
+
 }
 
 export function initShuffle () {

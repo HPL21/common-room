@@ -1,9 +1,13 @@
 import db from './firebase.js';
-import { playerRef, userID } from "./firebase.js";
-import { onValue, push, ref, set, get } from "firebase/database";
+import { ref, set, get } from "firebase/database";
+import { dict } from './lang.js';
 
 
 export async function handleRoomCreator() {
+
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+
     return new Promise((resolve, reject) => {
         let result;
 
@@ -13,17 +17,22 @@ export async function handleRoomCreator() {
         let cancelButton = document.getElementById("btnCancelRoom");
         cancelButton.addEventListener("click", returnToLobby);
 
-        function checkInput() {
+        async function checkInput() {
             let roomName = document.getElementById("txtRoomName").value;
             let roomPassword = document.getElementById("txtRoomPassword").value;
             let roomDescription = document.getElementById("txtRoomDescription").value;
 
+            let roomRef = ref(db, 'rooms/' + roomName);
+            let snapshot = await get(roomRef);
+            if (snapshot.exists()) {
+                alert(dictLang.alertroomexists);
+            } else
             if (roomName == "" || roomPassword == "" || roomDescription == "") {
-                alert("Please fill in all fields");
+                alert(dictLang.alertfill);
             } else {
                 createRoom(roomName, roomPassword, roomDescription)
                     .then(() => {
-                        resolve("Room created successfully");
+                        resolve(dictLang.roomcreated);
                     })
                     .catch((error) => {
                         reject(error);
@@ -31,21 +40,20 @@ export async function handleRoomCreator() {
             }
         }
 
-        //TODO: prevent from creating room with the same name as existing room
-
         async function createRoom(roomName, roomPassword, roomDescription) {
             let roomRef = ref(db, 'rooms/' + roomName);
+
             try {
                 await set(roomRef, {
                     password: roomPassword,
                     description: roomDescription
                 });
                 localStorage.setItem('roomName', roomName);
-                resolve("Room created successfully");
+                resolve(dictLang.roomcreated);
                 result = true;
             } catch (error) {
                 console.error(error);
-                reject("Error creating room");
+                reject(dictLang.errorcreatingroom);
             }
         }
 
@@ -72,7 +80,7 @@ export async function handleRoomJoin() {
             let roomPassword = document.getElementById("txtRoomPassword").value;
 
             if (roomName == "" || roomPassword == "") {
-                alert("Please fill in all fields");
+                alert(dictLang.alertfill);
             } else {
                 joinRoom(roomName, roomPassword)
                     .then((joinResult) => {
@@ -96,11 +104,11 @@ export async function handleRoomJoin() {
                             result = true;
                             resolve(result); // Resolve with true
                         } else {
-                            alert("Wrong password");
+                            alert(dictLang.passwordError);
                             result = false;
                         }
                     } else {
-                        alert("Room does not exist");
+                        alert(dictLang.alertroomdoesntexist);
                     }
                 }).catch((error) => {
                     console.error(error);

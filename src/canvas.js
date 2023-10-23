@@ -8,8 +8,10 @@ const paths = [];
 const pathsIDs = [];
 const currentPath = [];
 
+let canvasColor;
+let canvasWidth;
+let canvasHeight;
 let pencilColor = 'black';
-let canvasColor = 'white';
 let pencilSize = 5;
 
 let roomName;
@@ -34,16 +36,21 @@ export function initCanvas(){
         
         p.setup = () => {
 
-            // Create canvas with dimensions 
-            // TODO: user input for canvas size
-            canvas = p.createCanvas(p.windowWidth * 0.6, p.windowHeight * 0.6);
-            canvas.parent(canvasContainer);
-
-            // Set canvas background color
-            // TODO: user input for canvas color
-            p.background(canvasColor);
-
             roomName = localStorage.getItem('roomName');
+
+            // Create canvas with dimensions 
+            onValue(ref(db, 'rooms/' + roomName + '/canvasSettings'), (snapshot) => {
+                let canvasSettings = snapshot.val() || {};
+                canvasColor = canvasSettings.color || 'white';
+                canvasWidth = canvasSettings.width || p.windowWidth * 0.6;
+                canvasHeight = canvasSettings.height || p.windowHeight * 0.6;
+
+                canvas = p.createCanvas(canvasWidth, canvasHeight);
+                canvas.parent(canvasContainer);
+
+                // Set canvas background color
+                p.background(canvasColor);
+            });
 
             pathsRef = ref(db, 'rooms/' + roomName + '/paths');
 
@@ -101,7 +108,7 @@ export function initCanvas(){
 
         // If mouse is pressed on canvas, create new path
         p.mousePressed = () => {
-            if (p.mouseX >= 0 && p.mouseX < p.width && p.mouseY >= 0 && p.mouseY < p.height){
+            if (p.mouseX >= 0 && p.mouseX < p.width && p.mouseY >= 0 && p.mouseY < p.height && !settingsOpen){
                 currentPath.length = 0;
                 paths.push(currentPath);
             }
@@ -109,7 +116,7 @@ export function initCanvas(){
 
         // If mouse is released on canvas, save path to database
         p.mouseReleased = () => {
-            if (p.mouseX >= 0 && p.mouseX < p.width && p.mouseY >= 0 && p.mouseY < p.height){
+            if (p.mouseX >= 0 && p.mouseX < p.width && p.mouseY >= 0 && p.mouseY < p.height && !settingsOpen){
                 pathID = Date.now() + userID;
                 pathRef = ref(db, 'rooms/' + roomName +'/paths/' + pathID);
                 set(pathRef, {...currentPath});
@@ -123,8 +130,7 @@ export function initCanvas(){
 
         // Handling buttons
         //let btnLogout = document.getElementById('btnLogout');
-        let btnChangeRoom = document.getElementById('btnChangeRoom');
-        let btnMenu = document.getElementById('btnMenu');
+        let btnCanvasSettings = document.getElementById('btnCanvasSettings');
         let btnClear = document.getElementById('btnClear');
         let btnColor = document.getElementById('btnColor');
         let btnSize = document.getElementById('btnSize');
@@ -135,17 +141,40 @@ export function initCanvas(){
 
         let previousColor = pencilColor;
         let isEraser = false;
+        let settingsOpen = false;
 
-        // btnLogout.addEventListener('click', () => {
-        //     closeCanvas();
-        // });
+        //Opens canvas settings
+        btnCanvasSettings.addEventListener('click', () => {
+            settingsOpen = true;
 
-        btnMenu.addEventListener('click', () => {
-            closeCanvas();
-        })
+            let canvasSettings = document.getElementById('canvasSettings');
+            canvasSettings.style.display = 'flex';
 
-        btnChangeRoom.addEventListener('click', () => {
-            closeCanvas();
+            let btnCanvasColor = document.getElementById('btnCanvasColor');
+            let canvasWidthInput = document.getElementById('canvasSettingsWidthInput');
+            let canvasHeightInput = document.getElementById('canvasSettingsHeightInput');
+            let btnApply = document.getElementById('btnApply');
+            let btnCancel = document.getElementById('btnCancel');
+
+            btnCanvasColor.addEventListener('change', () => {
+                canvasColor = btnCanvasColor.value;
+            });
+
+            btnApply.addEventListener('click', () => {
+                set(ref(db, 'rooms/' + roomName + '/canvasSettings'), {
+                    color: canvasColor || 'white',
+                    width: canvasWidthInput.value || canvasWidth,
+                    height: canvasHeightInput.value ||  canvasHeight
+                });
+                canvasSettings.style.display = 'none';
+                settingsOpen = false;
+            });
+
+            btnCancel.addEventListener('click', () => {
+                canvasSettings.style.display = 'none';
+                settingsOpen = false;
+            });
+
         });
 
         // Clears everything from canvas and database

@@ -32,7 +32,16 @@ export const dict = {
         changeusername: "Change username",
         update: "Update",
         chattitle: "Chat in room: ",
-        shuffle: "Shuffle"
+        shuffle: "Shuffle",
+        settings: "Settings",
+        width: "Width",
+        height: "Height",
+        apply: "Apply",
+        alertfill: "Please fill in all fields",
+        alertroomexists: "Room already exists",
+        alertroomdoesntexist: "Room doesn't exist",
+        roomcreated: "Room created successfully",
+        errorcreatingroom: "Error creating room",
     },
     pl: {
         login: "Zaloguj się",
@@ -67,6 +76,15 @@ export const dict = {
         changeusername: "Zmień nazwę użytkownika",
         update: "Zaktualizuj",
         chattitle: "Czat w pokoju: ",
-        shuffle: "Podaj dalej"
+        shuffle: "Podaj dalej",
+        settings: "Ustawienia",
+        width: "Szerokość",
+        height: "Wysokość",
+        apply: "Zastosuj",
+        alertfill: "Proszę wypełnić wszystkie pola",
+        alertroomexists: "Pokój już istnieje",
+        alertroomdoesntexist: "Pokój nie istnieje",
+        roomcreated: "Pokój został utworzony",
+        errorcreatingroom: "Błąd podczas tworzenia pokoju",
     }
 };

@@ -82,6 +82,7 @@ export function loadCanvas() {
     let dictLang = dict[lang];
     content.innerHTML = `<div id="canvasContainer" class="canvas-container"></div>
     <div id="toolbox" class="toolbox">
+        <button id="btnCanvasSettings" type="button" class="toolbox-button"><img src="./assets/images/settings.png" alt="${dictLang.settings}" title="${dictLang.settings}"></button>
         <button id="btnClear" type="button" class="toolbox-button"><img src="./assets/images/clear.png" alt="${dictLang.clear}" title="${dictLang.clear}"></button>
         <div id="colorPicker" class="color-picker" title="${dictLang.color}">
             <input id="btnColor" type="color" class="color-picker-input" value="#ffffff">
@@ -93,6 +94,28 @@ export function loadCanvas() {
         <button id="btnEraser" type="button" class="toolbox-button"><img src="./assets/images/eraser.png" alt="${dictLang.eraser}" title="${dictLang.eraser}"></button>
         <button id="btnUndo" type="button" class="toolbox-button"><img src="./assets/images/undo.png" alt="${dictLang.undo}" title="${dictLang.undo}"></button>
         <button id="btnSave" type="button" class="toolbox-button"><img src="./assets/images/save.png" alt="${dictLang.save}" title="${dictLang.save}"></button>
+    </div>
+    <div id="canvasSettings" class="canvas-settings">
+        <div id="canvasSettingsHeader" class="canvas-settings-header">
+            <div class="header2">${dictLang.settings}</div>
+        </div>
+        <div id="canvasSettingsContent" class="canvas-settings-content">
+            <div id="colorPickerCanvas" class="color-picker" title="${dictLang.color}">
+                <label>${dictLang.color}</label>
+                <input id="btnCanvasColor" type="color" class="color-picker-input" value="#ffffff">
+                <button class="color-picker-button"><img src="assets/images/choose_color.png"></button>
+            </div>
+            <div id="canvasSettingsSize" class="canvas-settings-item">
+                <label>${dictLang.width}</label>
+                <input id="canvasSettingsWidthInput" type="number" class="input-text">
+                <label>${dictLang.height}</label>
+                <input id="canvasSettingsHeightInput" type="number" class="input-text">
+            </div>
+            <div id="canvasSettingsButtons" class="canvas-settings-buttons">
+                <button id="btnApply" type="button" class="white-button">${dictLang.apply}</button>
+                <button id="btnCancel" type="button" class="white-button">${dictLang.cancel}</button>
+            </div>
+        </div>
     </div>`;
 }
 
@@ -100,41 +123,27 @@ export function loadRoomCreator() {
     let content = document.getElementById('content');
     let lang = localStorage.getItem('lang') || 'en';
     let dictLang = dict[lang];
-    content.innerHTML = `<div id="roomCreator" class="room-creator">
-                            <div id="roomCreatorHeader" class="room-creator-header">
+    content.innerHTML = `<div id="roomCreator" class="creator">
+                            <div id="roomCreatorHeader" class="creator-header">
                                 <div class="header2">${dictLang.createroom}</div>
                             </div>
-                            <div id="roomCreatorContent" class="room-creator-content">
-                                <div id="roomNameInput" class="room-input room-creator-item">
+                            <div id="roomCreatorContent" class="creator-content">
+                                <div id="roomNameInput" class="creator-input creator-item">
                                     <label>${dictLang.roomname}</label>
                                     <input id="txtRoomName" type="text" class="input-text">
                                 </div>
-                                <div id="roomPasswordInput" class="room-input room-creator-item">
+                                <div id="roomPasswordInput" class="creator-input creator-item">
                                     <label>${dictLang.password}</label>
                                     <input id="txtRoomPassword" type="password" class="input-text">
                                 </div>
-                                <div id="roomDescriptionInput" class="room-input room-creator-item">
+                                <div id="roomDescriptionInput" class="creator-input creator-item">
                                     <label>${dictLang.desc}</label>
                                     <textarea id="txtRoomDescription" rows="3" class="input-text description-input"></textarea>
                                 </div>
-                                <div id="roomAddUsers" class="room-add-users room-creator-item">
-                                    <div id="addedUsers"></div>
-                                    <div id="addUserInput" >
-                                        <label>${dictLang.adduser}</label>
-                                        <div class="add-user-input">
-                                            <input id="txtAddUser" type="text" class="input-text">
-                                            <button id="btnAddUser" type="button" class="white-button plus-button">+</button>
-                                        </div>
-                                    </div>
-                                    <div id="addUserError" class="add-user-error">
-                                        <div id="lblAddUserErrorMessage" class="error-message">Error message</div>
-                                    </div>
-                                    <button id="btnAddUser" type="button" class="white-button">${dictLang.add}</button>
-                                </div>
-                                <div id="roomCreatorError" class="room-creator-error room-creator-item">
+                                <div id="roomCreatorError" class="creator-error creator-item">
                                     <div id="lblRoomCreatorErrorMessage" class="error-message">Error message</div>
                                 </div>
-                                <div id="roomCreatorButtons" class="room-creator-buttons room-creator-item">
+                                <div id="roomCreatorButtons" class="creator-item">
                                     <button id="btnCreateRoom" type="button" class="white-button">${dictLang.create}</button>
                                     <button id="btnCancelRoom" type="button" class="white-button">${dictLang.cancel}</button>
                                 </div>
@@ -146,20 +155,20 @@ export function loadRoomJoin() {
     let content = document.getElementById('content');
     let lang = localStorage.getItem('lang') || 'en';
     let dictLang = dict[lang];
-    content.innerHTML = `<div id="roomJoin" class="room-creator">
-                            <div id="roomJoinHeader" class="room-creator-header">
+    content.innerHTML = `<div id="roomJoin" class="creator">
+                            <div id="roomJoinHeader" class="creator-header">
                                 <div class="header2">${dictLang.joinroom}</div>
                             </div>
-                            <div id="roomJoinContent" class="room-creator-content">
-                                <div id="roomNameInput" class="room-input room-creator-item">
+                            <div id="roomJoinContent" class="creator-content">
+                                <div id="roomNameInput" class="creator-input creator-item">
                                     <label>${dictLang.roomname}</label>
                                     <input id="txtRoomName" type="text" class="input-text">
                                 </div>
-                                <div id="roomPasswordInput" class="room-input room-creator-item">
+                                <div id="roomPasswordInput" class="creator-input creator-item">
                                     <label>${dictLang.password}</label>
                                     <input id="txtRoomPassword" type="password" class="input-text">
                                 </div>
-                                <div id="roomJoinButtons" class="room-creator-buttons room-creator-item">
+                                <div id="roomJoinButtons" class="creator-item">
                                     <button id="btnJoinRoom" type="button" class="white-button">${dictLang.join}</button>
                                     <button id="btnCancelJoinRoom" type="button" class="white-button">${dictLang.cancel}</button>
                                 </div>
@@ -223,7 +232,38 @@ export function loadShuffleCreator() {
     let content = document.getElementById('content');
     let lang = localStorage.getItem('lang') || 'en';
     let dictLang = dict[lang];
-    content.innerHTML = `TEST`;
+    content.innerHTML = `<div id="shuffleCreator" class="creator">
+                            <div id="shuffleCreatorHeader" class="creator-header">
+                                <div class="header2">title</div>
+                            </div>
+                            <div id="shuffleCreatorContent" class="creator-input creator-content">
+                                <div id="roundInput" class="creator-input">
+                                    <label>round</label>
+                                    <input id="rounds" class="input-text" type="number" min="1" max="10" value="3">
+                                </div>
+                                <div id="modeInput" class="creator-input creator-item">
+                                    <label>mode</label>
+                                    <div id="modeChoiceDiv" class="creator-item">    
+                                        <input type="radio" id="mode1" name="mode" value="1" checked>
+                                        <label for="mode1">mode1</label>
+                                        <input type="radio" id="mode2" name="mode" value="2">
+                                        <label for="mode2">mode2</label>
+                                    </div>
+                                </div>
+                                <div id="shuffleCreatorPlayers" class="creator-players creator-item">
+                                    <label>players</label>
+                                    <div id="shuffleCreatorPlayersContent" class="creator-players-content">
+                                        <div id="shuffleCreatorPlayersList" class="creator-players-list">
+                                            <div class="player-list-item creator-item"><img id="profilePic" src="./assets/images/profile.png"><div id="username"></div>
+                                        </div>
+                                    </div>
+                                <div id="shuffleCreatorButtons" class="creator-item">
+                                    <button id="btnShuffleJoin" class="white-button">join</button>
+                                    <button id="btnShuffleLeave" class="white-button">leave</button>
+                                    <button id="btnShuffleStart" class="white-button">start</button>
+                                </div>
+                            </div>
+                        </div>`;
 }
 
 export function loadShuffle() {
