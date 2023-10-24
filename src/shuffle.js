@@ -1,4 +1,5 @@
 import { ref, onDisconnect, onValue, set } from 'firebase/database';
+import { dict } from './lang.js';
 
 export async function handleShuffleCreator() {
     let lang = localStorage.getItem('lang') || 'en';
@@ -9,31 +10,25 @@ export async function handleShuffleCreator() {
         let startButton = document.getElementById("btnShuffleStart");
         startButton.addEventListener("click", startGame);
 
+        let rounds;
+        let players;
+        let mode;
+
         async function startGame() {
-            let roomName = localStorage.getItem('roomName');
-            let roomRef = ref(db, 'rooms/' + roomName);
-            let roomSettingsRef = ref(db, 'rooms/' + roomName + '/shuffleSettings');
-            let snapshot = await get(roomRef);
-            if (snapshot.exists()) {
-                alert(dictLang.alertroomexists);
-            } else {
-                createRoom(roomName)
-                    .then(() => {
-                        resolve(dictLang.roomcreated);
-                    })
-                    .catch((error) => {
-                        reject(error);
-                    });
-            }
+            onValue(ref(db, 'rooms/' + roomName + 'shuffle/settings'), (snapshot) => {
+                let shuffleSettings = snapshot.val();
+                rounds = shuffleSettings.rounds;
+                players = shuffleSettings.players;
+                mode = shuffleSettings.mode;
+            });
         }
 
-        let cancelButton = document.getElementById("btnShuffleCancel");
-        cancelButton.addEventListener("click", returnToLobby);
+        let leaveButton = document.getElementById("btnShuffleLeave");
+        leaveButton.addEventListener("click", returnToLobby);
 
         function returnToLobby() {
             localStorage.setItem('currentPlace', 'lobby');
-            result = false;
-            resolve(result); // Resolve with false
+            resolve(false); // Resolve with false
         }
 
 

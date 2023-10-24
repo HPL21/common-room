@@ -42,6 +42,14 @@ export const dict = {
         alertroomdoesntexist: "Room doesn't exist",
         roomcreated: "Room created successfully",
         errorcreatingroom: "Error creating room",
+        shufflesettings: "Shuffle settings",
+        norounds: "Number of rounds",
+        mode: "Mode",
+        shufflemode1: "Picture first",
+        shufflemode2: "Text first",
+        players: "Players",
+        leave: "Leave",
+        start: "Start",
     },
     pl: {
         login: "Zaloguj się",
@@ -86,5 +94,13 @@ export const dict = {
         alertroomdoesntexist: "Pokój nie istnieje",
         roomcreated: "Pokój został utworzony",
         errorcreatingroom: "Błąd podczas tworzenia pokoju",
+        shufflesettings: "Ustawienia Podaj Dalej",
+        norounds: "Liczba rund",
+        mode: "Tryb",
+        shufflemode1: "Obrazek pierwszy",
+        shufflemode2: "Tekst pierwszy",
+        players: "Gracze",
+        leave: "Wyjdź",
+        start: "Start",
     }
 };
