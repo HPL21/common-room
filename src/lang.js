@@ -50,6 +50,7 @@ export const dict = {
         players: "Players",
         leave: "Leave",
         start: "Start",
+        ready: "Ready",
     },
     pl: {
         login: "Zaloguj się",
@@ -102,5 +103,6 @@ export const dict = {
         players: "Gracze",
         leave: "Wyjdź",
         start: "Start",
+        ready: "Gotowy",
     }
 };

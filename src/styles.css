@@ -542,6 +542,7 @@ canvas {
 .header2 {
 	font-size: 3vh;
 	padding: 3vh 0 3vh 0;
+	text-align: center;
 }
 
 .creator {
@@ -578,6 +579,18 @@ canvas {
 	image-rendering: pixelated;
 	margin-left: 0.5vh;
 	margin-right: 1vh;
+}
+
+.player-list-item {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+	margin: 1vh 0 1vh 0;
+}
+
+.player-list-item * {
+	display: inline;
 }
 
 .input-text {

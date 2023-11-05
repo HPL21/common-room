@@ -244,24 +244,29 @@ export function loadShuffleCreator() {
                                 <div id="modeInput" class="creator-input creator-item">
                                     <label>${dictLang.mode}</label>
                                     <div id="modeChoiceDiv" class="creator-item">    
-                                        <input type="radio" id="mode1" name="mode" value="1" checked>
-                                        <label for="mode1">${dictLang.shufflemode1}</label>
-                                        <input type="radio" id="mode2" name="mode" value="2">
-                                        <label for="mode2">${dictLang.shufflemode2}</label>
+                                        <div class="d-block">
+                                            <input type="radio" id="mode1" name="mode" value="1" checked>
+                                            <label for="mode1">${dictLang.shufflemode1}</label>
+                                        </div>
+                                        <div class="d-block">
+                                            <input type="radio" id="mode2" name="mode" value="2">
+                                            <label for="mode2">${dictLang.shufflemode2}</label>
+                                        </div>
                                     </div>
                                 </div>
                                 <div id="shuffleCreatorPlayers" class="creator-players creator-item">
                                     <label>${dictLang.players}</label>
                                     <div id="shuffleCreatorPlayersContent" class="creator-players-content">
                                         <div id="shuffleCreatorPlayersList" class="creator-players-list">
-                                            <div class="player-list-item creator-item"><img id="profilePic" src="./assets/images/profile.png"><div id="username"></div>
+                                            <div class="player-list-item creator-item"><img id="profilePic" src="./assets/images/profile.png"><div id="username">dupadupa</div>
                                         </div>
                                     </div>
-                                <div id="shuffleCreatorButtons" class="creator-item">
+                                </div>  
+                            </div>
+                            <div id="shuffleCreatorButtons" class="creator-item">
                                     <button id="btnShuffleJoin" class="white-button">${dictLang.join}</button>
                                     <button id="btnShuffleLeave" class="white-button">${dictLang.leave}</button>
                                     <button id="btnShuffleStart" class="white-button">${dictLang.start}</button>
-                                </div>
                             </div>
                         </div>`;
 }
@@ -270,5 +275,6 @@ export function loadShuffle() {
     let content = document.getElementById('content');
     let lang = localStorage.getItem('lang') || 'en';
     let dictLang = dict[lang];
-    content.innerHTML = `TEST`;
+    content.innerHTML = `<input id="shuffleInputText" type="text">
+    <button type="button" id="btnShuffleReady">${dictLang.ready}</button>`;
 }

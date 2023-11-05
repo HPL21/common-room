@@ -1,6 +1,7 @@
 import db from './firebase.js';
 import { ref, set, get } from "firebase/database";
 import { dict } from './lang.js';
+import { getUserID } from "./firebase.js";
 
 
 export async function handleRoomCreator() {
@@ -10,6 +11,11 @@ export async function handleRoomCreator() {
 
     return new Promise((resolve, reject) => {
         let result;
+
+        let userID;
+        getUserID().then((_userID) => {
+            userID = _userID;
+        });
 
         let createButton = document.getElementById("btnCreateRoom");
         createButton.addEventListener("click", checkInput);
@@ -49,6 +55,7 @@ export async function handleRoomCreator() {
                     description: roomDescription
                 });
                 localStorage.setItem('roomName', roomName);
+                set(ref(db, 'players/' + userID + '/room'), roomName);
                 resolve(dictLang.roomcreated);
                 result = true;
             } catch (error) {
@@ -69,6 +76,11 @@ export async function handleRoomCreator() {
 export async function handleRoomJoin() {
     return new Promise((resolve, reject) => {
         let result;
+
+        let userID;
+        getUserID().then((_userID) => {
+            userID = _userID;
+        });
 
         let joinButton = document.getElementById("btnJoinRoom");
         let cancelButton = document.getElementById("btnCancelJoinRoom");
@@ -101,6 +113,7 @@ export async function handleRoomJoin() {
                         if (roomData.password == roomPassword) {
                             localStorage.setItem('roomName', roomName);
                             localStorage.setItem('currentPlace', 'menu');
+                            set(ref(db, 'players/' + userID + '/room'), roomName);
                             result = true;
                             resolve(result); // Resolve with true
                         } else {
