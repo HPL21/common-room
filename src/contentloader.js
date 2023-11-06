@@ -276,5 +276,32 @@ export function loadShuffle() {
     let lang = localStorage.getItem('lang') || 'en';
     let dictLang = dict[lang];
     content.innerHTML = `<input id="shuffleInputText" type="text">
-    <button type="button" id="btnShuffleReady">${dictLang.ready}</button>`;
+    <button type="button" id="btnShuffleReady" class="white-button">${dictLang.ready}</button>`;
+}
+
+export function loadShuffleText() {
+    let content = document.getElementById('content');
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+    content.innerHTML = `<div id="shuffleCanvas"></div>
+    <input id="shuffleInputText" type="text">
+    <button type="button" id="btnShuffleReady" class="white-button">${dictLang.ready}</button>`;
+}
+
+export function loadShuffleCanvas() {
+    let content = document.getElementById('content');
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+    content.innerHTML = `<div id="shuffleText"></div>
+    <div id="canvasContainer" class="canvas-container"></div>
+    <div id="toolbox" class="toolbox">
+        <div id="colorPicker" class="color-picker" title="${dictLang.color}">
+            <input id="btnColor" type="color" class="color-picker-input" value="#ffffff">
+            <button class="color-picker-button"><img src="assets/images/choose_color.png"></button>
+        </div>
+        <div id="sizePicker" class="size-picker">
+            ${dictLang.size}<input id="btnSize" type="range" min="1" max="50" value="5" class="">
+        </div>
+    </div>
+    <button id="btnShuffleCanvasReady" type="button" class="white-button">${dictLang.ready}</button>`;
 }

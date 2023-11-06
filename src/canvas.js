@@ -24,8 +24,6 @@ let pathID;
 
 let canvasObject;
 
-//TODO: generalize this
-
 export function initCanvas(){
 
     let canvas;
