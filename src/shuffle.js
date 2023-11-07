@@ -1,4 +1,4 @@
-import { ref, onDisconnect, onValue, set, child } from 'firebase/database';
+import { ref, onDisconnect, onValue, set, child, get } from 'firebase/database';
 import db, { getUserID } from './firebase.js';
 import { dict } from './lang.js';
 import p5 from "p5";
@@ -71,12 +71,11 @@ export async function handleShuffleCreator() {
 
 
         async function startGame() {
-            onValue(child(shuffleRef, "settings"), (snapshot) => {
+            get(child(shuffleRef, "settings")).then((snapshot) => {
                 let shuffleSettings = snapshot.val();
                 rounds = shuffleSettings.rounds || 3;
                 players = shuffleSettings.players;
                 mode = shuffleSettings.mode || "mode1";
-                console.log(rounds, players, mode);
                 if(Object.keys(players).length < 2) {
                     alert("Not enough players");
                     return;
@@ -103,7 +102,7 @@ export async function handleShuffleCreator() {
 
         let inputRounds = document.getElementById("rounds");
         inputRounds.addEventListener("change", () => {
-            set(child(shuffleRef, "settings/rounds"), inputRounds.value);
+            set(child(shuffleRef, "settings/rounds"), parseInt(inputRounds.value));
         });
 
         let inputMode1 = document.getElementById("mode1");
@@ -133,115 +132,60 @@ export function initShuffle () {
 
     getUserID().then((_userID) => {
         userID = _userID;
-        onValue(ref(db, 'players/' + userID + '/room'), (snapshot) => {
+        get(ref(db, 'players/' + userID + '/room')).then((snapshot) => {
             roomName = snapshot.val();
             shuffleRef = ref(db, 'rooms/' + roomName + '/shuffle');
-            onValue(shuffleRef, (snapshot) => {
-                let shuffleSettings = snapshot.val().settings;
-                round = shuffleSettings.round;
+            get(child(shuffleRef,"settings")).then((snapshot) => {
+                console.log("Shuffle settings loaded");
+                let shuffleSettings = snapshot.val();
+                round = shuffleSettings.round || 1;
                 rounds = shuffleSettings.rounds || 3;
                 players = shuffleSettings.players;
                 playersList = Object.keys(players).sort();
-                mode = shuffleSettings.mode || "mode1";
-
-                let i = 1; // Initialize the loop variable outside of the loop
-
-                function processRound(i) {
-                    if (i <= rounds) {
-                        round = i;
-                        set(child(shuffleRef, "settings/round"), i);
-                        if (mode == "mode1") {
-                            console.log("Loading round " + i + ", mode: pictire first");
-                            loadShuffleCanvas();
-                            draw().then((imageBase64) => {
-                                console.log("Picture for user " + userID + " is ready");
-                                set(child(shuffleRef, "rounds/" + i + "/" + userID + "/image"), imageBase64);
-                                let countready1 = 0;
-                                while (countready1 < playersList.length) {
-                                    onValue(child(shuffleRef, "rounds/" + round), (snapshot) => {
-                                        let roundData = snapshot.val();
-                                        countready1 = 0;
-                                        for (let player in roundData) {
-                                            if (roundData[player].image != null) {
-                                                countready1++;
-                                            }
-                                        }
-                                        //console.log(countready1);
-                                        if (countready1 == playersList.length) {
-                                            loadShuffleText();
-                                            document.getElementById("shuffleCanvas").innerHTML = `<img src=${roundData[playersList[(playersList.indexOf(userID) + 1) % playersList.length]].image}>`;
-                                            write().then((text) => {
-                                                set(child(shuffleRef, "rounds/" + i + "/" + userID + "/text"), text);
-                                            });
-                                            let countready2 = 0;
-                                            while (countready2 < playersList.length) {
-                                                onValue(child(shuffleRef, "rounds/" + round), (snapshot) => {
-                                                    let roundData = snapshot.val();
-                                                    countready2 = 0
-                                                    for (let player in roundData) {
-                                                        if (roundData[player].text != null) {
-                                                            countready2++;
-                                                        }
-                                                    }
-                                                    if (countready2 == playersList.length) {
-                                                        // Continue to the next round
-                                                        processRound(i + 1);
-                                                    }
-                                                });
-                                            }
-                                        }
-                                    });
-                                }
-                            });
-                            
-                        } else if (mode == "mode2") {
-                            console.log("Loading round " + i + ", mode: text first");
-                            loadShuffleText();
-                            write().then((text) => {
-                                console.log("Text for user " + userID + " is ready");
-                                set(child(shuffleRef, "rounds/" + i + "/" + userID + "/text"), text);
-                                onValue(child(shuffleRef, "rounds/" + round), (snapshot) => {
-                                let roundData = snapshot.val();
-                                let countready = 0;
-                                for (let player in roundData) {
-                                    if (roundData[player].text != null) {
-                                        countready++;
-                                    }
-                                }
-                                if (countready == playersList.length) {
-                                    loadShuffleCanvas();
-                                    document.getElementById("shuffleText").innerHTML = roundData[playersList[(playersList.indexOf(userID) + 1) % playersList.length]].text;
-                                    draw().then((imageBase64) => {
-                                        set(child(shuffleRef, "rounds/" + i + "/" + userID + "/image"), imageBase64);
-                                    });
-                                    onValue(child(shuffleRef, "rounds/" + round), (snapshot) => {
-                                        let roundData = snapshot.val();
-                                        let countready = 0;
-                                        for (let player in roundData) {
-                                            if (roundData[player].image != null) {
-                                                countready++;
-                                            }
-                                        }
-                                        if (countready == playersList.length) {
-                                            // Continue to the next round
-                                            processRound(i + 1);
-                                        }
-                                    });
-                                }
-                                });
-                            });
-                            
-                        }
-                    }
-                }
-
+                mode = shuffleSettings.mode || "mode1";      
+                     
                 // Start the loop
-                processRound(i);                
-                
+                processRound(round, rounds, mode, userID, playersList, shuffleRef);
             });
         });
     });
 
+}
+
+async function processRound(round, rounds, mode, userID, playersList, shuffleRef) {
+    if (round <= rounds) {
+        set(child(shuffleRef, "settings/round"), round);
+        if (mode == "mode1") {
+            console.log("Loading round " + round + ", mode: picture first");
+            loadShuffleCanvas();
+            try {
+                const imageBase64 = await draw();
+                set(child(shuffleRef, "rounds/" + round + "/" + userID + "/image"), imageBase64);
+
+                let roundData = await waitForAllPlayers(child(shuffleRef, "rounds/" + round), "image", playersList);
+                loadShuffleText();
+                document.getElementById("shuffleCanvas").innerHTML = `<img src=${roundData[playersList[(playersList.indexOf(userID) + 1) % playersList.length]].image}>`;
+
+                const text = await write();
+                set(child(shuffleRef, "rounds/" + round + "/" + userID + "/text"), text);
+
+                await waitForAllPlayers(child(shuffleRef, "rounds/" + round), "text", playersList);
+                
+                console.log("Should processRound now");
+
+                processRound(round + 1, rounds, mode, userID, playersList, shuffleRef);
+            } catch (error) {
+                console.error(error);
+            }
+        } else if (mode == "mode2") {
+            // Handle mode2
+        }
+    }
+    if (round > rounds) {
+        set(child(shuffleRef, "settings/status"), "finished");
+        console.log("Shuffle finished");
+        showResults(shuffleRef);
+    }
 }
 
 async function draw(){
@@ -343,4 +287,105 @@ async function write(){
         });
 
     });
+}
+
+async function waitForAllPlayers(ref, mode, playersList){
+    console.log("Waiting for all players");
+    return new Promise((resolve, reject) => {
+        onValue(ref, (snapshot) => {
+            let roundData = snapshot.val();
+            let countready = 0;
+            for (let player in roundData) {  
+                if (mode == "image") {
+                    if (roundData[player].image != null) {
+                        countready++;
+                    }
+                } else if (mode == "text") {
+                    if (roundData[player].text != null) {
+                        countready++;
+                    }
+                }
+            }
+
+            console.log(countready + " players of " + playersList.length + " are ready");
+
+            if (countready == playersList.length) {
+                resolve(roundData);
+            }
+        });
+    });
+}
+
+function showResults(shuffleRef) {
+
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+
+    let content = document.getElementById("content");
+    content.innerHTML = "";
+    let roundsList = document.createElement("div");
+    let roundContent = document.createElement("div");
+
+    let snapshot, settings, mode, rounds;
+    get(shuffleRef).then((_snapshot) => {
+        snapshot = _snapshot.val(); 
+        settings = snapshot.settings;
+        mode = settings.mode || "mode1";
+        rounds = snapshot.rounds;
+        for (let round in rounds) {
+            let roundBtn = document.createElement("button");
+            roundBtn.innerHTML = dictLang.round + round;
+            roundBtn.classList.add("round-btn");
+            roundBtn.addEventListener("click", () => {
+                showRound(round, rounds[round], mode);
+            });
+            roundsList.appendChild(roundBtn);
+        }
+        content.appendChild(roundsList);
+    });
+
+}
+
+function showRound(round, roundData, mode) {
+    let content = document.getElementById("content");
+    content.innerHTML = "";
+    let roundContent = document.createElement("div");
+    roundContent.classList.add("round-content");
+
+    let playersList = Object.keys(roundData).sort();
+
+    if (mode == "mode1") {
+        for (let player in roundData) {
+            let playerDiv = document.createElement("div");
+            playerDiv.classList.add("player-div");
+
+            let playerDataDiv = document.createElement("div");
+            let playerPic = document.createElement("img");
+            let playerID = document.createElement("div");
+
+            playerPic.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFFJREFUOE9jZKAQMOLR/x9NDqtaXAaga4aZhaEemwG4NGM1BN0AQpoxDBmGBoD8SCgcULxNk2iEhTRFCYnoBA7zAiF/4zKQEWQAuZrBhg68AQB0Wg4O59TPLQAAAABJRU5ErkJggg==";
+            playerDataDiv.appendChild(playerPic);
+            playerID.innerHTML = player;
+            playerDataDiv.appendChild(playerID);
+            playerDiv.appendChild(playerDataDiv);
+
+            let playerImage = document.createElement("img");
+            console.log("Index: ", mod(playersList.indexOf(player) + 1, playersList.length));
+            playerImage.src = roundData[playersList[mod(playersList.indexOf(player) + 1, playersList.length)]].image;
+            let playerText = document.createElement("div");
+            playerText.innerHTML = roundData[playersList[mod(playersList.indexOf(player), playersList.length)]].text;
+            playerDiv.appendChild(playerImage);
+            playerDiv.appendChild(playerText);
+            roundContent.appendChild(playerDiv);
+        }
+    } else if (mode == "mode2") {
+        // Handle mode2
+    }
+
+    content.appendChild(roundContent);
+
+}
+
+function mod(n, m) { // Modulo function that works with negative numbers - fixing JS bullshit
+    return ((n % m) + m) % m;
 }

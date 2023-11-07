@@ -10,7 +10,7 @@ import './lobby.js'
 
 import { dict } from './lang.js';
 
-import { loadLogin, loadMenu, loadCanvas, loadLobby, loadRoomCreator, loadRoomJoin, loadSettings, loadProfileSettings, loadShuffle, loadShuffleCreator, loadChat } from './contentloader.js';
+import { loadLogin, loadMenu, loadCanvas, loadLobby, loadRoomCreator, loadRoomJoin, loadSettings, loadProfileSettings, loadShuffleCreator, loadChat } from './contentloader.js';
 
 import './room.js'
 
@@ -130,7 +130,7 @@ import { handleShuffleCreator, initShuffle } from './shuffle.js';
         });
         cardShuffle.addEventListener('click', () => {
             loadShuffleCreator();
-            handleShuffleCreator().then((result) => { if (!result) menu(); else { loadShuffle(); initShuffle(); } });
+            handleShuffleCreator().then((result) => { if (!result) menu(); else { initShuffle(); } });
         });
 
         //TODO: do it better

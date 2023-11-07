@@ -271,14 +271,6 @@ export function loadShuffleCreator() {
                         </div>`;
 }
 
-export function loadShuffle() {
-    let content = document.getElementById('content');
-    let lang = localStorage.getItem('lang') || 'en';
-    let dictLang = dict[lang];
-    content.innerHTML = `<input id="shuffleInputText" type="text">
-    <button type="button" id="btnShuffleReady" class="white-button">${dictLang.ready}</button>`;
-}
-
 export function loadShuffleText() {
     let content = document.getElementById('content');
     let lang = localStorage.getItem('lang') || 'en';

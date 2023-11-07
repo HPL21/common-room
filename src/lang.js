@@ -51,6 +51,7 @@ export const dict = {
         leave: "Leave",
         start: "Start",
         ready: "Ready",
+        round: "Round",
     },
     pl: {
         login: "Zaloguj się",
@@ -104,5 +105,6 @@ export const dict = {
         leave: "Wyjdź",
         start: "Start",
         ready: "Gotowy",
+        round: "Runda",
     }
 };
