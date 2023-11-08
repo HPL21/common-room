@@ -820,3 +820,7 @@ canvas {
 	margin-left: 0.5vh;
 	font-size: 1.5vh;
 }
+
+.shuffle-image {
+	border: 4px solid black;
+}

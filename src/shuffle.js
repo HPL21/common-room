@@ -23,69 +23,81 @@ export async function handleShuffleCreator() {
             onValue(ref(db, 'players/' + userID + '/room'), (snapshot) => {
                 roomName = snapshot.val();
                 shuffleRef = ref(db, 'rooms/' + roomName + '/shuffle');
-                onValue(child(shuffleRef, "settings/players"), (snapshot) => {
+                onValue(child(shuffleRef, "settings/players"), (snapshot) => { // Update players list
+
                     players = snapshot.val();
                     let playersList = document.getElementById("shuffleCreatorPlayersList");
                     playersList.innerHTML = "";
+
                     for (let player in players) {
                         let playerRef = ref(db, 'players/' + player);
                         let playerDiv = document.createElement('div');
                         playerDiv.classList.add("player-list-item", "creator-item");
                         let playerPic = document.createElement('img');
                         let playerName = document.createElement('div');
-                        onValue(playerRef, (snapshot) => {
+
+                        onValue(playerRef, (snapshot) => { // Get player data
                             playerPic.src = snapshot.val().profilePic || "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFFJREFUOE9jZKAQMOLR/x9NDqtaXAaga4aZhaEemwG4NGM1BN0AQpoxDBmGBoD8SCgcULxNk2iEhTRFCYnoBA7zAiF/4zKQEWQAuZrBhg68AQB0Wg4O59TPLQAAAABJRU5ErkJggg==";
                             playerName.innerHTML = snapshot.val().username || 'Anonymous';
                         });
+
                         playerDiv.appendChild(playerPic);
                         playerDiv.appendChild(playerName);
                         playersList.appendChild(playerDiv);
                     }
                 });
-                onValue(child(shuffleRef, "settings/rounds"), (snapshot) => {
+
+                onValue(child(shuffleRef, "settings/rounds"), (snapshot) => { // Update rounds
                     rounds = snapshot.val() || 3;
                     document.getElementById("rounds").value = rounds;
                 });
-                onValue(child(shuffleRef, "settings/mode"), (snapshot) => {
+
+                onValue(child(shuffleRef, "settings/mode"), (snapshot) => { // Update mode
                     mode = snapshot.val() || "mode1";
                     document.getElementById(mode).checked = true;
                 });
-                onValue(child(shuffleRef, "settings/status"), (snapshot) => {
+
+                onValue(child(shuffleRef, "settings/status"), (snapshot) => { // Listen for status change
                     let status = snapshot.val();
                     if(status == "running") {
                         resolve(true); // Resolve with true
                     }
                 });
+
             });
         });
 
         let joinButton = document.getElementById("btnShuffleJoin");
         joinButton.addEventListener("click", joinGame);
 
-        function joinGame() {
+        function joinGame() { // Join the game
             set(child(shuffleRef, "settings/players/" + userID), true);
         }
 
         let startButton = document.getElementById("btnShuffleStart");
         startButton.addEventListener("click", startGame);
 
-
         async function startGame() {
             get(child(shuffleRef, "settings")).then((snapshot) => {
-                let shuffleSettings = snapshot.val();
-                rounds = shuffleSettings.rounds || 3;
+
+                let shuffleSettings = snapshot.val(); // Get settings
+                rounds = shuffleSettings.rounds || 3; 
                 players = shuffleSettings.players;
                 mode = shuffleSettings.mode || "mode1";
-                if(Object.keys(players).length < 2) {
+
+                if(Object.keys(players).length < 2) { // Check if there are enough players - at least 2
                     alert("Not enough players");
                     return;
                 }
-                if(rounds < 1) {
+
+                if(rounds < 1) { // Check if there are enough rounds - at least 1
                     alert("Invalid number of rounds");
                     return;
                 }
-                set(child(shuffleRef, "settings/status"), "running");
-                set(child(shuffleRef, "settings/round"), 1);
+
+                set(child(shuffleRef, "settings/status"), "running"); // Set status to running
+                set(child(shuffleRef, "settings/round"), 1); // Set round to 1
+
                 resolve(true); // Resolve with true
             });
         }
@@ -100,16 +112,17 @@ export async function handleShuffleCreator() {
         }
         
 
-        let inputRounds = document.getElementById("rounds");
+        let inputRounds = document.getElementById("rounds"); // Update rounds
         inputRounds.addEventListener("change", () => {
             set(child(shuffleRef, "settings/rounds"), parseInt(inputRounds.value));
         });
 
-        let inputMode1 = document.getElementById("mode1");
+        let inputMode1 = document.getElementById("mode1"); // Update mode
         inputMode1.addEventListener("change", () => {
             set(child(shuffleRef, "settings/mode"), "mode1");
         });
-        let inputMode2 = document.getElementById("mode2");
+
+        let inputMode2 = document.getElementById("mode2"); // Update mode
         inputMode2.addEventListener("change", () => {
             set(child(shuffleRef, "settings/mode"), "mode2");
         });
@@ -135,17 +148,17 @@ export function initShuffle () {
         get(ref(db, 'players/' + userID + '/room')).then((snapshot) => {
             roomName = snapshot.val();
             shuffleRef = ref(db, 'rooms/' + roomName + '/shuffle');
-            get(child(shuffleRef,"settings")).then((snapshot) => {
+            get(child(shuffleRef,"settings")).then((snapshot) => { // Load settings
                 console.log("Shuffle settings loaded");
+
                 let shuffleSettings = snapshot.val();
                 round = shuffleSettings.round || 1;
                 rounds = shuffleSettings.rounds || 3;
                 players = shuffleSettings.players;
-                playersList = Object.keys(players).sort();
+                playersList = Object.keys(players).sort(); // Sort players list
                 mode = shuffleSettings.mode || "mode1";      
                      
-                // Start the loop
-                processRound(round, rounds, mode, userID, playersList, shuffleRef);
+                processRound(round, rounds, mode, userID, playersList, shuffleRef); // Start the game
             });
         });
     });
@@ -157,23 +170,25 @@ async function processRound(round, rounds, mode, userID, playersList, shuffleRef
         set(child(shuffleRef, "settings/round"), round);
         if (mode == "mode1") {
             console.log("Loading round " + round + ", mode: picture first");
-            loadShuffleCanvas();
+            loadShuffleCanvas(); // Load canvas
             try {
-                const imageBase64 = await draw();
-                set(child(shuffleRef, "rounds/" + round + "/" + userID + "/image"), imageBase64);
+                const imageBase64 = await draw(); // Draw canvas
+                set(child(shuffleRef, "rounds/" + round + "/" + userID + "/image"), imageBase64); // Save image to database
 
-                let roundData = await waitForAllPlayers(child(shuffleRef, "rounds/" + round), "image", playersList);
-                loadShuffleText();
-                document.getElementById("shuffleCanvas").innerHTML = `<img src=${roundData[playersList[(playersList.indexOf(userID) + 1) % playersList.length]].image}>`;
+                let roundData = await waitForAllPlayers(child(shuffleRef, "rounds/" + round), "image", playersList); // Wait for all players to finish
 
-                const text = await write();
-                set(child(shuffleRef, "rounds/" + round + "/" + userID + "/text"), text);
+                loadShuffleText(); // Load text input
+                //
+                //  TODO: make this prettier
+                //
+                document.getElementById("shuffleCanvas").innerHTML = `<img class="shuffle-image" src=${roundData[playersList[(playersList.indexOf(userID) + 1) % playersList.length]].image}>`; // Display image from previous player
 
-                await waitForAllPlayers(child(shuffleRef, "rounds/" + round), "text", playersList);
-                
-                console.log("Should processRound now");
+                const text = await write(); // Write text
+                set(child(shuffleRef, "rounds/" + round + "/" + userID + "/text"), text); // Save text to database
 
-                processRound(round + 1, rounds, mode, userID, playersList, shuffleRef);
+                await waitForAllPlayers(child(shuffleRef, "rounds/" + round), "text", playersList); // Wait for all players to finish
+
+                processRound(round + 1, rounds, mode, userID, playersList, shuffleRef); // Start next round
             } catch (error) {
                 console.error(error);
             }
@@ -182,7 +197,7 @@ async function processRound(round, rounds, mode, userID, playersList, shuffleRef
         }
     }
     if (round > rounds) {
-        set(child(shuffleRef, "settings/status"), "finished");
+        set(child(shuffleRef, "settings/status"), "finished"); // Set status to finished
         console.log("Shuffle finished");
         showResults(shuffleRef);
     }
@@ -204,8 +219,8 @@ async function draw(){
             
             p.setup = () => {
 
-                canvas = p.createCanvas(800, 600);
-                canvas.parent(canvasContainer);
+                canvas = p.createCanvas(800, 600); // Create canvas with dimensions
+                canvas.parent(canvasContainer); // Set canvas parent
 
                 // Set canvas background color
                 p.background("white");
@@ -282,15 +297,14 @@ async function write(){
         let shuffleInputText = document.getElementById("shuffleInputText");
         let btnShuffleReady = document.getElementById("btnShuffleReady");
 
-        btnShuffleReady.addEventListener("click", () => {
-            resolve(shuffleInputText.value);
+        btnShuffleReady.addEventListener("click", () => { // Send text to database
+            resolve(shuffleInputText.value);  // Resolve with text
         });
 
     });
 }
 
 async function waitForAllPlayers(ref, mode, playersList){
-    console.log("Waiting for all players");
     return new Promise((resolve, reject) => {
         onValue(ref, (snapshot) => {
             let roundData = snapshot.val();
@@ -307,9 +321,7 @@ async function waitForAllPlayers(ref, mode, playersList){
                 }
             }
 
-            console.log(countready + " players of " + playersList.length + " are ready");
-
-            if (countready == playersList.length) {
+            if (countready == playersList.length) { // If all players are ready, resolve with round data
                 resolve(roundData);
             }
         });
@@ -324,7 +336,6 @@ function showResults(shuffleRef) {
     let content = document.getElementById("content");
     content.innerHTML = "";
     let roundsList = document.createElement("div");
-    let roundContent = document.createElement("div");
 
     let snapshot, settings, mode, rounds;
     get(shuffleRef).then((_snapshot) => {
@@ -332,15 +343,20 @@ function showResults(shuffleRef) {
         settings = snapshot.settings;
         mode = settings.mode || "mode1";
         rounds = snapshot.rounds;
+
         for (let round in rounds) {
             let roundBtn = document.createElement("button");
             roundBtn.innerHTML = dictLang.round + round;
             roundBtn.classList.add("round-btn");
+            //
+            //  TODO: make this button prettier
+            //
             roundBtn.addEventListener("click", () => {
-                showRound(round, rounds[round], mode);
+                showRound(round, rounds[round], mode); // Show round
             });
             roundsList.appendChild(roundBtn);
         }
+
         content.appendChild(roundsList);
     });
 
@@ -348,21 +364,26 @@ function showResults(shuffleRef) {
 
 function showRound(round, roundData, mode) {
     let content = document.getElementById("content");
-    content.innerHTML = "";
     let roundContent = document.createElement("div");
     roundContent.classList.add("round-content");
+    //
+    //  TODO: make this prettier
+    //
 
-    let playersList = Object.keys(roundData).sort();
+    let playersList = Object.keys(roundData).sort(); // Sort players list
 
     if (mode == "mode1") {
         for (let player in roundData) {
             let playerDiv = document.createElement("div");
             playerDiv.classList.add("player-div");
-
+            //
+            //  TODO: make this prettier
+            //
             let playerDataDiv = document.createElement("div");
             let playerPic = document.createElement("img");
             let playerID = document.createElement("div");
 
+            // TODO: get player data from database (username, profile pic)
             playerPic.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFFJREFUOE9jZKAQMOLR/x9NDqtaXAaga4aZhaEemwG4NGM1BN0AQpoxDBmGBoD8SCgcULxNk2iEhTRFCYnoBA7zAiF/4zKQEWQAuZrBhg68AQB0Wg4O59TPLQAAAABJRU5ErkJggg==";
             playerDataDiv.appendChild(playerPic);
             playerID.innerHTML = player;
@@ -370,10 +391,10 @@ function showRound(round, roundData, mode) {
             playerDiv.appendChild(playerDataDiv);
 
             let playerImage = document.createElement("img");
-            console.log("Index: ", mod(playersList.indexOf(player) + 1, playersList.length));
-            playerImage.src = roundData[playersList[mod(playersList.indexOf(player) + 1, playersList.length)]].image;
+            playerImage.classList.add("shuffle-image");
+            playerImage.src = roundData[playersList[mod(playersList.indexOf(player) + 1, playersList.length)]].image; // Display image from previous player
             let playerText = document.createElement("div");
-            playerText.innerHTML = roundData[playersList[mod(playersList.indexOf(player), playersList.length)]].text;
+            playerText.innerHTML = roundData[playersList[mod(playersList.indexOf(player), playersList.length)]].text; // Display text from current player
             playerDiv.appendChild(playerImage);
             playerDiv.appendChild(playerText);
             roundContent.appendChild(playerDiv);
