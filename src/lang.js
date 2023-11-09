@@ -52,6 +52,7 @@ export const dict = {
         start: "Start",
         ready: "Ready",
         round: "Round",
+        waiting: "Waiting for all players...",
     },
     pl: {
         login: "Zaloguj się",
@@ -106,5 +107,6 @@ export const dict = {
         start: "Start",
         ready: "Gotowy",
         round: "Runda",
+        waiting: "Oczekiwanie na wszystkich graczy...",
     }
 };

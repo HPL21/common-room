@@ -59,7 +59,7 @@ export async function handleShuffleCreator() {
 
                 onValue(child(shuffleRef, "settings/status"), (snapshot) => { // Listen for status change
                     let status = snapshot.val();
-                    if(status == "running") {
+                    if(status == "running" || status == "finished") {
                         resolve(true); // Resolve with true
                     }
                 });
@@ -127,6 +127,23 @@ export async function handleShuffleCreator() {
             set(child(shuffleRef, "settings/mode"), "mode2");
         });
 
+        let waitingShield = document.createElement("div"); // Create waiting shield
+        waitingShield.id = "waitingShield";
+        waitingShield.classList.add("waiting-shield");
+
+        let waitingText = document.createElement("div");
+        waitingText.innerHTML = dictLang.waiting;
+        waitingShield.appendChild(waitingText);
+
+        let waitingCircleDiv = document.createElement("div");
+        waitingCircleDiv.classList.add("waiting-circle");
+        let waitingCircle = document.createElement("img");
+        // TODO: MAKE MY OWN GIF
+        waitingCircle.src = "https://i.gifer.com/YlWC.gif";
+        waitingCircleDiv.appendChild(waitingCircle);
+        waitingShield.appendChild(waitingCircleDiv);
+
+        document.body.appendChild(waitingShield);
     });
 
 }
@@ -158,7 +175,10 @@ export function initShuffle () {
                 playersList = Object.keys(players).sort(); // Sort players list
                 mode = shuffleSettings.mode || "mode1";      
                      
-                processRound(round, rounds, mode, userID, playersList, shuffleRef); // Start the game
+                if (shuffleSettings.status == "finished") 
+                    showResults(shuffleRef); // Show results if game is finished
+                else
+                    processRound(round, rounds, mode, userID, playersList, shuffleRef); // Start the game
             });
         });
     });
@@ -305,6 +325,9 @@ async function write(){
 }
 
 async function waitForAllPlayers(ref, mode, playersList){
+
+    document.getElementById("waitingShield").style.display = "flex"; // Show waiting shield
+
     return new Promise((resolve, reject) => {
         onValue(ref, (snapshot) => {
             let roundData = snapshot.val();
@@ -322,6 +345,7 @@ async function waitForAllPlayers(ref, mode, playersList){
             }
 
             if (countready == playersList.length) { // If all players are ready, resolve with round data
+                document.getElementById("waitingShield").style.display = "none"; // Hide waiting shield
                 resolve(roundData);
             }
         });
@@ -336,6 +360,8 @@ function showResults(shuffleRef) {
     let content = document.getElementById("content");
     content.innerHTML = "";
     let roundsList = document.createElement("div");
+    roundsList.id = "roundsList";
+    roundsList.classList.add("rounds-list");
 
     let snapshot, settings, mode, rounds;
     get(shuffleRef).then((_snapshot) => {
@@ -347,10 +373,7 @@ function showResults(shuffleRef) {
         for (let round in rounds) {
             let roundBtn = document.createElement("button");
             roundBtn.innerHTML = dictLang.round + round;
-            roundBtn.classList.add("round-btn");
-            //
-            //  TODO: make this button prettier
-            //
+            roundBtn.classList.add("white-button");
             roundBtn.addEventListener("click", () => {
                 showRound(round, rounds[round], mode); // Show round
             });
@@ -364,7 +387,9 @@ function showResults(shuffleRef) {
 
 function showRound(round, roundData, mode) {
     let content = document.getElementById("content");
-    let roundContent = document.createElement("div");
+    let roundContent = document.getElementById("roundContent") || document.createElement("div");
+    roundContent.id = "roundContent";
+    roundContent.innerHTML = "";
     roundContent.classList.add("round-content");
     //
     //  TODO: make this prettier
@@ -392,9 +417,14 @@ function showRound(round, roundData, mode) {
 
             let playerImage = document.createElement("img");
             playerImage.classList.add("shuffle-image");
-            playerImage.src = roundData[playersList[mod(playersList.indexOf(player) + 1, playersList.length)]].image; // Display image from previous player
             let playerText = document.createElement("div");
-            playerText.innerHTML = roundData[playersList[mod(playersList.indexOf(player), playersList.length)]].text; // Display text from current player
+
+            let playerImageID = playersList[mod(playersList.indexOf(player) + 1, playersList.length)];
+            let playerTextID = playersList[mod(playersList.indexOf(player), playersList.length)];
+
+            playerImage.src = roundData[playerImageID].image; // Display image from previous player
+            playerText.innerHTML = roundData[playerTextID].text; // Display text from current player
+
             playerDiv.appendChild(playerImage);
             playerDiv.appendChild(playerText);
             roundContent.appendChild(playerDiv);

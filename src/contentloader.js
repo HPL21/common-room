@@ -276,7 +276,7 @@ export function loadShuffleText() {
     let lang = localStorage.getItem('lang') || 'en';
     let dictLang = dict[lang];
     content.innerHTML = `<div id="shuffleCanvas"></div>
-    <input id="shuffleInputText" type="text">
+    <input id="shuffleInputText" type="text" class="input-text">
     <button type="button" id="btnShuffleReady" class="white-button">${dictLang.ready}</button>`;
 }
 
