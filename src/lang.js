@@ -53,6 +53,8 @@ export const dict = {
         ready: "Ready",
         round: "Round",
         waiting: "Waiting for all players...",
+        picture: "'s picture:",
+        text: "'s text:",
     },
     pl: {
         login: "Zaloguj się",
@@ -108,5 +110,7 @@ export const dict = {
         ready: "Gotowy",
         round: "Runda",
         waiting: "Oczekiwanie na wszystkich graczy...",
+        picture: "narysował obrazek:",
+        text: "napisał tekst:",
     }
 };

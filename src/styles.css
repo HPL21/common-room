@@ -850,3 +850,32 @@ canvas {
 	margin-left: 0.5vw;
 	margin-right: 0.5vw;
 }
+
+.round-item div {
+	background-color: #B8B8FF;
+	border-radius: 50px;
+	padding: 2vh 2vh 2vh 2vh;
+	margin: 1vh 0 1vh 0;
+	width: fit-content;
+
+}
+
+.round-item img {
+	border-radius: 30px;
+	height: 100%;
+}
+
+.player-info {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+}
+
+.player-info img {
+	height: 4vh;
+	width: 4vh;
+	image-rendering: pixelated;
+	margin-left: 0.5vh;
+	margin-right: 1vh;
+}

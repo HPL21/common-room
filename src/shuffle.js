@@ -385,7 +385,11 @@ function showResults(shuffleRef) {
 
 }
 
-function showRound(round, roundData, mode) {
+async function showRound(round, roundData, mode) {
+
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+
     let content = document.getElementById("content");
     let roundContent = document.getElementById("roundContent") || document.createElement("div");
     roundContent.id = "roundContent";
@@ -396,38 +400,65 @@ function showRound(round, roundData, mode) {
     //
 
     let playersList = Object.keys(roundData).sort(); // Sort players list
+    let playersData = {};
+    for (let player in playersList) {
+        await get(ref(db, 'players/' + playersList[player])).then((snapshot) => {
+            let playerData = snapshot.val();
+            playersData[playersList[player]] = playerData;
+        });
+    }
+
+    //
+    // TODO: merge labels with content
+    //
 
     if (mode == "mode1") {
         for (let player in roundData) {
-            let playerDiv = document.createElement("div");
-            playerDiv.classList.add("player-div");
-            //
-            //  TODO: make this prettier
-            //
-            let playerDataDiv = document.createElement("div");
-            let playerPic = document.createElement("img");
-            let playerID = document.createElement("div");
-
-            // TODO: get player data from database (username, profile pic)
-            playerPic.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFFJREFUOE9jZKAQMOLR/x9NDqtaXAaga4aZhaEemwG4NGM1BN0AQpoxDBmGBoD8SCgcULxNk2iEhTRFCYnoBA7zAiF/4zKQEWQAuZrBhg68AQB0Wg4O59TPLQAAAABJRU5ErkJggg==";
-            playerDataDiv.appendChild(playerPic);
-            playerID.innerHTML = player;
-            playerDataDiv.appendChild(playerID);
-            playerDiv.appendChild(playerDataDiv);
+            let roundItem = document.createElement("div");
+            roundItem.classList.add("round-item");
+            let playerImageID = playersList[mod(playersList.indexOf(player) + 1, playersList.length)];
+            let playerTextID = playersList[mod(playersList.indexOf(player), playersList.length)];
 
             let playerImage = document.createElement("img");
             playerImage.classList.add("shuffle-image");
             let playerText = document.createElement("div");
 
-            let playerImageID = playersList[mod(playersList.indexOf(player) + 1, playersList.length)];
-            let playerTextID = playersList[mod(playersList.indexOf(player), playersList.length)];
-
             playerImage.src = roundData[playerImageID].image; // Display image from previous player
             playerText.innerHTML = roundData[playerTextID].text; // Display text from current player
 
-            playerDiv.appendChild(playerImage);
-            playerDiv.appendChild(playerText);
-            roundContent.appendChild(playerDiv);
+            let playerImageInfo = document.createElement("div");
+            let playerTextInfo = document.createElement("div");
+            playerImageInfo.classList.add("player-info");
+            playerTextInfo.classList.add("player-info");
+
+            let playerImageUsername = document.createElement("label");
+            let playerTextUsername = document.createElement("label");
+
+            playerImageUsername.innerHTML = (playersData[playerImageID].username || "Anonymous") + dictLang.picture;
+            playerTextUsername.innerHTML = (playersData[playerTextID].username || "Anonymous")  + dictLang.text;
+
+            let playerImagePic = document.createElement("img");
+            let playerTextPic = document.createElement("img");
+
+            playerImagePic.src = playersData[playerImageID].profilePic || "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFFJREFUOE9jZKAQMOLR/x9NDqtaXAaga4aZhaEemwG4NGM1BN0AQpoxDBmGBoD8SCgcULxNk2iEhTRFCYnoBA7zAiF/4zKQEWQAuZrBhg68AQB0Wg4O59TPLQAAAABJRU5ErkJggg==";
+            playerTextPic.src = playersData[playerTextID].profilePic || "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFFJREFUOE9jZKAQMOLR/x9NDqtaXAaga4aZhaEemwG4NGM1BN0AQpoxDBmGBoD8SCgcULxNk2iEhTRFCYnoBA7zAiF/4zKQEWQAuZrBhg68AQB0Wg4O59TPLQAAAABJRU5ErkJggg==";
+
+            playerImageInfo.appendChild(playerImagePic);
+            playerImageInfo.appendChild(playerImageUsername);
+
+            playerTextInfo.appendChild(playerTextPic);
+            playerTextInfo.appendChild(playerTextUsername);
+
+            roundItem.appendChild(playerImageInfo);
+            let playerImageDiv = document.createElement("div");
+            playerImageDiv.appendChild(playerImage);
+            roundItem.appendChild(playerImageDiv);
+            roundItem.appendChild(playerTextInfo);
+            roundItem.appendChild(playerText);
+
+            roundContent.appendChild(roundItem);
+
+ 
         }
     } else if (mode == "mode2") {
         // Handle mode2
