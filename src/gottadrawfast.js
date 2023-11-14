@@ -5,12 +5,6 @@ import p5 from "p5";
 import { loadGottaRound } from './contentloader.js';
 import { Configuration, OpenAIApi } from "openai"
 
-// const openAi = new OpenAIApi(
-//     new Configuration({
-//       apiKey: "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",
-//     })
-// );
-
 export async function handleGottaCreator() {
     localStorage.setItem('currentPlace', 'shuffleCreator');
     let lang = localStorage.getItem('lang') || 'en';
