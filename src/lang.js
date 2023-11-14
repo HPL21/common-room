@@ -55,6 +55,8 @@ export const dict = {
         waiting: "Waiting for all players...",
         picture: "'s picture:",
         text: "'s text:",
+        finishshuffle: "Finish and return to menu",
+        errorloadinground: "Error loading round (data may have been deleted)",
     },
     pl: {
         login: "Zaloguj się",
@@ -110,7 +112,9 @@ export const dict = {
         ready: "Gotowy",
         round: "Runda",
         waiting: "Oczekiwanie na wszystkich graczy...",
-        picture: "narysował obrazek:",
-        text: "napisał tekst:",
+        picture: " narysował obrazek:",
+        text: " napisał tekst:",
+        finishshuffle: "Zakończ i wróć do menu",
+        errorloadinground: "Błąd podczas ładowania rundy (możliwe, że dane zostały usunięte)",
     }
 };

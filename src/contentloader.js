@@ -10,6 +10,7 @@ import chooseColorPNG from './assets/images/choose_color.png';
 import eraserPNG from './assets/images/eraser.png';
 import savePNG from './assets/images/save.png';
 import undoPNG from './assets/images/undo.png';
+import loadingDots from './assets/images/loading_dots.gif';
 
 document.addEventListener('DOMContentLoaded', () => {
     let profilePic = new Image();
@@ -257,16 +258,14 @@ export function loadShuffleCreator() {
                                 <div id="shuffleCreatorPlayers" class="creator-players creator-item">
                                     <label>${dictLang.players}</label>
                                     <div id="shuffleCreatorPlayersContent" class="creator-players-content">
-                                        <div id="shuffleCreatorPlayersList" class="creator-players-list">
-                                            <div class="player-list-item creator-item"><img id="profilePic" src="./assets/images/profile.png"><div id="username">dupadupa</div>
-                                        </div>
+                                        <div id="shuffleCreatorPlayersList" class="creator-players-list"></div>
                                     </div>
                                 </div>  
                             </div>
-                            <div id="shuffleCreatorButtons" class="creator-item">
-                                    <button id="btnShuffleJoin" class="white-button">${dictLang.join}</button>
-                                    <button id="btnShuffleLeave" class="white-button">${dictLang.leave}</button>
-                                    <button id="btnShuffleStart" class="white-button">${dictLang.start}</button>
+                            <div id="shuffleCreatorButtons" class="creator-buttons">
+                                <button id="btnShuffleJoin" class="white-button">${dictLang.join}</button>
+                                <button id="btnShuffleLeave" class="white-button">${dictLang.leave}</button>
+                                <button id="btnShuffleStart" class="white-button">${dictLang.start}</button>
                             </div>
                         </div>`;
 }

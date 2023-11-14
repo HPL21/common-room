@@ -13,9 +13,9 @@ export async function handleShuffleCreator() {
     let roomName;
     let shuffleRef;
 
-    let rounds;
+    let rounds = 3;
     let players;
-    let mode;
+    let mode = "mode1";
 
     return new Promise((resolve, reject) => {
         getUserID().then((_userID) => {
@@ -23,9 +23,15 @@ export async function handleShuffleCreator() {
             onValue(ref(db, 'players/' + userID + '/room'), (snapshot) => {
                 roomName = snapshot.val();
                 shuffleRef = ref(db, 'rooms/' + roomName + '/shuffle');
+
                 onValue(child(shuffleRef, "settings/players"), (snapshot) => { // Update players list
 
                     players = snapshot.val();
+
+                    if (players == null) {
+                        return;
+                    }
+
                     let playersList = document.getElementById("shuffleCreatorPlayersList");
                     playersList.innerHTML = "";
 
@@ -48,12 +54,18 @@ export async function handleShuffleCreator() {
                 });
 
                 onValue(child(shuffleRef, "settings/rounds"), (snapshot) => { // Update rounds
-                    rounds = snapshot.val() || 3;
+                    rounds = snapshot.val();
+                    if (rounds == null) {
+                        return;
+                    }
                     document.getElementById("rounds").value = rounds;
                 });
 
                 onValue(child(shuffleRef, "settings/mode"), (snapshot) => { // Update mode
-                    mode = snapshot.val() || "mode1";
+                    mode = snapshot.val();
+                    if (mode == null) {
+                        return;
+                    }
                     document.getElementById(mode).checked = true;
                 });
 
@@ -126,24 +138,6 @@ export async function handleShuffleCreator() {
         inputMode2.addEventListener("change", () => {
             set(child(shuffleRef, "settings/mode"), "mode2");
         });
-
-        let waitingShield = document.createElement("div"); // Create waiting shield
-        waitingShield.id = "waitingShield";
-        waitingShield.classList.add("waiting-shield");
-
-        let waitingText = document.createElement("div");
-        waitingText.innerHTML = dictLang.waiting;
-        waitingShield.appendChild(waitingText);
-
-        let waitingCircleDiv = document.createElement("div");
-        waitingCircleDiv.classList.add("waiting-circle");
-        let waitingCircle = document.createElement("img");
-        // TODO: MAKE MY OWN GIF
-        waitingCircle.src = "https://i.gifer.com/YlWC.gif";
-        waitingCircleDiv.appendChild(waitingCircle);
-        waitingShield.appendChild(waitingCircleDiv);
-
-        document.body.appendChild(waitingShield);
     });
 
 }
@@ -213,7 +207,27 @@ async function processRound(round, rounds, mode, userID, playersList, shuffleRef
                 console.error(error);
             }
         } else if (mode == "mode2") {
-            // Handle mode2
+            console.log("Loading round " + round + ", mode: text first");
+            loadShuffleText(); // Load text input
+            try {
+                const text = await write(); // Write text
+                set(child(shuffleRef, "rounds/" + round + "/" + userID + "/text"), text); // Save text to database
+
+                let roundData = await waitForAllPlayers(child(shuffleRef, "rounds/" + round), "text", playersList); // Wait for all players to finish
+
+                loadShuffleCanvas(); // Load canvas
+
+                document.getElementById("shuffleText").innerHTML = `<div class="shuffle-mode2-text">${roundData[playersList[(playersList.indexOf(userID) + 1) % playersList.length]].text}</div>`; // Display text from previous player
+
+                const imageBase64 = await draw(); // Draw canvas
+                set(child(shuffleRef, "rounds/" + round + "/" + userID + "/image"), imageBase64); // Save image to database
+
+                await waitForAllPlayers(child(shuffleRef, "rounds/" + round), "image", playersList); // Wait for all players to finish
+
+                processRound(round + 1, rounds, mode, userID, playersList, shuffleRef); // Start next round
+            } catch (error) {
+                console.error(error);
+            }
         }
     }
     if (round > rounds) {
@@ -326,7 +340,26 @@ async function write(){
 
 async function waitForAllPlayers(ref, mode, playersList){
 
-    document.getElementById("waitingShield").style.display = "flex"; // Show waiting shield
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+
+    let waitingShield = document.createElement("div"); // Create waiting shield
+    waitingShield.id = "waitingShield";
+    waitingShield.classList.add("waiting-shield");
+
+    let waitingText = document.createElement("div");
+    waitingText.innerHTML = dictLang.waiting;
+    waitingShield.appendChild(waitingText);
+
+    let waitingCircleDiv = document.createElement("div");
+    waitingCircleDiv.classList.add("waiting-circle");
+    let waitingCircle = document.createElement("img");
+    // TODO: MAKE MY OWN GIF
+    waitingCircle.src = "./assets/images/loading_dots.gif";
+    waitingCircleDiv.appendChild(waitingCircle);
+    waitingShield.appendChild(waitingCircleDiv);
+
+    document.body.appendChild(waitingShield); // Display waiting shield
 
     return new Promise((resolve, reject) => {
         onValue(ref, (snapshot) => {
@@ -345,7 +378,7 @@ async function waitForAllPlayers(ref, mode, playersList){
             }
 
             if (countready == playersList.length) { // If all players are ready, resolve with round data
-                document.getElementById("waitingShield").style.display = "none"; // Hide waiting shield
+                try {document.getElementById("waitingShield").remove();} catch (error) {} // Remove waiting shield
                 resolve(roundData);
             }
         });
@@ -363,6 +396,25 @@ function showResults(shuffleRef) {
     roundsList.id = "roundsList";
     roundsList.classList.add("rounds-list");
 
+    let finishButton = document.createElement("button");
+    finishButton.innerHTML = dictLang.finishshuffle;
+    finishButton.classList.add("red-button");
+    finishButton.addEventListener("click", () => {
+        get(shuffleRef).then((snapshot) => {
+            let shuffleData = snapshot.val();
+            try {
+                if (shuffleData.settings.status == "finished") {
+                    set(shuffleRef, null); // Delete shuffle from database
+                }
+            } catch (error) {
+                console.error(error);
+            }
+            localStorage.setItem('currentPlace', 'menu');
+            location.reload(); // Reload page
+            return;
+        });
+    });
+
     let snapshot, settings, mode, rounds;
     get(shuffleRef).then((_snapshot) => {
         snapshot = _snapshot.val(); 
@@ -375,12 +427,18 @@ function showResults(shuffleRef) {
             roundBtn.innerHTML = dictLang.round + round;
             roundBtn.classList.add("white-button");
             roundBtn.addEventListener("click", () => {
-                showRound(round, rounds[round], mode); // Show round
+                try {
+                    showRound(round, rounds[round], mode); // Show round
+                } catch (error) {
+                    alert(dictLang.errorloadinground);
+                    console.error(error);
+                }
             });
             roundsList.appendChild(roundBtn);
         }
 
         content.appendChild(roundsList);
+        content.appendChild(finishButton);
     });
 
 }
@@ -412,56 +470,63 @@ async function showRound(round, roundData, mode) {
     // TODO: merge labels with content
     //
 
-    if (mode == "mode1") {
-        for (let player in roundData) {
-            let roundItem = document.createElement("div");
-            roundItem.classList.add("round-item");
-            let playerImageID = playersList[mod(playersList.indexOf(player) + 1, playersList.length)];
-            let playerTextID = playersList[mod(playersList.indexOf(player), playersList.length)];
+    for (let player in roundData) {
+        let roundItem = document.createElement("div");
+        roundItem.classList.add("round-item");
+        let playerImageID = playersList[mod(playersList.indexOf(player) + 1, playersList.length)];
+        let playerTextID = playersList[mod(playersList.indexOf(player), playersList.length)];
 
-            let playerImage = document.createElement("img");
-            playerImage.classList.add("shuffle-image");
-            let playerText = document.createElement("div");
+        let playerImage = document.createElement("img");
+        playerImage.classList.add("shuffle-image");
+        let playerText = document.createElement("div");
+        playerText.classList.add("shuffle-text");
 
-            playerImage.src = roundData[playerImageID].image; // Display image from previous player
-            playerText.innerHTML = roundData[playerTextID].text; // Display text from current player
+        playerImage.src = roundData[playerImageID].image; // Display image from previous player
+        playerText.innerHTML = roundData[playerTextID].text; // Display text from current player
 
-            let playerImageInfo = document.createElement("div");
-            let playerTextInfo = document.createElement("div");
-            playerImageInfo.classList.add("player-info");
-            playerTextInfo.classList.add("player-info");
+        let playerImageInfo = document.createElement("div");
+        let playerTextInfo = document.createElement("div");
+        playerImageInfo.classList.add("player-info");
+        playerTextInfo.classList.add("player-info");
 
-            let playerImageUsername = document.createElement("label");
-            let playerTextUsername = document.createElement("label");
+        let playerImageUsername = document.createElement("label");
+        let playerTextUsername = document.createElement("label");
 
-            playerImageUsername.innerHTML = (playersData[playerImageID].username || "Anonymous") + dictLang.picture;
-            playerTextUsername.innerHTML = (playersData[playerTextID].username || "Anonymous")  + dictLang.text;
+        playerImageUsername.innerHTML = (playersData[playerImageID].username || "Anonymous") + dictLang.picture;
+        playerTextUsername.innerHTML = (playersData[playerTextID].username || "Anonymous")  + dictLang.text;
 
-            let playerImagePic = document.createElement("img");
-            let playerTextPic = document.createElement("img");
+        let playerImagePic = document.createElement("img");
+        let playerTextPic = document.createElement("img");
 
-            playerImagePic.src = playersData[playerImageID].profilePic || "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFFJREFUOE9jZKAQMOLR/x9NDqtaXAaga4aZhaEemwG4NGM1BN0AQpoxDBmGBoD8SCgcULxNk2iEhTRFCYnoBA7zAiF/4zKQEWQAuZrBhg68AQB0Wg4O59TPLQAAAABJRU5ErkJggg==";
-            playerTextPic.src = playersData[playerTextID].profilePic || "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFFJREFUOE9jZKAQMOLR/x9NDqtaXAaga4aZhaEemwG4NGM1BN0AQpoxDBmGBoD8SCgcULxNk2iEhTRFCYnoBA7zAiF/4zKQEWQAuZrBhg68AQB0Wg4O59TPLQAAAABJRU5ErkJggg==";
+        playerImagePic.src = playersData[playerImageID].profilePic || "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFFJREFUOE9jZKAQMOLR/x9NDqtaXAaga4aZhaEemwG4NGM1BN0AQpoxDBmGBoD8SCgcULxNk2iEhTRFCYnoBA7zAiF/4zKQEWQAuZrBhg68AQB0Wg4O59TPLQAAAABJRU5ErkJggg==";
+        playerTextPic.src = playersData[playerTextID].profilePic || "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFFJREFUOE9jZKAQMOLR/x9NDqtaXAaga4aZhaEemwG4NGM1BN0AQpoxDBmGBoD8SCgcULxNk2iEhTRFCYnoBA7zAiF/4zKQEWQAuZrBhg68AQB0Wg4O59TPLQAAAABJRU5ErkJggg==";
 
-            playerImageInfo.appendChild(playerImagePic);
-            playerImageInfo.appendChild(playerImageUsername);
+        playerImageInfo.appendChild(playerImagePic);
+        playerImageInfo.appendChild(playerImageUsername);
 
-            playerTextInfo.appendChild(playerTextPic);
-            playerTextInfo.appendChild(playerTextUsername);
+        playerTextInfo.appendChild(playerTextPic);
+        playerTextInfo.appendChild(playerTextUsername);
 
-            roundItem.appendChild(playerImageInfo);
-            let playerImageDiv = document.createElement("div");
-            playerImageDiv.appendChild(playerImage);
+
+        let playerImageDiv = document.createElement("div");
+        let playerTextDiv = document.createElement("div");
+        playerImageDiv.classList.add("round-item-group");
+        playerTextDiv.classList.add("round-item-group");
+
+        playerImageDiv.appendChild(playerImageInfo);
+        playerImageDiv.appendChild(playerImage);
+        playerTextDiv.appendChild(playerTextInfo);
+        playerTextDiv.appendChild(playerText);
+
+        if (mode == "mode1") {
             roundItem.appendChild(playerImageDiv);
-            roundItem.appendChild(playerTextInfo);
-            roundItem.appendChild(playerText);
-
-            roundContent.appendChild(roundItem);
-
- 
+            roundItem.appendChild(playerTextDiv);
+        } else if (mode == "mode2") {
+            roundItem.appendChild(playerTextDiv);
+            roundItem.appendChild(playerImageDiv);
         }
-    } else if (mode == "mode2") {
-        // Handle mode2
+
+        roundContent.appendChild(roundItem);
     }
 
     content.appendChild(roundContent);
