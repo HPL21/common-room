@@ -354,7 +354,6 @@ async function waitForAllPlayers(ref, mode, playersList){
     let waitingCircleDiv = document.createElement("div");
     waitingCircleDiv.classList.add("waiting-circle");
     let waitingCircle = document.createElement("img");
-    // TODO: MAKE MY OWN GIF
     waitingCircle.src = "./assets/images/loading_dots.gif";
     waitingCircleDiv.appendChild(waitingCircle);
     waitingShield.appendChild(waitingCircleDiv);
@@ -453,9 +452,6 @@ async function showRound(round, roundData, mode) {
     roundContent.id = "roundContent";
     roundContent.innerHTML = "";
     roundContent.classList.add("round-content");
-    //
-    //  TODO: make this prettier
-    //
 
     let playersList = Object.keys(roundData).sort(); // Sort players list
     let playersData = {};
@@ -465,10 +461,6 @@ async function showRound(round, roundData, mode) {
             playersData[playersList[player]] = playerData;
         });
     }
-
-    //
-    // TODO: merge labels with content
-    //
 
     for (let player in roundData) {
         let roundItem = document.createElement("div");

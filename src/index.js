@@ -10,7 +10,7 @@ import './lobby.js'
 
 import { dict } from './lang.js';
 
-import { loadLogin, loadMenu, loadCanvas, loadLobby, loadRoomCreator, loadRoomJoin, loadSettings, loadProfileSettings, loadShuffleCreator, loadChat } from './contentloader.js';
+import { loadLogin, loadMenu, loadCanvas, loadLobby, loadRoomCreator, loadRoomJoin, loadSettings, loadProfileSettings, loadShuffleCreator, loadChat, loadGottaCreator } from './contentloader.js';
 
 import './room.js'
 
@@ -24,6 +24,9 @@ import { handleChat } from './chat.js';
 
 import './shuffle.js'
 import { handleShuffleCreator, initShuffle } from './shuffle.js';
+
+import './gottadrawfast.js'
+import { handleGottaCreator, initGotta } from './gottadrawfast.js'
 
 (function () {
     let userID;
@@ -124,6 +127,7 @@ import { handleShuffleCreator, initShuffle } from './shuffle.js';
         handleChat();
         let cardCanvas = document.getElementById('card1');
         let cardShuffle = document.getElementById('card2');
+        let cardGottaDrawFast = document.getElementById('card3');
         cardCanvas.addEventListener('click', () => {
             loadCanvas();
             initCanvas();
@@ -131,6 +135,10 @@ import { handleShuffleCreator, initShuffle } from './shuffle.js';
         cardShuffle.addEventListener('click', () => {
             loadShuffleCreator();
             handleShuffleCreator().then((result) => { if (!result) menu(); else { initShuffle(); } });
+        });
+        cardGottaDrawFast.addEventListener('click', () => {
+            loadGottaCreator();
+            handleGottaCreator().then((result) => { if (!result) menu(); else { initGotta(); } });
         });
 
         //TODO: do it better

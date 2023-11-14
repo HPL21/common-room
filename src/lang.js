@@ -57,6 +57,10 @@ export const dict = {
         text: "'s text:",
         finishshuffle: "Finish and return to menu",
         errorloadinground: "Error loading round (data may have been deleted)",
+        gottadrawfast: "Gotta draw fast!",
+        gottasettings: "Gotta draw fast! settings",
+        roundtimemin: "Minimum drawing time",
+        roundtimemax: "Maximum drawing time",
     },
     pl: {
         login: "Zaloguj się",
@@ -116,5 +120,9 @@ export const dict = {
         text: " napisał tekst:",
         finishshuffle: "Zakończ i wróć do menu",
         errorloadinground: "Błąd podczas ładowania rundy (możliwe, że dane zostały usunięte)",
+        gottadrawfast: "Musisz rysować szybko!", // do zmiany
+        gottasettings: "Musisz rysować szybko! ustawienia",
+        roundtimemin: "Minimalny czas rysowania",
+        roundtimemax: "Maksymalny czas rysowania",
     }
 };
