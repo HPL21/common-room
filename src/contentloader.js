@@ -314,7 +314,7 @@ export function loadGottaCreator() {
                                     <label>${dictLang.roundtimemin}</label>
                                     <input id="timemin" class="input-text" type="number" min="10" max="60" value="30">
                                     <label>${dictLang.roundtimemax}</label>
-                                    <input id="timemax" class="input-text" type="number" min="30" max="300" value="120">
+                                    <input id="timemax" class="input-text" type="number" min="10" max="300" value="120">
                                 </div>
                                 <div id="gottaCreatorPlayers" class="creator-players creator-item">
                                     <label>${dictLang.players}</label>
@@ -335,7 +335,8 @@ export function loadGottaRound() {
     let content = document.getElementById('content');
     let lang = localStorage.getItem('lang') || 'en';
     let dictLang = dict[lang];
-    content.innerHTML = `<div id="canvasContainer" class="canvas-container"></div>
+    content.innerHTML = `<div id="theme" class="theme"></div>
+    <div id="canvasContainer" class="canvas-container"></div>
     <div id="toolbox" class="toolbox">
         <button id="btnClear" type="button" class="toolbox-button"><img src="./assets/images/clear.png" alt="${dictLang.clear}" title="${dictLang.clear}"></button>
         <div id="colorPicker" class="color-picker" title="${dictLang.color}">

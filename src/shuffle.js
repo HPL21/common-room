@@ -345,14 +345,17 @@ async function waitForAllPlayers(ref, mode, playersList){
 
     let waitingShield = document.createElement("div"); // Create waiting shield
     waitingShield.id = "waitingShield";
-    waitingShield.classList.add("waiting-shield");
+    waitingShield.classList.add("shield");
+    setTimeout(() => { 
+        waitingShield.style.height = "100%";
+    }, 100);
 
     let waitingText = document.createElement("div");
     waitingText.innerHTML = dictLang.waiting;
+    waitingText.classList.add("shield-text");
     waitingShield.appendChild(waitingText);
 
     let waitingCircleDiv = document.createElement("div");
-    waitingCircleDiv.classList.add("waiting-circle");
     let waitingCircle = document.createElement("img");
     waitingCircle.src = "./assets/images/loading_dots.gif";
     waitingCircleDiv.appendChild(waitingCircle);
@@ -396,7 +399,7 @@ function showResults(shuffleRef) {
     roundsList.classList.add("rounds-list");
 
     let finishButton = document.createElement("button");
-    finishButton.innerHTML = dictLang.finishshuffle;
+    finishButton.innerHTML = dictLang.finishandreturn;
     finishButton.classList.add("red-button");
     finishButton.addEventListener("click", () => {
         get(shuffleRef).then((snapshot) => {

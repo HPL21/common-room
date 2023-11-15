@@ -614,9 +614,9 @@ canvas {
 	padding: 1vh;
 }
 
-.waiting-shield {
+.shield {
 	width: 100%;
-	height: 100%;
+	height: 0%;
 	background-color: #706a8a;
 	position: fixed;
 	top: 0;
@@ -627,12 +627,12 @@ canvas {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	transition: all 0.7s ease;
 }
 
-.waiting-text {
+.shield-text {
 	opacity: 1;
 	font-size: 5vh;
-	color: white;
 }
 
 .rounds-list *{
@@ -669,13 +669,22 @@ canvas {
 	margin-right: 1vh;
 }
 
-.waiting-shield div{
+.shield div{
 	font-size: 2.5vh;
 }
 
-.waiting-shield img{
+.shield img{
 	margin-top: 3vh;
 	height: 10vh;
 	width: 10vh;
 	image-rendering: pixelated;
+}
+
+.theme {
+	background-color: #eee;
+	border: 4px solid black;
+	margin-bottom: 2vh;
+	font-size: 4vh;
+	padding: 1vh;
+	display: none;
 }

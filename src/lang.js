@@ -55,12 +55,14 @@ export const dict = {
         waiting: "Waiting for all players...",
         picture: "'s picture:",
         text: "'s text:",
-        finishshuffle: "Finish and return to menu",
+        finishandreturn: "Finish and return to menu",
         errorloadinground: "Error loading round (data may have been deleted)",
         gottadrawfast: "Gotta draw fast!",
         gottasettings: "Gotta draw fast! settings",
         roundtimemin: "Minimum drawing time",
         roundtimemax: "Maximum drawing time",
+        drawingtime: "drawing time",
+        gottaresults: "Processing results...",
     },
     pl: {
         login: "Zaloguj się",
@@ -118,11 +120,13 @@ export const dict = {
         waiting: "Oczekiwanie na wszystkich graczy...",
         picture: " narysował obrazek:",
         text: " napisał tekst:",
-        finishshuffle: "Zakończ i wróć do menu",
+        finishandreturn: "Zakończ i wróć do menu",
         errorloadinground: "Błąd podczas ładowania rundy (możliwe, że dane zostały usunięte)",
         gottadrawfast: "Musisz rysować szybko!", // do zmiany
         gottasettings: "Musisz rysować szybko! ustawienia",
         roundtimemin: "Minimalny czas rysowania",
         roundtimemax: "Maksymalny czas rysowania",
+        drawingtime: "czas rysowania",
+        gottaresults: "Przetwarzanie wyników...",
     }
 };

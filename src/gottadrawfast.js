@@ -142,6 +142,11 @@ export async function handleGottaCreator() {
                     return;
                 }
 
+                if(timemin < 10 || timemax < 10) { // Check if there are enough time - at least 10
+                    alert("Invalid time");
+                    return;
+                }
+
                 set(child(gottaRef, "settings/status"), "running"); // Set status to running
                 set(child(gottaRef, "settings/round"), 1); // Set round to 1
 
@@ -159,10 +164,10 @@ export function initGotta() {
     
     let round;
     let rounds;
-    let players;
-    let playersList;
     let timemin;
     let timemax;
+    let timeArray;
+    let theme;
 
     getUserID().then((_userID) => {
         userID = _userID;
@@ -177,28 +182,167 @@ export function initGotta() {
                 rounds = gottaSettings.rounds || 3; 
                 timemin = gottaSettings.timemin || 30;
                 timemax = gottaSettings.timemax || 120;
-                players = gottaSettings.players;
-                playersList = Object.keys(players).sort(); // Sort players list     
+
+                timeArray = calculateTime(rounds, timemin, timemax);
+
+                theme = getTheme("normal");
                      
                 if (gottaSettings.status == "finished") 
                     showResults(gottaRef); // Show results if game is finished
                 else
-                    processRound(round, rounds, timemin, timemax, userID, playersList, gottaRef); // Start the game
+                    processRound(round, rounds, timeArray, userID, gottaRef, theme); // Start the game
             });
         });
     });
 }
 
-async function processRound(round, rounds, timemin, timemax, userID, playersList, gottaRef){
-    loadGottaRound();
-    draw(10).then((data) => {
-        set(child(gottaRef, "rounds/" + round + "/" + userID), data); // Save picture to database
+function calculateTime(rounds, timemin, timemax) {
+    let delta = timemax - timemin;
+    let timeArray = [];
+    timeArray.push(timemin);
+    for(let i = 1; i < rounds - 1; i++) {
+        timeArray.push(timemin + Math.floor(i * (delta/(rounds - 1))));
+    }
+    timeArray.push(timemax);
+    return timeArray;
+}
+
+function getTheme(mode) {
+    if (mode == "ChatGPT") {
+        return "Coming soon";
+    }
+    else if (mode == "normal") {
+        const themeArray = [
+            "Leśny krajobraz.",
+            "Latarnia morska przy wschodzie słońca.",
+            "Dziecko grające na trampolinie.",
+            "Stary zegar nawijany.",
+            "Dziki zachód z koniem i kaktusami.",
+            "Wodospad otoczony tropikalną dżunglą.",
+            "Kolorowy karuzela na tle nocnego nieba.",
+            "Mały robak na dużym liściu.",
+            "Magiczny zamek na szczycie góry.",
+            "Uliczny muzyk grający na saksofonie."
+          ];
+        return themeArray[Math.floor(Math.random() * themeArray.length)];
+    }
+}
+
+async function processRound(round, rounds, timeArray, userID, gottaRef, theme){
+    
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+
+    if(round > rounds) { // If all rounds are finished, finish the game
+        set(child(gottaRef, "settings/status"), "finished");
+        displayTransition(dictLang.gottaresults, 3).then(() => {
+            showResults(gottaRef);
+        });
+        return;
+    }
+
+    document.getElementById("content").innerHTML = ""; // Clear content
+
+    let time = timeArray[round - 1]; // Get time for current round
+
+    displayTransition(dictLang.round + round + ", " + dictLang.drawingtime + ": " + time, 3).then(() => {
+        loadGottaRound();
+        displayTheme(theme);
+        countdown(time);
+        draw(time).then((data) => {
+            set(child(gottaRef, "rounds/" + round + "/" + userID), data); // Save picture to database
+            processRound(round + 1, rounds, timeArray, userID, gottaRef, theme);
+        });
     });
-    countdown(10);
 }
 
 function showResults(gottaRef) {
 
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+
+    let content = document.getElementById("content");
+    content.innerHTML = "";
+    let roundsList = document.createElement("div");
+    roundsList.id = "roundsList";
+    roundsList.classList.add("rounds-list");
+
+    let finishButton = document.createElement("button");
+    finishButton.innerHTML = dictLang.finishandreturn;
+    finishButton.classList.add("red-button");
+    finishButton.addEventListener("click", () => {
+        get(gottaRef).then((snapshot) => {
+            let gottaData = snapshot.val();
+            try {
+                if (gottaData.settings.status == "finished") {
+                    set(gottaRef, null); // Delete shuffle from database
+                }
+            } catch (error) {
+                console.error(error);
+            }
+            localStorage.setItem('currentPlace', 'menu');
+            location.reload(); // Reload page
+            return;
+        });
+    });
+
+    let snapshot, settings, rounds;
+    get(gottaRef).then((_snapshot) => {
+        snapshot = _snapshot.val(); 
+        settings = snapshot.settings;
+        rounds = snapshot.rounds;
+
+        for (let round in rounds) {
+            let roundBtn = document.createElement("button");
+            roundBtn.innerHTML = dictLang.round + round;
+            roundBtn.classList.add("white-button");
+            roundBtn.addEventListener("click", () => {
+                try {
+                    showRound(round, rounds[round]); // Show round
+                } catch (error) {
+                    alert(dictLang.errorloadinground);
+                    console.error(error);
+                }
+            });
+            roundsList.appendChild(roundBtn);
+        }
+
+        content.appendChild(roundsList);
+        content.appendChild(finishButton);
+    });
+}
+
+async function showRound(round, roundData) {
+
+    console.log("test");
+
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
+
+    let content = document.getElementById("content");
+    let roundContent = document.getElementById("roundContent") || document.createElement("div");
+    roundContent.id = "roundContent";
+    roundContent.innerHTML = "";
+    roundContent.classList.add("round-content");
+
+    let playersList = Object.keys(roundData).sort(); // Sort players list
+    let playersData = {};
+    for (let player in playersList) {
+        await get(ref(db, 'players/' + playersList[player])).then((snapshot) => {
+            let playerData = snapshot.val();
+            playersData[playersList[player]] = playerData;
+        });
+    }
+
+    for (let player in roundData) {
+        let image = document.createElement("img");
+        image.src = roundData[player];
+        image.classList.add("round-image");
+
+        roundContent.appendChild(image);
+    }
+
+    content.appendChild(roundContent);
 }
 
 function countdown(time){
@@ -346,9 +490,34 @@ async function draw(time){
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             canvasObject.remove();
+            document.getElementById("content").innerHTML = "";
             resolve(canvas.canvas.toDataURL());
         }, time * 1000);
     });
 
 }
 
+async function displayTransition(text, time) {
+    let transition = document.createElement("div");
+    transition.classList.add("shield");
+    let textElement = document.createElement("div");
+    textElement.classList.add("shield-text");
+    textElement.innerHTML = text;
+    transition.appendChild(textElement);
+    document.body.appendChild(transition);
+    setTimeout(() => {
+        transition.style.height = "100%";
+    });
+    await new Promise((resolve, reject) => {
+        setTimeout(() => {
+            transition.remove();
+            resolve();
+        }, time * 1000);
+    });
+}
+
+function displayTheme(theme){
+    let themeDiv = document.getElementById("theme");
+    themeDiv.innerHTML = theme;
+    themeDiv.style.display = "block";
+}
