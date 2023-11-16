@@ -498,6 +498,8 @@ canvas {
 .pixel-canvas {
 	width: 320px;
 	height: 320px;
+	margin-top: 1vh;
+	margin-bottom: 2vh;
 }
 
 .chat-container {
@@ -680,11 +682,32 @@ canvas {
 	image-rendering: pixelated;
 }
 
-.theme {
+.theme{
 	background-color: #eee;
 	border: 4px solid black;
 	margin-bottom: 2vh;
 	font-size: 4vh;
 	padding: 1vh;
 	display: none;
+	text-align: center;
+	width: fit-content;
+}
+
+.time {
+	font-size: 3vh;
+	border: 7px solid black;
+	border-radius: 50%;
+	background-color: #eee;
+	width: 16vh;
+	height: 16vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}	
+
+.timer {
+	position: relative;
+	left: -480px;
+	top: -740px;
 }

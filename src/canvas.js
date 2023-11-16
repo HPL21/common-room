@@ -1,6 +1,6 @@
 import p5 from "p5";
 import db from './firebase.js';
-import { playerRef, userID } from "./firebase.js";
+import { playerRef, userID, getUserID } from "./firebase.js";
 import { onValue, push, ref, set, get } from "firebase/database";
 import { dict } from './lang.js';
 
@@ -34,7 +34,13 @@ export function initCanvas(){
         
         p.setup = () => {
 
-            roomName = localStorage.getItem('roomName');
+            getUserID().then((userID) => {
+                get(ref(db, 'players/' + userID)).then((snapshot) => {
+                    let user = snapshot.val();
+                    roomName = user.room;
+                });
+            });
+
 
             // Create canvas with dimensions 
             onValue(ref(db, 'rooms/' + roomName + '/canvasSettings'), (snapshot) => {

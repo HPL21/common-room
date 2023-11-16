@@ -441,6 +441,8 @@ function showResults(shuffleRef) {
 
         content.appendChild(roundsList);
         content.appendChild(finishButton);
+
+        showRound(1, rounds[1], mode); // Show first round
     });
 
 }

@@ -1,5 +1,6 @@
 import './firebase.js';
-import { auth } from './firebase.js';
+import { auth, db } from './firebase.js';
+import { get, ref } from 'firebase/database';
 
 import './styles.css';
 
@@ -29,19 +30,12 @@ import './gottadrawfast.js'
 import { handleGottaCreator, initGotta } from './gottadrawfast.js'
 
 (function () {
-    let userID;
-    let userRef;
-    let users = {};
-    let lang = localStorage.getItem('lang') || 'en';
-    let dictLang = dict[lang];
-    let roomName = localStorage.getItem('roomName');
+    let userID, roomName;
 
     let btnMenu = document.getElementById('btnMenu');
     btnMenu.addEventListener('click', () => {
-        roomName = localStorage.getItem('roomName');
         if (roomName) {
             menu();
-
             localStorage.setItem('currentPlace', 'menu');
         }
         else {
@@ -178,8 +172,12 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
 
     auth.onAuthStateChanged((user) => {
         if (user) {
-            initGame();
             userID = user.uid;
+            get(ref(db, 'players/' + userID)).then((snapshot) => {
+                let user = snapshot.val();
+                roomName = user.room;
+                initGame();
+            });
         }
         else {
             console.log('You are not logged in.');

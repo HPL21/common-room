@@ -1,8 +1,22 @@
-import db from './firebase.js';
-import { playerRef, userID } from "./firebase.js";
+import { db } from "./firebase.js";
+import { playerRef, getUserID } from "./firebase.js";
 import { onValue, push, ref, set, get, update } from "firebase/database";
 
-document.getElementById('username').innerHTML = localStorage.getItem('username');
+getUserID().then((userID) => {
+    let userRef = ref(db, 'players/' + userID);
+    onValue(userRef, (snapshot) => {
+        let user = snapshot.val();
+        let username = user.username;
+        let profilePic = user.profilePic;
+        document.getElementById('username').innerHTML = username;
+        let image = new Image();
+        image.src = profilePic;
+        image.onload = () => {
+            document.getElementById('profilePic').appendChild(image);
+        }
+    });
+});
+
 
 export function handleProfileSettings() {
     let btnUpdate = document.getElementById('btnUpdate');
@@ -45,15 +59,6 @@ export function handleProfilePicCreator() {
         const cellY = Math.floor(y / cellPixelLength);
 
         fillCell(cellX, cellY);
-    }
-
-    function handleClearButtonClick() {
-        const yes = confirm("Are you sure you wish to clear the canvas?");
-
-        if (!yes) return;
-
-        drawingContext.fillStyle = "#ffffff";
-        drawingContext.fillRect(0, 0, canvas.width, canvas.height);
     }
 
     function fillCell(cellX, cellY) {

@@ -9,7 +9,7 @@ import {
     signInWithEmailAndPassword,
 } from 'firebase/auth';
 
-import { loadLogin, showApp, showLoginError, hideLoginError, showLogin } from "./contentloader";
+import { loadLogin, showApp, showLogin } from "./contentloader";
 
 export const firebaseConfig = {
     apiKey: "AIzaSyCDbQxGk2gMb8GHlSAsTj2QQzvIE5izQJs",

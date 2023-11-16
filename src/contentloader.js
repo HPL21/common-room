@@ -198,12 +198,13 @@ export function loadProfileSettings() {
                             <label class="d-block">${dictLang.changeusername}</label>
                             <input id="usernameInput" type="text" class="input-text">
                             <button id="btnUpdate" class="white-button">${dictLang.update}</button>
+                            <label class="d-block">${dictLang.changepic}</label>
                             <canvas id="pixelCanvas" class="pixel-canvas" width="320" height="320"></canvas>
                             <div id="colorPicker" class="color-picker" title="${dictLang.color}">
                                 <input id="btnColor" type="color" class="color-picker-input" value="#ffffff">
                                 <button class="color-picker-button"><img src="assets/images/choose_color.png"></button>
                             </div>
-                            <button id="btnSave" type="button">${dictLang.save}</button>
+                            <button id="btnSave" type="button" class="white-button">${dictLang.save}</button>
                         </div>`;
 }
 
