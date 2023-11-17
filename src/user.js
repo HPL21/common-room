@@ -1,8 +1,11 @@
 import { db } from "./firebase.js";
-import { playerRef, getUserID } from "./firebase.js";
+import { playerRef, getUserID, getDb } from "./firebase.js";
 import { onValue, push, ref, set, get, update } from "firebase/database";
+import { dict } from "./lang.js";
 
+// When userID is ready, set username and avatar
 getUserID().then((userID) => {
+    let db  = getDb();
     let userRef = ref(db, 'players/' + userID);
     onValue(userRef, (snapshot) => {
         let user = snapshot.val();
@@ -17,21 +20,24 @@ getUserID().then((userID) => {
     });
 });
 
-
+// Update username
 export function handleProfileSettings() {
     let btnUpdate = document.getElementById('btnUpdate');
     btnUpdate.addEventListener('click', () => {
         let username = document.getElementById('usernameInput').value;
+        let dictLang = dict[localStorage.getItem('lang') || 'en'];
         if (username == '') {
-            alert('Please enter a username');
+            alert(dictLang.enterusername);
             return;
         }
         localStorage.setItem('username', username);
         update(playerRef, { username: username });
         document.getElementById('username').innerHTML = username;
+        alert(dictLang.usernamechanged);
     });
 }
 
+// Update avatar
 export function handleProfilePicCreator() {
     const canvas = document.getElementById("pixelCanvas");
     const btnColor = document.getElementById("btnColor");
@@ -74,6 +80,9 @@ export function handleProfilePicCreator() {
         //Save canvas to firebase
         let canvasData = canvas.toDataURL();
         update(playerRef, { profilePic: canvasData });
+        let dictLang = dict[localStorage.getItem('lang') || 'en'];
+        alert(dictLang.avatarchanged);
+        location.reload();
     }
 
     function loadCanvas() {

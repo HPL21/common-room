@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set, get, onValue, onDisconnect, push } from "firebase/database";
+import { getDatabase, ref, set, get, onValue } from "firebase/database";
 
 import {
     getAuth,
@@ -9,7 +9,9 @@ import {
     signInWithEmailAndPassword,
 } from 'firebase/auth';
 
-import { loadLogin, showApp, showLogin } from "./contentloader";
+import { loadApp, loadLogin } from "./contentloader";
+
+// Firebase initialization
 
 export const firebaseConfig = {
     apiKey: "AIzaSyCDbQxGk2gMb8GHlSAsTj2QQzvIE5izQJs",
@@ -28,18 +30,17 @@ const db = getDatabase();
 
 export default db;
 
+export function getDb() {
+    return db;
+}
 
 export let playerRef;
 export let userName;
-let roomName;
-let roomRef;
-let allPlayersRoomRef;
-let playerRoomRef;
-let allPlayersRoom = {};
 
+// Login using Firebase authentication
 const loginEmailPassword = async () => {
-    const loginEmail = txtEmail.value;
-    const loginPassword = txtPassword.value;
+    const loginEmail = document.getElementById("txtEmail").value;
+    const loginPassword = document.getElementById("txtPassword").value;
 
     try {
         await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
@@ -49,9 +50,10 @@ const loginEmailPassword = async () => {
     }
 }
 
+//Create account using firebase authentication
 const createAccount = async () => {
-    const email = txtEmail.value;
-    const password = txtPassword.value;
+    const email = document.getElementById("txtEmail").value;
+    const password = document.getElementById("txtPassword").value;
 
     try {
         await createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
@@ -65,50 +67,48 @@ const createAccount = async () => {
 
 }
 
-export const monitorAuthState = async () => {
-    return new Promise((resolve, reject) => {
-        onAuthStateChanged(auth, user => {
-            if (user) {
-                showApp();
+// TODO: fix logout button
+// Monitor auth state
+const monitorAuthState = async () => {
+    onAuthStateChanged(auth, user => {
+        if (user) { // If user is authenticated
+            loadApp();
 
-                userID = user.uid;
-                playerRef = ref(db, 'players/' + userID);
+            userID = user.uid;
+            playerRef = ref(db, 'players/' + userID);
 
-                onValue(ref(db, 'players/' + userID), (snapshot) => {
-                    userName = snapshot.val().username || "Anonymous";
-                    localStorage.setItem('username', userName);
-                });
-                localStorage.setItem('userID', userID);
-                let btnLogout = document.getElementById('btnLogout');
-                btnLogout.addEventListener("click", logout);
-                
-                resolve(userID); // Resolve the Promise with the userID
-            }
-            else {
-                loadLogin();
-                showLogin();
-                let btnLogin = document.getElementById('btnLogin');
-                let btnSignup = document.getElementById('btnSignup');
-                btnLogin.addEventListener("click", loginEmailPassword);
-                btnSignup.addEventListener("click", createAccount);
+            onValue(ref(db, 'players/' + userID), (snapshot) => {
+                userName = snapshot.val().username || "Anonymous";
+                localStorage.setItem('username', userName);
+            });
+            localStorage.setItem('userID', userID);
+            let btnLogout = document.getElementById('btnLogout');
+            btnLogout.addEventListener("click", logout);
+        }
+        else {
+            loadLogin();
+            let btnLogin = document.getElementById('btnLogin');
+            let btnSignup = document.getElementById('btnSignup');
+            btnLogin.addEventListener("click", loginEmailPassword);
+            btnSignup.addEventListener("click", createAccount);
 
-                localStorage.removeItem('username');
-                localStorage.removeItem('userID');
-                localStorage.removeItem('roomName');
-
-                reject("User is not authenticated"); // Reject the Promise if user is not authenticated
-            }
-        })
-    });
+            localStorage.removeItem('username');
+            localStorage.removeItem('userID');
+            localStorage.removeItem('roomName');
+        }
+    })
 }
 
+// Logout function
 const logout = async () => {
+    console.log("Logging out...");
     await signOut(auth);
 }
 
 export const auth = getAuth(firebaseApp);
 export let userID;
 
+// Async function that returns UserID
 export async function getUserID() {
     return new Promise((resolve, reject) => {
         onAuthStateChanged(auth, user => {
@@ -117,10 +117,26 @@ export async function getUserID() {
                 resolve(userID);
             }
             else {
-                reject("User is not authenticated");
+                console.log("User is not authenticated");
             }
         })
     });
+}
+
+// Async function that returns room name
+export async function getRoomName() {
+    return new Promise((resolve, reject) => {
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                get(ref(db, "players/" + user.uid + "/room")).then((snapshot) => {
+                    resolve(snapshot.val())
+                });
+            }
+            else {
+                reject("User is not authenticated");
+            }
+        })
+    })
 }
 
 monitorAuthState();

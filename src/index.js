@@ -1,5 +1,5 @@
 import './firebase.js';
-import { auth, db } from './firebase.js';
+import { auth, getDb } from './firebase.js';
 import { get, ref } from 'firebase/database';
 
 import './styles.css';
@@ -7,11 +7,9 @@ import './styles.css';
 import './canvas.js'
 import { initCanvas, closeCanvas } from './canvas.js';
 
-import './lobby.js'
-
 import { dict } from './lang.js';
 
-import { loadLogin, loadMenu, loadCanvas, loadLobby, loadRoomCreator, loadRoomJoin, loadSettings, loadProfileSettings, loadShuffleCreator, loadChat, loadGottaCreator } from './contentloader.js';
+import { loadMenu, loadCanvas, loadLobby, loadRoomCreator, loadRoomJoin, loadSettings, loadProfileSettings, loadShuffleCreator, loadChat, loadGottaCreator, loadLogin, loadApp } from './contentloader.js';
 
 import './room.js'
 
@@ -31,56 +29,9 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
 
 (function () {
     let userID, roomName;
+    let dictLang = dict[localStorage.getItem('lang') || 'en'];
 
-    let btnMenu = document.getElementById('btnMenu');
-    btnMenu.addEventListener('click', () => {
-        if (roomName) {
-            menu();
-            localStorage.setItem('currentPlace', 'menu');
-        }
-        else {
-            lobby();
-            localStorage.setItem('currentPlace', 'lobby');
-        }
-    });
-
-    let btnEng = document.getElementById('btnEng');
-    btnEng.addEventListener('click', () => {
-        localStorage.setItem('lang', 'en');
-        dictLang = dict['en'];
-        reloadLanguage();
-    });
-
-    let btnPl = document.getElementById('btnPl');
-    btnPl.addEventListener('click', () => {
-        localStorage.setItem('lang', 'pl');
-        dictLang = dict['pl'];
-        reloadLanguage();
-    });
-
-    let btnChangeRoom = document.getElementById('btnChangeRoom');
-    btnChangeRoom.addEventListener('click', () => {
-        lobby();
-        localStorage.setItem('currentPlace', 'lobby');
-    });
-
-    let btnSettings = document.getElementById('btnSettings');
-    let settings = document.getElementById('settings');
-    settings.style.display = 'none';
-    let isSettingsOpen = false;
-    btnSettings.addEventListener('click', () => {
-        settings.style.display = isSettingsOpen ? 'none' : 'block';
-        isSettingsOpen = !isSettingsOpen;
-    });
-
-    let btnProfileSettings = document.getElementById('btnProfile');
-    btnProfileSettings.addEventListener('click', () => {
-        loadProfileSettings();
-        handleProfileSettings();
-        handleProfilePicCreator();
-        localStorage.setItem('currentPlace', 'profileSettings');
-    });
-
+    // Reload current page
     function reloadLanguage() {
         loadSettings();
 
@@ -112,13 +63,80 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
                 loadProfileSettings();
                 handleProfileSettings();
                 break;
+            case 'gottadrawfast':
+                loadGottaCreator();
+                handleGottaCreator().then((result) => { if (!result) menu(); else { initGotta(); } });
+            default:
+                break;
         }
     }
 
+    // Load menu
     function menu() {
         loadMenu();
         loadChat();
         handleChat();
+
+        //Some buttons event listeners
+        let btnMenu = document.getElementById('btnMenu');
+        btnMenu.addEventListener('click', () => {
+            if (roomName) {
+                menu();
+                localStorage.setItem('currentPlace', 'menu');
+            }
+            else {
+                lobby();
+                localStorage.setItem('currentPlace', 'lobby');
+            }
+        });
+
+        let btnEng = document.getElementById('btnEng');
+        btnEng.addEventListener('click', () => {
+            localStorage.setItem('lang', 'en');
+            dictLang = dict['en'];
+            reloadLanguage();
+        });
+
+        let btnPl = document.getElementById('btnPl');
+        btnPl.addEventListener('click', () => {
+            localStorage.setItem('lang', 'pl');
+            dictLang = dict['pl'];
+            reloadLanguage();
+        });
+
+        let btnChangeRoom = document.getElementById('btnChangeRoom');
+        btnChangeRoom.addEventListener('click', () => {
+            lobby();
+            localStorage.setItem('currentPlace', 'lobby');
+        });
+
+        let btnSettings = document.getElementById('btnSettings');
+        let settings = document.getElementById('settings');
+        let settingsImg = document.getElementById('settingsImg');
+        settings.style.display = 'none';
+        let isSettingsOpen = false;
+        btnSettings.addEventListener('click', () => {
+            settings.style.display = isSettingsOpen ? 'none' : 'block';
+            isSettingsOpen = !isSettingsOpen;
+        });
+
+        // Close settings when clicked outside
+        window.addEventListener('click', (e) => {
+            if (isSettingsOpen && e.target != btnSettings && e.target != settings && e.target != settingsImg) {
+                settings.style.display = 'none';
+                isSettingsOpen = false;
+            }
+        });
+
+        let btnProfileSettings = document.getElementById('btnProfile');
+        btnProfileSettings.addEventListener('click', () => {
+            loadProfileSettings();
+            handleProfileSettings();
+            handleProfilePicCreator();
+            localStorage.setItem('currentPlace', 'profileSettings');
+        });
+
+        // Listen for clicks on cards
         let cardCanvas = document.getElementById('card1');
         let cardShuffle = document.getElementById('card2');
         let cardGottaDrawFast = document.getElementById('card3');
@@ -142,6 +160,7 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
         catch (e) { }
     }
 
+    //Load lobby (place where you can join or create room)
     function lobby() {
         loadLobby();
         let btnCreateRoom = document.getElementById('btnCreate');
@@ -158,6 +177,7 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
         });
     }
 
+    // Initialize game
     function initGame() {
         loadSettings();
         if (roomName) {
@@ -170,10 +190,12 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
         }
     }
 
+    // Monitor auth state
     auth.onAuthStateChanged((user) => {
         if (user) {
+            loadApp();
             userID = user.uid;
-            get(ref(db, 'players/' + userID)).then((snapshot) => {
+            get(ref(getDb(), 'players/' + userID)).then((snapshot) => {
                 let user = snapshot.val();
                 roomName = user.room;
                 initGame();
@@ -181,6 +203,7 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
         }
         else {
             console.log('You are not logged in.');
+            loadLogin();
             localStorage.setItem('currentPlace', 'login');
         }
     })

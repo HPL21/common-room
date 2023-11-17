@@ -64,6 +64,12 @@ export const dict = {
         roundtimemax: "Maximum drawing time",
         drawingtime: "drawing time",
         gottaresults: "Processing results...",
+        enterusername: "Please enter your username",
+        usernamechanged: "Username changed",
+        avatarchanged: "Avatar changed",
+        notenoughplayers: "Not enough players",
+        invalidnorounds: "Invalid number of rounds",
+        invalidtime: "Invalid time",
     },
     pl: {
         login: "Zaloguj się",
@@ -124,11 +130,17 @@ export const dict = {
         text: " napisał tekst:",
         finishandreturn: "Zakończ i wróć do menu",
         errorloadinground: "Błąd podczas ładowania rundy (możliwe, że dane zostały usunięte)",
-        gottadrawfast: "Musisz rysować szybko!", // do zmiany
+        gottadrawfast: "Kto pierwszy ten lepszy", 
         gottasettings: "Musisz rysować szybko! ustawienia",
         roundtimemin: "Minimalny czas rysowania",
         roundtimemax: "Maksymalny czas rysowania",
         drawingtime: "czas rysowania",
         gottaresults: "Przetwarzanie wyników...",
+        enterusername: "Proszę podać nazwę użytkownika",
+        usernamechanged: "Nazwa użytkownika została zmieniona",
+        avatarchanged: "Avatar został zmieniony",
+        notenoughplayers: "Za mało graczy",
+        invalidnorounds: "Nieprawidłowa liczba rund",
+        invalidtime: "Nieprawidłowy czas",
     }
 };

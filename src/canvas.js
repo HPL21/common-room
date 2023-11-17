@@ -1,8 +1,6 @@
 import p5 from "p5";
-import db from './firebase.js';
-import { playerRef, userID, getUserID } from "./firebase.js";
-import { onValue, push, ref, set, get } from "firebase/database";
-import { dict } from './lang.js';
+import {  userID, getUserID, getDb } from "./firebase.js";
+import { onValue, ref, set, get } from "firebase/database";
 
 const paths = [];
 const pathsIDs = [];
@@ -17,9 +15,7 @@ let pencilSize = 5;
 let roomName;
 let pathsRef;
 let pathRef;
-let allPlayersRef = ref(db, 'players');
 
-let allPlayers;
 let pathID;
 
 let canvasObject;
@@ -35,54 +31,54 @@ export function initCanvas(){
         p.setup = () => {
 
             getUserID().then((userID) => {
-                get(ref(db, 'players/' + userID)).then((snapshot) => {
+                get(ref(getDb(), 'players/' + userID)).then((snapshot) => {
                     let user = snapshot.val();
                     roomName = user.room;
+                    // Create canvas with dimensions 
+                    onValue(ref(getDb(), 'rooms/' + roomName + '/canvasSettings'), (snapshot) => {
+                        let canvasSettings = snapshot.val() || {};
+                        canvasColor = canvasSettings.color || 'white';
+                        canvasWidth = canvasSettings.width || p.windowWidth * 0.6;
+                        canvasHeight = canvasSettings.height || p.windowHeight * 0.6;
+
+                        canvas = p.createCanvas(canvasWidth, canvasHeight);
+                        canvas.parent(canvasContainer);
+
+                        // Set canvas background color
+                        p.background(canvasColor);
+                    });
+
+                    pathsRef = ref(getDb(), 'rooms/' + roomName + '/paths');
+
+                    onValue(pathsRef, (snapshot) => {
+
+                        // Clear canvas and load paths from database
+                        p.background(canvasColor);
+
+                        // Load paths from database on every change
+                        paths.length = 0;
+                        pathsIDs.length = 0;
+
+                        // Get all paths from database and assign them to 'temp' object 
+                        let temp = snapshot.val() || {};
+
+                        // Convert object to array of arrays
+                        const pathPairs = Object.entries(temp);
+
+                        // Sort the array based on keys
+                        pathPairs.sort((a, b) => a[0].localeCompare(b[0]));
+
+                        // Extract the sorted paths and IDs
+                        const sortedPaths = pathPairs.map((pair) => pair[1]);
+                        pathsIDs.push(...pathPairs.map((pair) => pair[0]));
+
+                        // Push the sorted paths into the 'paths' array
+                        paths.push(...sortedPaths); 
+                    });
                 });
+
+                
             });
-
-
-            // Create canvas with dimensions 
-            onValue(ref(db, 'rooms/' + roomName + '/canvasSettings'), (snapshot) => {
-                let canvasSettings = snapshot.val() || {};
-                canvasColor = canvasSettings.color || 'white';
-                canvasWidth = canvasSettings.width || p.windowWidth * 0.6;
-                canvasHeight = canvasSettings.height || p.windowHeight * 0.6;
-
-                canvas = p.createCanvas(canvasWidth, canvasHeight);
-                canvas.parent(canvasContainer);
-
-                // Set canvas background color
-                p.background(canvasColor);
-            });
-
-            pathsRef = ref(db, 'rooms/' + roomName + '/paths');
-
-            onValue(pathsRef, (snapshot) => {
-
-                // Clear canvas and load paths from database
-                p.background(canvasColor);
-
-                // Load paths from database on every change
-                paths.length = 0;
-                pathsIDs.length = 0;
-
-                // Get all paths from database and assign them to 'temp' object 
-                let temp = snapshot.val() || {};
-
-                // Convert object to array of arrays
-                const pathPairs = Object.entries(temp);
-
-                // Sort the array based on keys
-                pathPairs.sort((a, b) => a[0].localeCompare(b[0]));
-
-                // Extract the sorted paths and IDs
-                const sortedPaths = pathPairs.map((pair) => pair[1]);
-                pathsIDs.push(...pathPairs.map((pair) => pair[0]));
-
-                // Push the sorted paths into the 'paths' array
-                paths.push(...sortedPaths); 
-            })
         };
 
         // If mouse is pressed on canvas, draw line between previous and current mouse position
@@ -122,7 +118,7 @@ export function initCanvas(){
         p.mouseReleased = () => {
             if (p.mouseX >= 0 && p.mouseX < p.width && p.mouseY >= 0 && p.mouseY < p.height && !settingsOpen){
                 pathID = Date.now() + userID;
-                pathRef = ref(db, 'rooms/' + roomName +'/paths/' + pathID);
+                pathRef = ref(getDb(), 'rooms/' + roomName +'/paths/' + pathID);
                 set(pathRef, {...currentPath});
             }
         }
@@ -165,7 +161,7 @@ export function initCanvas(){
             });
 
             btnApply.addEventListener('click', () => {
-                set(ref(db, 'rooms/' + roomName + '/canvasSettings'), {
+                set(ref(getDb(), 'rooms/' + roomName + '/canvasSettings'), {
                     color: canvasColor || 'white',
                     width: canvasWidthInput.value || canvasWidth,
                     height: canvasHeightInput.value ||  canvasHeight
@@ -183,12 +179,11 @@ export function initCanvas(){
 
         // Clears everything from canvas and database
         btnClear.addEventListener('click', () => {
-            set(ref(db, 'rooms/' + roomName + '/paths'), null);
+            set(ref(getDb(), 'rooms/' + roomName + '/paths'), null);
             p.clear();
             p.background(canvasColor);
             paths.length = 0;
             currentPath.length = 0;
-            console.log('Canvas cleared');
         });
 
         // Changes pencil color
@@ -226,12 +221,10 @@ export function initCanvas(){
             if (paths.length > 0){;
                 paths.pop();
                 pathID = pathsIDs.pop();
-                set(ref(db, 'rooms/' + roomName + '/paths/' + pathID), null);
+                set(ref(getDb(), 'rooms/' + roomName + '/paths/' + pathID), null);
                 p.background(canvasColor);
-                console.log('Undo successful');
             }
             else {
-                console.log('Nothing to undo');
             }
         });
 
@@ -258,6 +251,5 @@ export function initCanvas(){
 
 export function closeCanvas(){
     canvasObject.remove();
-    console.log('Canvas closed inside');
 }
 

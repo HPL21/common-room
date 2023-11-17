@@ -1,9 +1,9 @@
 import { dict } from './lang.js';
-import { AuthErrorCodes } from 'firebase/auth';
 import db from './firebase.js';
-import { getDatabase, ref, set, get, onValue } from "firebase/database";
-import { monitorAuthState } from "./firebase.js";
+import { ref, get } from "firebase/database";
+import { getUserID } from "./firebase.js";
 
+// Load images
 import cardPNG from './assets/images/card.png';
 import clearPNG from './assets/images/clear.png';
 import chooseColorPNG from './assets/images/choose_color.png';
@@ -12,10 +12,11 @@ import savePNG from './assets/images/save.png';
 import undoPNG from './assets/images/undo.png';
 import loadingDots from './assets/images/loading_dots.gif';
 
+// Load user avatar
 document.addEventListener('DOMContentLoaded', () => {
     let profilePic = new Image();
     
-    monitorAuthState().then((userID) => {
+    getUserID().then((userID) => {
         get(ref(db, 'players/' + userID)).then((snapshot) => {
             if (snapshot.val() != null) {
                 profilePic.src = snapshot.val().profilePic;
@@ -26,18 +27,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         profilePic.onload = () => {
             document.getElementById('profilePic').src = profilePic.src;
-            localStorage.setItem('profilePic', profilePic.src);
         }
     
     });
 });
 
+// Load everything
 
 export function loadLogin() {
     let lang = localStorage.getItem('lang') || 'en';
     let dictLang = dict[lang];
-    let login = document.getElementById('login');
-    login.innerHTML = `<div class="header1">${dictLang.welcome}</div>
+    let app = document.getElementById('app');
+    app.innerHTML = `<div class="login">
+                        <div class="header1">${dictLang.welcome}</div>
                         <form>
                             <div class="group">
                                 <label class="d-block">${dictLang.email}</label>
@@ -49,17 +51,39 @@ export function loadLogin() {
                             </div>
                             <button id="btnLogin" type="button" class="white-button">${dictLang.login}</button>
                             <button id="btnSignup" type="button" class="white-button">${dictLang.signup}</button>
-                        </form>`;
+                        </form>
+                    </div>`;
 }
 
-export const showApp = () => {
-    login.style.display = 'none';
-    app.style.display = 'block';
-}
+export function loadApp() {
+    let app = document.getElementById('app');
+    app.innerHTML = `<div class="nav-bar" id="nav-bar">
+                    <div id="nav-bar-left" class="nav-bar-left">
+                        <button id="btnMenu" class="menu-button"><img src="./assets/images/logo2.png"></button>
+                    </div>
+                    <div id="nav-bar-center" class="nav-bar-center">
 
-export const showLogin = () => {
-    login.style.display = 'flex';
-    app.style.display = 'none';
+                    </div>
+                    <div id="nav-bar-right" class="nav-bar-right">
+                        <button id="btnChangeRoom" class="img-button square-button"><img src="./assets/images/changeroom2.png"></button>
+                        
+                        <button id="btnSettings" type="button" class="img-button square-button"><img id="settingsImg" src="./assets/images/settings.png"></button>
+                    </div>
+                </div>
+                <div id="settings" class="settings">
+                    <div class="profile">
+                        <button id="btnProfile" class="img-button square-button text-button flex-button"><img id="profilePic" src="./assets/images/profile.png"><div id="username"></div></button>
+                    </div>
+                    <div class="logout">
+                        <button id="btnLogout" class="img-button square-button text-button flex-button"><img src="./assets/images/logout.png"><div id="logoutText"></div></button>
+                    </div>
+                    <div class="lang-buttons">
+                        <button id="btnEng" class="img-button lang-button"><img src="./assets/images/eng.png"></button>
+                        <button id="btnPl" class="img-button lang-button"><img src="./assets/images/pl.png"></button>
+                    </div>
+                </div>
+                <div class="content" id="content"></div>
+                <div id="chat"></div>`;
 }
 
 export function loadSettings() {
@@ -202,7 +226,7 @@ export function loadProfileSettings() {
                             <canvas id="pixelCanvas" class="pixel-canvas" width="320" height="320"></canvas>
                             <div id="colorPicker" class="color-picker" title="${dictLang.color}">
                                 <input id="btnColor" type="color" class="color-picker-input" value="#ffffff">
-                                <button class="color-picker-button"><img src="assets/images/choose_color.png"></button>
+                                <button class="color-picker-button"><img src="assets/images/choose_color.png" class=""></button>
                             </div>
                             <button id="btnSave" type="button" class="white-button">${dictLang.save}</button>
                         </div>`;

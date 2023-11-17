@@ -6,7 +6,7 @@ import { loadGottaRound } from './contentloader.js';
 import { Configuration, OpenAIApi } from "openai"
 
 export async function handleGottaCreator() {
-    localStorage.setItem('currentPlace', 'shuffleCreator');
+    localStorage.setItem('currentPlace', 'gottadrawfast');
     let lang = localStorage.getItem('lang') || 'en';
     let dictLang = dict[lang];
 
@@ -36,8 +36,8 @@ export async function handleGottaCreator() {
 
                     let playersList = document.getElementById("gottaCreatorPlayersList");
                     playersList.innerHTML = "";
-
-                    for (let player in players) {
+                    
+                    for (let player in players) { // Show players
                         let playerRef = ref(db, 'players/' + player);
                         let playerDiv = document.createElement('div');
                         playerDiv.classList.add("player-list-item", "creator-item");
@@ -82,7 +82,7 @@ export async function handleGottaCreator() {
                 onValue(child(gottaRef, "settings/status"), (snapshot) => { // Listen for status change
                     let status = snapshot.val();
                     if(status == "running" || status == "finished") {
-                        resolve(true); // Resolve with true
+                        resolve(true);
                     }
                 });
 
@@ -117,7 +117,7 @@ export async function handleGottaCreator() {
         function returnToMenu() {
             localStorage.setItem('currentPlace', 'menu');
             set(child(gottaRef, "settings/players/" + userID), null); 
-            resolve(false); // Resolve with false
+            resolve(false); 
         }
 
         let startButton = document.getElementById("btnGottaStart");
@@ -133,17 +133,17 @@ export async function handleGottaCreator() {
                 players = gottaSettings.players;
 
                 if(Object.keys(players).length < 2) { // Check if there are enough players - at least 2
-                    alert("Not enough players");
+                    alert(dictLang.notenoughplayers);
                     return;
                 }
 
                 if(rounds < 1) { // Check if there are enough rounds - at least 1
-                    alert("Invalid number of rounds");
+                    alert(dictLang.invalidnorounds);
                     return;
                 }
 
                 if(timemin < 10 || timemax < 10) { // Check if there are enough time - at least 10
-                    alert("Invalid time");
+                    alert(dictLang.invalidtime);
                     return;
                 }
 
@@ -169,7 +169,6 @@ export function initGotta() {
     let timeArray;
 
     let playersList;
-    let theme;
 
     getUserID().then((_userID) => {
         userID = _userID;
@@ -193,7 +192,6 @@ export function initGotta() {
                     showResults(gottaRef); // Show results if game is finished
                 else {
                     getTheme("normal", userID, playersList, gottaRef).then((_theme) => {
-                        theme = _theme;
                         processRound(round, rounds, timeArray, userID, gottaRef); // Start the game
                     });
                 }
@@ -213,6 +211,7 @@ function calculateTime(rounds, timemin, timemax) {
     return timeArray;
 }
 
+// TODO: implement OpenAI API
 function getRandomTheme(mode) {
     if (mode == "ChatGPT") {
         return "Coming soon";
@@ -275,7 +274,7 @@ async function processRound(round, rounds, timeArray, userID, gottaRef){
         countdown(time);
         draw(time).then((data) => {
             set(child(gottaRef, "rounds/" + round + "/" + userID), data); // Save picture to database
-            processRound(round + 1, rounds, timeArray, userID, gottaRef);
+            processRound(round + 1, rounds, timeArray, userID, gottaRef); // Next round
         });
     });
 }
@@ -314,6 +313,7 @@ function showResults(gottaRef) {
     themeDiv.id = "theme";
     themeDiv.classList.add("theme");
 
+    // Get game data
     let snapshot, settings, rounds, timeArray;
     get(gottaRef).then((_snapshot) => {
         snapshot = _snapshot.val(); 
@@ -321,13 +321,14 @@ function showResults(gottaRef) {
         rounds = snapshot.rounds;
         timeArray = settings.timeArray;
 
+        // Display every round button
         for (let round in rounds) {
             let roundBtn = document.createElement("button");
             roundBtn.innerHTML = dictLang.round + round;
             roundBtn.classList.add("white-button");
             roundBtn.addEventListener("click", () => {
                 try {
-                    showRound(round, rounds[round], timeArray[round-1]); // Show round
+                    showRound(rounds[round], timeArray[round-1]); // Show round
                 } catch (error) {
                     alert(dictLang.errorloadinground);
                     console.error(error);
@@ -345,7 +346,7 @@ function showResults(gottaRef) {
     
 }
 
-async function showRound(round, roundData, time) {
+async function showRound(roundData, time) {
 
     let lang = localStorage.getItem('lang') || 'en';
     let dictLang = dict[lang];
@@ -365,6 +366,8 @@ async function showRound(round, roundData, time) {
 
     let playersList = Object.keys(roundData).sort(); // Sort players list
     let playersData = {};
+
+    // Get every player data
     for (let player in playersList) {
         await get(ref(db, 'players/' + playersList[player])).then((snapshot) => {
             let playerData = snapshot.val();
@@ -372,12 +375,8 @@ async function showRound(round, roundData, time) {
         });
     }
 
+    // Get and display every drawing 
     for (let player in roundData) {
-        // let image = document.createElement("img");
-        // image.src = roundData[player];
-        // image.classList.add("round-image");
-
-        // roundContent.appendChild(image);
         let roundItem = document.createElement("div");
         roundItem.classList.add("round-item", "round-item-group");
         roundItem.style.backgroundColor = "FFEEDB";
@@ -407,6 +406,7 @@ async function showRound(round, roundData, time) {
     content.appendChild(roundContent);
 }
 
+// Display countdown
 function countdown(time){
     let timer = document.createElement("div");
     timer.classList.add("time", "timer");
@@ -422,8 +422,8 @@ function countdown(time){
 
     document.getElementById("content").appendChild(timer);
 }
-            
 
+// Handle canvas drawing and return base64 image
 async function draw(time){
 
     const paths = [];
@@ -559,6 +559,7 @@ async function draw(time){
 
 }
 
+// Display smooth transition
 async function displayTransition(text, time) {
     let transition = document.createElement("div");
     transition.classList.add("shield");
@@ -578,6 +579,7 @@ async function displayTransition(text, time) {
     });
 }
 
+// Display theme (same for everyone)
 async function displayTheme(gottaRef){
     let theme;
     await get(child(gottaRef, "settings/theme")).then((snapshot) => { // Get theme
