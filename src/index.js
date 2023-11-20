@@ -1,5 +1,5 @@
 import './firebase.js';
-import { auth, getDb } from './firebase.js';
+import { auth, getDb, logout, loginEmailPassword, createAccount } from './firebase.js';
 import { get, ref } from 'firebase/database';
 
 import './styles.css';
@@ -200,11 +200,21 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
                 roomName = user.room;
                 initGame();
             });
+            let btnLogout = document.getElementById('btnLogout');
+            btnLogout.addEventListener("click", logout);
         }
         else {
             console.log('You are not logged in.');
             loadLogin();
             localStorage.setItem('currentPlace', 'login');
+            let btnLogin = document.getElementById('btnLogin');
+            let btnSignup = document.getElementById('btnSignup');
+            btnLogin.addEventListener("click", loginEmailPassword);
+            btnSignup.addEventListener("click", createAccount);
+            localStorage.removeItem('username');
+            localStorage.removeItem('userID');
+            localStorage.removeItem('roomName');
+            localStorage.removeItem('profilePic');
         }
     })
 

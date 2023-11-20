@@ -70,6 +70,11 @@ export const dict = {
         notenoughplayers: "Not enough players",
         invalidnorounds: "Invalid number of rounds",
         invalidtime: "Invalid time",
+        loggedin: "Logged in",
+        loggedout: "Logged out",
+        createdaccount: "Account created",
+        errorcreatingaccount: "Error creating account",
+        errorloggingin: "Error logging in",
     },
     pl: {
         login: "Zaloguj się",
@@ -142,5 +147,10 @@ export const dict = {
         notenoughplayers: "Za mało graczy",
         invalidnorounds: "Nieprawidłowa liczba rund",
         invalidtime: "Nieprawidłowy czas",
+        loggedin: "Zalogowano",
+        loggedout: "Wylogowano",
+        createdaccount: "Konto zostało utworzone",
+        errorcreatingaccount: "Błąd podczas tworzenia konta",
+        errorloggingin: "Błąd podczas logowania",
     }
 };

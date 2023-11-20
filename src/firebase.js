@@ -38,7 +38,7 @@ export let playerRef;
 export let userName;
 
 // Login using Firebase authentication
-const loginEmailPassword = async () => {
+export const loginEmailPassword = async () => {
     const loginEmail = document.getElementById("txtEmail").value;
     const loginPassword = document.getElementById("txtPassword").value;
 
@@ -51,7 +51,7 @@ const loginEmailPassword = async () => {
 }
 
 //Create account using firebase authentication
-const createAccount = async () => {
+export const createAccount = async () => {
     const email = document.getElementById("txtEmail").value;
     const password = document.getElementById("txtPassword").value;
 
@@ -67,12 +67,10 @@ const createAccount = async () => {
 
 }
 
-// TODO: fix logout button
 // Monitor auth state
 const monitorAuthState = async () => {
     onAuthStateChanged(auth, user => {
         if (user) { // If user is authenticated
-            loadApp();
 
             userID = user.uid;
             playerRef = ref(db, 'players/' + userID);
@@ -82,25 +80,15 @@ const monitorAuthState = async () => {
                 localStorage.setItem('username', userName);
             });
             localStorage.setItem('userID', userID);
-            let btnLogout = document.getElementById('btnLogout');
-            btnLogout.addEventListener("click", logout);
         }
         else {
-            loadLogin();
-            let btnLogin = document.getElementById('btnLogin');
-            let btnSignup = document.getElementById('btnSignup');
-            btnLogin.addEventListener("click", loginEmailPassword);
-            btnSignup.addEventListener("click", createAccount);
-
-            localStorage.removeItem('username');
-            localStorage.removeItem('userID');
-            localStorage.removeItem('roomName');
+            userID = null;
         }
     })
 }
 
 // Logout function
-const logout = async () => {
+export const logout = async () => {
     console.log("Logging out...");
     await signOut(auth);
 }
