@@ -28,6 +28,7 @@ import './gottadrawfast.js'
 import { handleGottaCreator, initGotta } from './gottadrawfast.js'
 
 (function () {
+    
     let userID, roomName;
     let dictLang = dict[localStorage.getItem('lang') || 'en'];
 
@@ -202,6 +203,7 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
             });
             let btnLogout = document.getElementById('btnLogout');
             btnLogout.addEventListener("click", logout);
+            
         }
         else {
             console.log('You are not logged in.');

@@ -3,7 +3,8 @@ import db, { getUserID } from './firebase.js';
 import { dict } from './lang.js';
 import p5 from "p5";
 import { loadGottaRound } from './contentloader.js';
-import { Configuration, OpenAIApi } from "openai"
+import { Configuration, OpenAIApi } from "openai";
+
 
 export async function handleGottaCreator() {
     localStorage.setItem('currentPlace', 'gottadrawfast');
@@ -215,6 +216,12 @@ function calculateTime(rounds, timemin, timemax) {
 function getRandomTheme(mode) {
     if (mode == "ChatGPT") {
         return "Coming soon";
+        
+
+
+
+
+
     }
     else if (mode == "normal") {
         const themeArray = [
