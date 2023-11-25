@@ -3,7 +3,7 @@ import db, { getUserID } from './firebase.js';
 import { dict } from './lang.js';
 import p5 from "p5";
 import { loadGottaRound } from './contentloader.js';
-import { Configuration, OpenAIApi } from "openai";
+import { Configuration, OpenAIApi, OpenAI } from "openai";
 
 
 export async function handleGottaCreator() {
@@ -192,7 +192,7 @@ export function initGotta() {
                 if (gottaSettings.status == "finished") 
                     showResults(gottaRef); // Show results if game is finished
                 else {
-                    getTheme("normal", userID, playersList, gottaRef).then((_theme) => {
+                    getTheme("ChatGPT", userID, playersList, gottaRef).then((_theme) => {
                         processRound(round, rounds, timeArray, userID, gottaRef); // Start the game
                     });
                 }
@@ -212,31 +212,73 @@ function calculateTime(rounds, timemin, timemax) {
     return timeArray;
 }
 
-// TODO: implement OpenAI API
-function getRandomTheme(mode) {
+// Generate random theme using GPT-3.5-turbo or return one from array
+async function getRandomTheme(mode) { 
+    let lang = localStorage.getItem('lang') || 'en';
     if (mode == "ChatGPT") {
-        return "Coming soon";
+
+        let messageArray;
+
+        if(lang == "pl") {
+            messageArray = [
+                {role: "user", content: "Wymyśl mi temat do rysowania (5-10 słów)"},
+                {role: "system", content: "Kwiecista polana z zachodzącym słońcem"},
+                {role: "user", content: "Wymyśl mi temat do rysowania (5-10 słów)"},
+            ];
+        } else if(lang=="en") {
+            messageArray = [
+                {role: "user", content: "Give me a theme to draw (5-10 words)"},
+                {role: "system", content: "A flowery meadow with a sunset"},
+                {role: "user", content: "Give me a theme to draw (5-10 words)"},
+            ];
+        }
+
+        const openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
+            dangerouslyAllowBrowser: true
+        });
+    
+        const completion = await openai.chat.completions.create({
+            messages: messageArray,
+            model: "gpt-3.5-turbo",
+            max_tokens: 25,
+            temperature: 0.7,
+        });
         
+        console.log(completion);
 
+        return completion.choices[0].message.content;
 
-
-
-
-    }
-    else if (mode == "normal") {
-        const themeArray = [
-            "Leśny krajobraz.",
-            "Latarnia morska przy wschodzie słońca.",
-            "Dziecko grające na trampolinie.",
-            "Stary zegar nawijany.",
-            "Dziki zachód z koniem i kaktusami.",
-            "Wodospad otoczony tropikalną dżunglą.",
-            "Kolorowy karuzela na tle nocnego nieba.",
-            "Mały robak na dużym liściu.",
-            "Magiczny zamek na szczycie góry.",
-            "Uliczny muzyk grający na saksofonie."
-          ];
-        return themeArray[Math.floor(Math.random() * themeArray.length)];
+    } else if (mode == "normal") {
+        if(lang == "pl") {
+            const themeArray = [
+                "Leśny krajobraz.",
+                "Latarnia morska przy wschodzie słońca.",
+                "Dziecko grające na trampolinie.",
+                "Stary zegar nawijany.",
+                "Dziki zachód z koniem i kaktusami.",
+                "Wodospad otoczony tropikalną dżunglą.",
+                "Kolorowa karuzela na tle nocnego nieba.",
+                "Mały robak na dużym liściu.",
+                "Magiczny zamek na szczycie góry.",
+                "Uliczny muzyk grający na saksofonie."
+            ];
+            return themeArray[Math.floor(Math.random() * themeArray.length)];
+        } else if(lang=="en") {
+            const themeArray = [
+                "Forest landscape.",
+                "Lighthouse at sunrise.",
+                "Child playing on a trampoline.",
+                "Old clock being wound up.",
+                "Wild west with a horse and cacti.",
+                "Waterfall surrounded by a tropical jungle.",
+                "Colorful carousel against the night sky.",
+                "A small worm on a big leaf.",
+                "A magical castle on top of a mountain.",
+                "A street musician playing the saxophone."
+            ];
+            return themeArray[Math.floor(Math.random() * themeArray.length)];
+        }
     }
 }
 
@@ -244,9 +286,11 @@ async function getTheme(mode, userID, playersList, gottaRef) {
     let theme;
     return new Promise((resolve, reject) => {
         if(userID == playersList[0]) { // If user is the first player, set theme
-            theme = getRandomTheme(mode);
-            set(child(gottaRef, "settings/theme"), theme);
-            resolve(theme);
+            getRandomTheme(mode).then((_theme) => {
+                theme = _theme;
+                set(child(gottaRef, "settings/theme"), theme);
+                resolve(theme);
+            });
         } else { // If user is not the first player, wait for theme
             onValue(child(gottaRef, "settings/theme"), (snapshot) => {
                 theme = snapshot.val();
@@ -268,8 +312,6 @@ async function processRound(round, rounds, timeArray, userID, gottaRef){
         });
         return;
     }
-
-    
 
     document.getElementById("content").innerHTML = ""; // Clear content
 
@@ -348,7 +390,7 @@ function showResults(gottaRef) {
         content.appendChild(finishButton);
         content.appendChild(themeDiv);
         displayTheme(gottaRef);
-        showRound(1, rounds[1], timeArray[0]); // Show first round
+        showRound(rounds[1], timeArray[0]); // Show first round
     });
     
 }
@@ -589,10 +631,11 @@ async function displayTransition(text, time) {
 // Display theme (same for everyone)
 async function displayTheme(gottaRef){
     let theme;
-    await get(child(gottaRef, "settings/theme")).then((snapshot) => { // Get theme
+
+    onValue(child(gottaRef, "settings/theme"), (snapshot) => { // Listen for theme change
         theme = snapshot.val();
         let themeDiv = document.getElementById("theme");
         themeDiv.innerHTML = theme;
         themeDiv.style.display = "block";
-    }); 
+    });
 }

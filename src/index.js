@@ -218,6 +218,6 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
             localStorage.removeItem('roomName');
             localStorage.removeItem('profilePic');
         }
-    })
+    });
 
 })();

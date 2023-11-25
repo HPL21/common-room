@@ -285,7 +285,7 @@ export function loadShuffleCreator() {
                                     <div id="shuffleCreatorPlayersContent" class="creator-players-content">
                                         <div id="shuffleCreatorPlayersList" class="creator-players-list"></div>
                                     </div>
-                                </div>  
+                                </div>
                             </div>
                             <div id="shuffleCreatorButtons" class="creator-buttons">
                                 <button id="btnShuffleJoin" class="white-button">${dictLang.join}</button>
