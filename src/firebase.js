@@ -27,8 +27,10 @@ export const firebaseConfig = {
 export const firebaseApp = initializeApp(firebaseConfig);
 
 const db = getDatabase();
-
 export default db;
+
+export const auth = getAuth(firebaseApp);
+export let userID;
 
 export function getDb() {
     return db;
@@ -93,9 +95,6 @@ export const logout = async () => {
     await signOut(auth);
 }
 
-export const auth = getAuth(firebaseApp);
-export let userID;
-
 // Async function that returns UserID
 export async function getUserID() {
     return new Promise((resolve, reject) => {
@@ -105,7 +104,7 @@ export async function getUserID() {
                 resolve(userID);
             }
             else {
-                console.log("User is not authenticated");
+                reject("User is not authenticated");
             }
         })
     });
