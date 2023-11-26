@@ -46,6 +46,7 @@ export const loginEmailPassword = async () => {
 
     try {
         await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+        location.reload();
     }
     catch (error) {
         console.log(`There was an error: ${error}`);
@@ -61,6 +62,7 @@ export const createAccount = async () => {
         await createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
             playerRef = ref(db, 'players/' + userCredential.user.uid);
             set(playerRef, { email: email });
+            location.reload();
         });
     }
     catch (error) {
@@ -93,6 +95,7 @@ const monitorAuthState = async () => {
 export const logout = async () => {
     console.log("Logging out...");
     await signOut(auth);
+    location.reload();
 }
 
 // Async function that returns UserID

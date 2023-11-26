@@ -244,8 +244,6 @@ async function getRandomTheme(mode) {
             max_tokens: 25,
             temperature: 0.7,
         });
-        
-        console.log(completion);
 
         return completion.choices[0].message.content;
 
