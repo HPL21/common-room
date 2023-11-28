@@ -1,5 +1,4 @@
-import { db } from "./firebase.js";
-import { playerRef, getUserID, getDb } from "./firebase.js";
+import { getUserID, getDb } from "./firebase.js";
 import { onValue, push, ref, set, get, update } from "firebase/database";
 import { dict } from "./lang.js";
 
@@ -20,8 +19,29 @@ getUserID().then((userID) => {
     });
 });
 
+// Load user avatar
+document.addEventListener('DOMContentLoaded', () => {
+    let profilePic = new Image();
+    
+    getUserID().then((userID) => {
+        get(ref(getDb(), 'players/' + userID)).then((snapshot) => {
+            if (snapshot.val() != null) {
+                profilePic.src = snapshot.val().profilePic;
+            }
+            else {
+                profilePic.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFFJREFUOE9jZKAQMOLR/x9NDqtaXAaga4aZhaEemwG4NGM1BN0AQpoxDBmGBoD8SCgcULxNk2iEhTRFCYnoBA7zAiF/4zKQEWQAuZrBhg68AQB0Wg4O59TPLQAAAABJRU5ErkJggg==";
+            }
+        });
+        profilePic.onload = () => {
+            document.getElementById('profilePic').src = profilePic.src;
+        }
+    
+    });
+});
+
 // Update username
 export function handleProfileSettings() {
+    localStorage.setItem('currentPlace', 'profileSettings');
     let btnUpdate = document.getElementById('btnUpdate');
     btnUpdate.addEventListener('click', () => {
         let username = document.getElementById('usernameInput').value;
@@ -39,6 +59,7 @@ export function handleProfileSettings() {
 
 // Update avatar
 export function handleProfilePicCreator() {
+    let playerRef;
     const canvas = document.getElementById("pixelCanvas");
     const btnColor = document.getElementById("btnColor");
     const btnSave = document.getElementById("btnSave");
@@ -79,7 +100,7 @@ export function handleProfilePicCreator() {
     function saveCanvas() {
         //Save canvas to firebase
         let canvasData = canvas.toDataURL();
-        update(playerRef, { profilePic: canvasData });
+        update(playerRef, { profilePic: canvasData }); // TODO: Change this shit
         let dictLang = dict[localStorage.getItem('lang') || 'en'];
         alert(dictLang.avatarchanged);
         location.reload();

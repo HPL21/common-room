@@ -1,9 +1,9 @@
 import { ref, onDisconnect, onValue, set, child, get } from 'firebase/database';
-import db, { getUserID } from './firebase.js';
+import { getUserID, getDb } from './firebase.js';
 import { dict } from './lang.js';
 import p5 from "p5";
 import { loadGottaRound } from './contentloader.js';
-import { Configuration, OpenAIApi, OpenAI } from "openai";
+import {  OpenAI } from "openai";
 
 
 export async function handleGottaCreator() {
@@ -23,9 +23,9 @@ export async function handleGottaCreator() {
     return new Promise((resolve, reject) => {
         getUserID().then((_userID) => {
             userID = _userID;
-            onValue(ref(db, 'players/' + userID + '/room'), (snapshot) => {
+            onValue(ref(getDb(), 'players/' + userID + '/room'), (snapshot) => {
                 roomName = snapshot.val();
-                gottaRef = ref(db, 'rooms/' + roomName + '/gottadrawfast');
+                gottaRef = ref(getDb(), 'rooms/' + roomName + '/gottadrawfast');
 
                 onValue(child(gottaRef, "settings/players"), (snapshot) => { // Update players list
 
@@ -416,7 +416,7 @@ async function showRound(roundData, time) {
 
     // Get every player data
     for (let player in playersList) {
-        await get(ref(db, 'players/' + playersList[player])).then((snapshot) => {
+        await get(ref(getDb(), 'players/' + playersList[player])).then((snapshot) => {
             let playerData = snapshot.val();
             playersData[playersList[player]] = playerData;
         });

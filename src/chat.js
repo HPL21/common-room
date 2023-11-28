@@ -1,4 +1,4 @@
-import db, { getRoomName } from './firebase.js';
+import { getRoomName, getDb } from './firebase.js';
 import { getUserID } from "./firebase.js";
 import { onValue, ref, set } from "firebase/database";
 import { dict } from './lang.js';
@@ -21,7 +21,7 @@ export function handleChat () {
                 if (message == '') {
                     return;
                 }
-                let messageRef = ref(db, 'rooms/' + roomName + '/chat/' + Date.now());
+                let messageRef = ref(getDb(), 'rooms/' + roomName + '/chat/' + Date.now());
                 set(messageRef, {
                     sender: userID,
                     message: message
@@ -30,7 +30,7 @@ export function handleChat () {
             }
         
             function displayMessage (message) {
-                let userRef = ref(db, 'players/' + message.sender);
+                let userRef = ref(getDb(), 'players/' + message.sender);
         
                 let messageContainer = document.getElementById('messagesContainer');
                 let messageDiv = document.createElement('div');
@@ -61,7 +61,7 @@ export function handleChat () {
                 messageContainer.appendChild(messageDiv);
             }
         
-            let chatRef = ref(db, 'rooms/' + roomName + '/chat');
+            let chatRef = ref(getDb(), 'rooms/' + roomName + '/chat');
 
             // Update chat
             onValue(chatRef, (snapshot) => {

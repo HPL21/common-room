@@ -1,7 +1,4 @@
 import { dict } from './lang.js';
-import db from './firebase.js';
-import { ref, get } from "firebase/database";
-import { getUserID } from "./firebase.js";
 
 // Load images
 import cardPNG from './assets/images/card.png';
@@ -11,26 +8,6 @@ import eraserPNG from './assets/images/eraser.png';
 import savePNG from './assets/images/save.png';
 import undoPNG from './assets/images/undo.png';
 import loadingDots from './assets/images/loading_dots.gif';
-
-// Load user avatar
-document.addEventListener('DOMContentLoaded', () => {
-    let profilePic = new Image();
-    
-    getUserID().then((userID) => {
-        get(ref(db, 'players/' + userID)).then((snapshot) => {
-            if (snapshot.val() != null) {
-                profilePic.src = snapshot.val().profilePic;
-            }
-            else {
-                profilePic.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFFJREFUOE9jZKAQMOLR/x9NDqtaXAaga4aZhaEemwG4NGM1BN0AQpoxDBmGBoD8SCgcULxNk2iEhTRFCYnoBA7zAiF/4zKQEWQAuZrBhg68AQB0Wg4O59TPLQAAAABJRU5ErkJggg==";
-            }
-        });
-        profilePic.onload = () => {
-            document.getElementById('profilePic').src = profilePic.src;
-        }
-    
-    });
-});
 
 // Load everything
 
@@ -56,6 +33,8 @@ export function loadLogin() {
 }
 
 export function loadApp() {
+    let lang = localStorage.getItem('lang') || 'en';
+    let dictLang = dict[lang];
     let app = document.getElementById('app');
     app.innerHTML = `<div class="nav-bar" id="nav-bar">
                     <div id="nav-bar-left" class="nav-bar-left">
@@ -75,7 +54,7 @@ export function loadApp() {
                         <button id="btnProfile" class="img-button square-button text-button flex-button"><img id="profilePic" src="./assets/images/profile.png"><div id="username"></div></button>
                     </div>
                     <div class="logout">
-                        <button id="btnLogout" class="img-button square-button text-button flex-button"><img src="./assets/images/logout.png"><div id="logoutText"></div></button>
+                        <button id="btnLogout" class="img-button square-button text-button flex-button"><img src="./assets/images/logout.png"><div id="logoutText">${dictLang.logout}</div></button>
                     </div>
                     <div class="lang-buttons">
                         <button id="btnEng" class="img-button lang-button"><img src="./assets/images/eng.png"></button>
@@ -84,12 +63,6 @@ export function loadApp() {
                 </div>
                 <div class="content" id="content"></div>
                 <div id="chat"></div>`;
-}
-
-export function loadSettings() {
-    let lang = localStorage.getItem('lang') || 'en';
-    let dictLang = dict[lang];
-    document.getElementById('logoutText').innerHTML = dictLang.logout;
 }
 
 export function loadMenu() {

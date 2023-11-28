@@ -9,7 +9,6 @@ import {
     signInWithEmailAndPassword,
 } from 'firebase/auth';
 
-import { loadApp, loadLogin } from "./contentloader";
 
 // Firebase initialization
 
@@ -27,17 +26,12 @@ export const firebaseConfig = {
 export const firebaseApp = initializeApp(firebaseConfig);
 
 const db = getDatabase();
-export default db;
-
-export const auth = getAuth(firebaseApp);
-export let userID;
 
 export function getDb() {
     return db;
 }
 
-export let playerRef;
-export let userName;
+export const auth = getAuth(firebaseApp);
 
 // Login using Firebase authentication
 export const loginEmailPassword = async () => {
@@ -60,8 +54,11 @@ export const createAccount = async () => {
 
     try {
         await createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
-            playerRef = ref(db, 'players/' + userCredential.user.uid);
-            set(playerRef, { email: email });
+            let playerRef = ref(db, 'players/' + userCredential.user.uid);
+            set(playerRef, { email: email,
+                             username: "Anonymous",
+                             profilePic: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFFJREFUOE9jZKAQMOLR/x9NDqtaXAaga4aZhaEemwG4NGM1BN0AQpoxDBmGBoD8SCgcULxNk2iEhTRFCYnoBA7zAiF/4zKQEWQAuZrBhg68AQB0Wg4O59TPLQAAAABJRU5ErkJggg==",
+                             room: null });
             location.reload();
         });
     }
@@ -70,27 +67,6 @@ export const createAccount = async () => {
     }
 
 }
-
-// Monitor auth state
-const monitorAuthState = async () => {
-    onAuthStateChanged(auth, user => {
-        if (user) { // If user is authenticated
-
-            userID = user.uid;
-            playerRef = ref(db, 'players/' + userID);
-
-            onValue(ref(db, 'players/' + userID), (snapshot) => {
-                userName = snapshot.val().username || "Anonymous";
-                localStorage.setItem('username', userName);
-            });
-            localStorage.setItem('userID', userID);
-        }
-        else {
-            userID = null;
-        }
-    })
-}
-
 // Logout function
 export const logout = async () => {
     console.log("Logging out...");
@@ -103,11 +79,9 @@ export async function getUserID() {
     return new Promise((resolve, reject) => {
         onAuthStateChanged(auth, user => {
             if (user) {
-                userID = user.uid;
-                resolve(userID);
+                resolve(user.uid);
             }
             else {
-                reject("User is not authenticated");
             }
         })
     });
@@ -123,11 +97,8 @@ export async function getRoomName() {
                 });
             }
             else {
-                reject("User is not authenticated");
             }
         })
     })
 }
-
-monitorAuthState();
 

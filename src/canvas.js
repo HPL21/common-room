@@ -1,5 +1,5 @@
 import p5 from "p5";
-import {  userID, getUserID, getDb } from "./firebase.js";
+import {  getUserID, getDb } from "./firebase.js";
 import { onValue, ref, set, get } from "firebase/database";
 
 const paths = [];
@@ -15,22 +15,23 @@ let pencilSize = 5;
 let roomName;
 let pathsRef;
 let pathRef;
-
 let pathID;
+
+let userID;
 
 let canvasObject;
 
 export function initCanvas(){
 
     let canvas;
-    let canvasContainer = document.getElementById('canvasContainer');
     localStorage.setItem('currentPlace', 'canvas');
     
     canvasObject = new p5((p) => {
         
         p.setup = () => {
 
-            getUserID().then((userID) => {
+            getUserID().then((_userID) => {
+                userID = _userID;
                 get(ref(getDb(), 'players/' + userID)).then((snapshot) => {
                     let user = snapshot.val();
                     roomName = user.room;
@@ -83,7 +84,7 @@ export function initCanvas(){
 
         // If mouse is pressed on canvas, draw line between previous and current mouse position
         p.draw = () => {
-            if (p.mouseIsPressed && p.mouseX >= 0 && p.mouseX < p.width && p.mouseY >= 0 && p.mouseY < p.height) {
+            if (p.mouseIsPressed) {
                 const point = {
                     x: p.mouseX,
                     y: p.mouseY,
@@ -107,29 +108,23 @@ export function initCanvas(){
         };
 
         // If mouse is pressed on canvas, create new path
-        p.mousePressed = () => {
-            if (p.mouseX >= 0 && p.mouseX < p.width && p.mouseY >= 0 && p.mouseY < p.height && !settingsOpen){
+        p.mousePressed = (e) => {
+            if (!settingsOpen && e.target === canvas.canvas){
                 currentPath.length = 0;
                 paths.push(currentPath);
             }
         }
 
         // If mouse is released on canvas, save path to database
-        p.mouseReleased = () => {
-            if (p.mouseX >= 0 && p.mouseX < p.width && p.mouseY >= 0 && p.mouseY < p.height && !settingsOpen){
+        p.mouseReleased = (e) => {
+            if (!settingsOpen && e.target === canvas.canvas){
                 pathID = Date.now() + userID;
                 pathRef = ref(getDb(), 'rooms/' + roomName +'/paths/' + pathID);
                 set(pathRef, {...currentPath});
             }
         }
-        
-        // TODO: close canvas whenever user leaves canvas page, not only on logout
-        function closeCanvas(){
-            p.remove();
-        }
 
         // Handling buttons
-        //let btnLogout = document.getElementById('btnLogout');
         let btnCanvasSettings = document.getElementById('btnCanvasSettings');
         let btnClear = document.getElementById('btnClear');
         let btnColor = document.getElementById('btnColor');
@@ -224,8 +219,6 @@ export function initCanvas(){
                 set(ref(getDb(), 'rooms/' + roomName + '/paths/' + pathID), null);
                 p.background(canvasColor);
             }
-            else {
-            }
         });
 
         // Saves canvas as png
@@ -233,23 +226,7 @@ export function initCanvas(){
             p.saveCanvas(canvas, 'canvas', 'png');
         });
 
-        // Debugging buttons
-        // let btnPaths = document.getElementById('btnPaths');
-        // let btnPathsIDs = document.getElementById('btnPathsIDs');
-
-        // btnPaths.addEventListener('click', () => {
-        //     console.log(paths);
-        // });
-
-        // btnPathsIDs.addEventListener('click', () => {
-        //     console.log(pathsIDs);
-        // });
-
     });
 
-}
-
-export function closeCanvas(){
-    canvasObject.remove();
 }
 

@@ -1,5 +1,5 @@
-import { ref, onDisconnect, onValue, set, child, get } from 'firebase/database';
-import db, { getUserID } from './firebase.js';
+import { ref, onValue, set, child, get } from 'firebase/database';
+import { getUserID, getDb } from './firebase.js';
 import { dict } from './lang.js';
 import p5 from "p5";
 import { loadShuffleCanvas, loadShuffleText } from './contentloader.js';
@@ -20,9 +20,9 @@ export async function handleShuffleCreator() {
     return new Promise((resolve, reject) => {
         getUserID().then((_userID) => {
             userID = _userID;
-            onValue(ref(db, 'players/' + userID + '/room'), (snapshot) => {
+            onValue(ref(getDb(), 'players/' + userID + '/room'), (snapshot) => {
                 roomName = snapshot.val();
-                shuffleRef = ref(db, 'rooms/' + roomName + '/shuffle');
+                shuffleRef = ref(getDb(), 'rooms/' + roomName + '/shuffle');
 
                 onValue(child(shuffleRef, "settings/players"), (snapshot) => { // Update players list
 
@@ -36,7 +36,7 @@ export async function handleShuffleCreator() {
                     playersList.innerHTML = "";
 
                     for (let player in players) {
-                        let playerRef = ref(db, 'players/' + player);
+                        let playerRef = ref(getDb(), 'players/' + player);
                         let playerDiv = document.createElement('div');
                         playerDiv.classList.add("player-list-item", "creator-item");
                         let playerPic = document.createElement('img');
@@ -156,9 +156,9 @@ export function initShuffle () {
 
     getUserID().then((_userID) => {
         userID = _userID;
-        get(ref(db, 'players/' + userID + '/room')).then((snapshot) => {
+        get(ref(getDb(), 'players/' + userID + '/room')).then((snapshot) => {
             roomName = snapshot.val();
-            shuffleRef = ref(db, 'rooms/' + roomName + '/shuffle');
+            shuffleRef = ref(getDb(), 'rooms/' + roomName + '/shuffle');
             get(child(shuffleRef,"settings")).then((snapshot) => { // Load settings
                 console.log("Shuffle settings loaded");
 
@@ -461,7 +461,7 @@ async function showRound(round, roundData, mode) {
     let playersList = Object.keys(roundData).sort(); // Sort players list
     let playersData = {};
     for (let player in playersList) {
-        await get(ref(db, 'players/' + playersList[player])).then((snapshot) => {
+        await get(ref(getDb(), 'players/' + playersList[player])).then((snapshot) => {
             let playerData = snapshot.val();
             playersData[playersList[player]] = playerData;
         });

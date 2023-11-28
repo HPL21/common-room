@@ -1,4 +1,4 @@
-import db from './firebase.js';
+import { getDb } from './firebase.js';
 import { ref, set, get } from "firebase/database";
 import { dict } from './lang.js';
 import { getUserID } from "./firebase.js";
@@ -9,55 +9,51 @@ export async function handleRoomCreator() {
     let lang = localStorage.getItem('lang') || 'en';
     let dictLang = dict[lang];
 
+
     return new Promise((resolve, reject) => {
-        let result;
 
-        let userID;
-        getUserID().then((_userID) => {
-            userID = _userID;
-        });
-
-        let createButton = document.getElementById("btnCreateRoom");
-        createButton.addEventListener("click", checkInput);
-
-        let cancelButton = document.getElementById("btnCancelRoom");
-        cancelButton.addEventListener("click", returnToLobby);
+        // Buttons listeners
+        function handleRoomCreatorButtons() {
+            let btnCreate = document.getElementById("btnCreateRoom");
+            let btnCancel = document.getElementById("btnCancelRoom");
+            btnCreate.addEventListener("click", checkInput);
+            btnCancel.addEventListener("click", returnToLobby);
+        }
 
         async function checkInput() {
             let roomName = document.getElementById("txtRoomName").value;
             let roomPassword = document.getElementById("txtRoomPassword").value;
             let roomDescription = document.getElementById("txtRoomDescription").value;
 
-            let roomRef = ref(db, 'rooms/' + roomName);
+            let roomRef = ref(getDb(), 'rooms/' + roomName);
             let snapshot = await get(roomRef);
-            if (snapshot.exists()) {
-                alert(dictLang.alertroomexists);
-            } else
+
+            // Check if room name, password and description are not empty and if room name is not taken
             if (roomName == "" || roomPassword == "" || roomDescription == "") {
                 alert(dictLang.alertfill);
+            } else if (snapshot.exists()) {
+                alert(dictLang.alertroomexists);
             } else {
-                createRoom(roomName, roomPassword, roomDescription)
-                    .then(() => {
-                        resolve(dictLang.roomcreated);
-                    })
-                    .catch((error) => {
-                        reject(error);
-                    });
+                createRoom(roomName, roomPassword, roomDescription);
             }
         }
 
         async function createRoom(roomName, roomPassword, roomDescription) {
-            let roomRef = ref(db, 'rooms/' + roomName);
+            let roomRef = ref(getDb(), 'rooms/' + roomName);
 
             try {
-                await set(roomRef, {
+                await set(roomRef, { // Create room
                     password: roomPassword,
                     description: roomDescription
                 });
+
+                let userID = await getUserID();
+
+                set(ref(getDb(), 'players/' + userID + '/room'), roomName); // Set room name to player
+
                 localStorage.setItem('roomName', roomName);
-                set(ref(db, 'players/' + userID + '/room'), roomName);
                 resolve(dictLang.roomcreated);
-                result = true;
+
             } catch (error) {
                 console.error(error);
                 reject(dictLang.errorcreatingroom);
@@ -65,75 +61,70 @@ export async function handleRoomCreator() {
         }
 
         function returnToLobby() {
-            localStorage.setItem('currentPlace', 'lobby');
-            result = false;
-            resolve(result); // Resolve with false
+            resolve(false);
         }
+
+        handleRoomCreatorButtons();
     });
 }
 
 
 export async function handleRoomJoin() {
     return new Promise((resolve, reject) => {
-        let result;
 
-        let userID;
-        getUserID().then((_userID) => {
-            userID = _userID;
-        });
+        let lang = localStorage.getItem('lang') || 'en';
+        let dictLang = dict[lang];
 
-        let joinButton = document.getElementById("btnJoinRoom");
-        let cancelButton = document.getElementById("btnCancelJoinRoom");
-        joinButton.addEventListener("click", checkInput);
-        cancelButton.addEventListener("click", returnToLobby);
+        // Buttons listeners
+        function handleRoomJoinButtons() {
+            let btnJoin = document.getElementById("btnJoinRoom");
+            let btnCancel = document.getElementById("btnCancelJoinRoom");
+            btnJoin.addEventListener("click", checkInput);
+            btnCancel.addEventListener("click", returnToLobby);
+        }
 
         function checkInput() {
             let roomName = document.getElementById("txtRoomName").value;
             let roomPassword = document.getElementById("txtRoomPassword").value;
 
-            if (roomName == "" || roomPassword == "") {
+            if (roomName == "" || roomPassword == "") { // Check if room name and password are not empty
                 alert(dictLang.alertfill);
             } else {
-                joinRoom(roomName, roomPassword)
-                    .then((joinResult) => {
-                        resolve(joinResult); // Resolve the promise with the result
-                    })
-                    .catch((error) => {
-                        reject(error); // Reject the promise if there's an error
-                    });
+                joinRoom(roomName, roomPassword);
             }
         }
 
-        function joinRoom(roomName, roomPassword) {
-            return new Promise((resolve, reject) => {
-                let roomRef = ref(db, 'rooms/' + roomName);
-                get(roomRef).then((snapshot) => {
-                    if (snapshot.exists()) {
-                        let roomData = snapshot.val();
-                        if (roomData.password == roomPassword) {
-                            localStorage.setItem('roomName', roomName);
-                            localStorage.setItem('currentPlace', 'menu');
-                            set(ref(db, 'players/' + userID + '/room'), roomName);
-                            result = true;
-                            resolve(result); // Resolve with true
-                        } else {
-                            alert(dictLang.passwordError);
-                            result = false;
-                        }
+        async function joinRoom(roomName, roomPassword) {
+
+            let roomRef = ref(getDb(), 'rooms/' + roomName);
+
+            let userID = await getUserID();
+
+            get(roomRef).then((snapshot) => {
+
+                if (snapshot.exists()) {
+
+                    let roomData = snapshot.val();
+
+                    if (roomData.password == roomPassword) {
+
+                        localStorage.setItem('roomName', roomName);
+                        set(ref(getDb(), 'players/' + userID + '/room'), roomName);
+                        resolve(true);
                     } else {
-                        alert(dictLang.alertroomdoesntexist);
+                        alert(dictLang.passwordError);
                     }
-                }).catch((error) => {
-                    console.error(error);
-                    reject(error); // Reject the promise if there's an error
-                });
+
+                } else {
+                    alert(dictLang.alertroomdoesntexist);
+                }
             });
         }
 
         function returnToLobby() {
-            localStorage.setItem('currentPlace', 'lobby');
-            result = false;
-            resolve(result); // Resolve with false
+            resolve(false);
         }
+
+        handleRoomJoinButtons();
     });
 }
