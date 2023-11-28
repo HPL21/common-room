@@ -58,8 +58,9 @@ export const createAccount = async () => {
             set(playerRef, { email: email,
                              username: "Anonymous",
                              profilePic: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAFFJREFUOE9jZKAQMOLR/x9NDqtaXAaga4aZhaEemwG4NGM1BN0AQpoxDBmGBoD8SCgcULxNk2iEhTRFCYnoBA7zAiF/4zKQEWQAuZrBhg68AQB0Wg4O59TPLQAAAABJRU5ErkJggg==",
-                             room: null });
-            location.reload();
+                             room: null })
+                             .then(() => location.reload());
+            
         });
     }
     catch (error) {

@@ -27,7 +27,7 @@ import './room.js'
 import { handleRoomCreator, handleRoomJoin } from './room.js';
 
 import './user.js'
-import { handleProfilePicCreator, handleProfileSettings } from './user.js';
+import { handleProfileSettings, loadUserData } from './user.js';
 
 import { handleChat } from './chat.js';
 
@@ -131,7 +131,6 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
         btnProfileSettings.addEventListener('click', () => {
             loadProfileSettings();
             handleProfileSettings();
-            handleProfilePicCreator();
         });
 
         let btnLogout = document.getElementById('btnLogout');
@@ -223,5 +222,8 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
             localStorage.clear();
         }
     });
+
+    // Load user data
+    loadUserData();
 
 })();
