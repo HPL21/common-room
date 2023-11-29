@@ -87,7 +87,7 @@ export function loadCanvas() {
             <button class="color-picker-button"><img src="assets/images/choose_color.png"></button>
         </div>
         <div id="sizePicker" class="size-picker">
-            ${dictLang.size}<input id="btnSize" type="range" min="1" max="50" value="5" class="">
+            ${dictLang.size}<input id="btnSize" type="range" min="1" max="150" value="5" class="">
         </div>
         <button id="btnEraser" type="button" class="toolbox-button"><img src="./assets/images/eraser.png" alt="${dictLang.eraser}" title="${dictLang.eraser}"></button>
         <button id="btnUndo" type="button" class="toolbox-button"><img src="./assets/images/undo.png" alt="${dictLang.undo}" title="${dictLang.undo}"></button>
@@ -289,7 +289,7 @@ export function loadShuffleCanvas() {
             <button class="color-picker-button"><img src="assets/images/choose_color.png"></button>
         </div>
         <div id="sizePicker" class="size-picker">
-            ${dictLang.size}<input id="btnSize" type="range" min="1" max="50" value="5" class="">
+            ${dictLang.size}<input id="btnSize" type="range" min="1" max="150" value="5" class="">
         </div>
     </div>
     <button id="btnShuffleCanvasReady" type="button" class="white-button">${dictLang.ready}</button>`;
@@ -342,7 +342,7 @@ export function loadGottaRound() {
             <button class="color-picker-button"><img src="assets/images/choose_color.png"></button>
         </div>
         <div id="sizePicker" class="size-picker">
-            ${dictLang.size}<input id="btnSize" type="range" min="1" max="50" value="5" class="">
+            ${dictLang.size}<input id="btnSize" type="range" min="1" max="150" value="5" class="">
         </div>
         <button id="btnEraser" type="button" class="toolbox-button"><img src="./assets/images/eraser.png" alt="${dictLang.eraser}" title="${dictLang.eraser}"></button>
         <button id="btnUndo" type="button" class="toolbox-button"><img src="./assets/images/undo.png" alt="${dictLang.undo}" title="${dictLang.undo}"></button>

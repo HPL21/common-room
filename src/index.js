@@ -8,6 +8,8 @@ import { get, ref } from 'firebase/database';
 
 import './styles.css';
 
+import { dict } from './lang.js';
+
 import { initCanvas } from './canvas.js';
 
 import { loadMenu, 
@@ -22,11 +24,8 @@ import { loadMenu,
         loadLogin, 
         loadApp } from './contentloader.js';
 
-import './room.js'
-
 import { handleRoomCreator, handleRoomJoin } from './room.js';
 
-import './user.js'
 import { handleProfileSettings, loadUserData } from './user.js';
 
 import { handleChat } from './chat.js';
@@ -41,6 +40,8 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
 
     // Reload current page
     function reloadLanguage() {
+
+        document.getElementById("logoutText").innerHTML = dict[localStorage.getItem('lang') || 'en'].logout;
 
         let currentPlace = localStorage.getItem('currentPlace');
         switch (currentPlace) {
@@ -217,9 +218,11 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
             initGame(userID);
         }
         else {
+            let lang = localStorage.getItem('lang') || 'en'; // Delete everything except language
+            localStorage.clear();
+            localStorage.setItem('lang', lang);
             loadLogin();
             handleLoginButtons();
-            localStorage.clear();
         }
     });
 

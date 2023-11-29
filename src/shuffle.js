@@ -274,16 +274,12 @@ async function draw(){
                 }
                 
                 paths.forEach((path) => {
-                    p.beginShape();
-                    path.forEach(({ x, y, color, size }) => {
-                        p.vertex(x, y);
-                        p.strokeWeight(size);
-                        p.stroke(color);
-                    });
-                    p.endShape();
+                    for (let i = 0; i < path.length - 1; i++) {
+                        p.strokeWeight(path[i].size);
+                        p.stroke(path[i].color);
+                        p.line(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y);
+                    }
                 });
-                
-                p.noFill();
             };
 
             // If mouse is pressed on canvas, create new path

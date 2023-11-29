@@ -39,8 +39,8 @@ export function initCanvas(){
                     onValue(ref(getDb(), 'rooms/' + roomName + '/canvasSettings'), (snapshot) => {
                         let canvasSettings = snapshot.val() || {};
                         canvasColor = canvasSettings.color || 'white';
-                        canvasWidth = canvasSettings.width || p.windowWidth * 0.6;
-                        canvasHeight = canvasSettings.height || p.windowHeight * 0.6;
+                        canvasWidth = canvasSettings.width || 800;
+                        canvasHeight = canvasSettings.height || 600;
 
                         canvas = p.createCanvas(canvasWidth, canvasHeight);
                         canvas.parent(canvasContainer);
@@ -94,17 +94,27 @@ export function initCanvas(){
                 currentPath.push(point);
             }
             
+            // Old version of drawing paths
+            // paths.forEach((path) => {
+            //     p.beginShape();
+            //     path.forEach(({ x, y, color, size }) => {
+            //         p.vertex(x, y);
+            //         p.strokeWeight(size);
+            //         p.stroke(color);
+            //     });
+            //     p.endShape();
+            // });
+            
+            // p.noFill();
+
             paths.forEach((path) => {
-                p.beginShape();
-                path.forEach(({ x, y, color, size }) => {
-                    p.vertex(x, y);
-                    p.strokeWeight(size);
-                    p.stroke(color);
-                });
-                p.endShape();
+                for (let i = 0; i < path.length - 1; i++) {
+                    p.strokeWeight(path[i].size);
+                    p.stroke(path[i].color);
+                    p.line(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y);
+                }
             });
             
-            p.noFill();
         };
 
         // If mouse is pressed on canvas, create new path

@@ -39,7 +39,7 @@ export async function handleGottaCreator() {
                     playersList.innerHTML = "";
                     
                     for (let player in players) { // Show players
-                        let playerRef = ref(db, 'players/' + player);
+                        let playerRef = ref(getDb(), 'players/' + player);
                         let playerDiv = document.createElement('div');
                         playerDiv.classList.add("player-list-item", "creator-item");
                         let playerPic = document.createElement('img');
@@ -173,9 +173,9 @@ export function initGotta() {
 
     getUserID().then((_userID) => {
         userID = _userID;
-        get(ref(db, 'players/' + userID + '/room')).then((snapshot) => {
+        get(ref(getDb(), 'players/' + userID + '/room')).then((snapshot) => {
             roomName = snapshot.val();
-            gottaRef = ref(db, 'rooms/' + roomName + '/gottadrawfast');
+            gottaRef = ref(getDb(), 'rooms/' + roomName + '/gottadrawfast');
             get(child(gottaRef,"settings")).then((snapshot) => { // Load settings
                 console.log("Gotta draw fast! settings loaded");
 
@@ -509,13 +509,11 @@ async function draw(time){
         };
 
         function drawPath(path) {
-            p.beginShape();
-            path.forEach(({ x, y, color, size }) => {
-                p.vertex(x, y);
-                p.strokeWeight(size);
-                p.stroke(color);
-            });
-            p.endShape();
+            for (let i = 0; i < path.length - 1; i++) {
+                p.strokeWeight(path[i].size);
+                p.stroke(path[i].color);
+                p.line(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y);
+            }
         }
 
         function drawPaths(paths) {
