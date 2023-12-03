@@ -1,4 +1,4 @@
-import { ref, onDisconnect, onValue, set, child, get } from 'firebase/database';
+import { ref, onValue, set, child, get } from 'firebase/database';
 import { getUserID, getDb } from './firebase.js';
 import { dict } from './lang.js';
 import p5 from "p5";

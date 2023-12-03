@@ -710,3 +710,50 @@ canvas {
 	left: -480px;
 	top: -740px;
 }
+
+.color-history {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	border: 2px solid black;
+	background-color: #eee;
+}
+
+.color-history-active {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 0.5vh 0.5vh 0.5vh 0.5vh;
+	border-right: 1px solid black;
+	height: 100%;
+}
+
+.color-history-previous {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 0.5vh 0.5vh 0.5vh 0.5vh;
+	border-left: 1px solid black;
+	height: 100%;
+}
+
+.color-history-item {
+	height: 2vh;
+	width: 2vh;
+	border: 1px solid black;
+	margin: 1vh 0.5vh 0 0.5vh;
+}
+
+.previous-color {
+	cursor: pointer;
+}
+
+.color-history-previous-colors {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}

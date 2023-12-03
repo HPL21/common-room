@@ -75,6 +75,8 @@ export const dict = {
         createdaccount: "Account created",
         errorcreatingaccount: "Error creating account",
         errorloggingin: "Error logging in",
+        activecolor: "Active",
+        previouscolors: "Previous",
     },
     pl: {
         login: "Zaloguj się",
@@ -152,5 +154,7 @@ export const dict = {
         createdaccount: "Konto zostało utworzone",
         errorcreatingaccount: "Błąd podczas tworzenia konta",
         errorloggingin: "Błąd podczas logowania",
+        activecolor: "Aktywny",
+        previouscolors: "Poprzednie",
     }
 };

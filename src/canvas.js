@@ -143,7 +143,9 @@ export function initCanvas(){
         let btnUndo = document.getElementById('btnUndo');
         let btnSave = document.getElementById('btnSave');
         let canvasContainer = document.getElementById('canvasContainer');
+        let activeColorDiv = document.getElementById('activeColor');
 
+        let colorHistory = ["white", "white", "white", "white", "white"];
         let previousColor = pencilColor;
         let isEraser = false;
         let settingsOpen = false;
@@ -193,11 +195,30 @@ export function initCanvas(){
 
         // Changes pencil color
         btnColor.addEventListener('change', () => {
+            let oldColor;
             if (isEraser){
+                oldColor = previousColor;
                 previousColor = btnColor.value;
             }
             else {
+                oldColor = pencilColor;
                 pencilColor = btnColor.value;
+            }
+            // Adds color to color history
+            colorHistory.push(oldColor);
+            colorHistory.shift();
+
+            // Updates active color div
+            activeColorDiv.style.backgroundColor = pencilColor;
+
+            // Updates color history divs
+            let colorHistoryDivs = document.getElementsByClassName('previous-color');
+            for (let i = 0; i < 5; i++){
+                colorHistoryDivs[i].style.backgroundColor = colorHistory[5 - i - 1];
+                colorHistoryDivs[i].addEventListener('click', () => {
+                    pencilColor = colorHistory[5 - i - 1];
+                    activeColorDiv.style.backgroundColor = pencilColor;
+                });
             }
         });
 

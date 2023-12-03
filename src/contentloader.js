@@ -86,6 +86,22 @@ export function loadCanvas() {
             <input id="btnColor" type="color" class="color-picker-input" value="#ffffff">
             <button class="color-picker-button"><img src="assets/images/choose_color.png"></button>
         </div>
+        <div id="colorHistory" class="color-history">
+            <div class="color-history-active">
+                <div>${dictLang.activecolor}</div>
+                <div class="color-history-item" id="activeColor" style="background:black"></div>
+            </div>
+            <div class="color-history-previous">
+                <div>${dictLang.previouscolors}</div>
+                <div class="color-history-previous-colors">
+                    <div class="color-history-item previous-color"></div>
+                    <div class="color-history-item previous-color"></div>
+                    <div class="color-history-item previous-color"></div>
+                    <div class="color-history-item previous-color"></div>
+                    <div class="color-history-item previous-color"></div>
+                </div>
+            </div>
+        </div>
         <div id="sizePicker" class="size-picker">
             ${dictLang.size}<input id="btnSize" type="range" min="1" max="150" value="5" class="">
         </div>
