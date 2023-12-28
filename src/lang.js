@@ -77,6 +77,7 @@ export const dict = {
         errorloggingin: "Error logging in",
         activecolor: "Active",
         previouscolors: "Previous",
+        happynewyear: "Happy New Year!",
     },
     pl: {
         login: "Zaloguj się",
@@ -156,5 +157,6 @@ export const dict = {
         errorloggingin: "Błąd podczas logowania",
         activecolor: "Aktywny",
         previouscolors: "Poprzednie",
+        happynewyear: "Szczęśliwego Nowego Roku!",
     }
 };
