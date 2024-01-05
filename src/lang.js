@@ -78,6 +78,7 @@ export const dict = {
         activecolor: "Active",
         previouscolors: "Previous",
         happynewyear: "Happy New Year!",
+        welcome2024: "Welcome to CommonRoom 2024!",
     },
     pl: {
         login: "Zaloguj się",
@@ -158,5 +159,6 @@ export const dict = {
         activecolor: "Aktywny",
         previouscolors: "Poprzednie",
         happynewyear: "Szczęśliwego Nowego Roku!",
+        welcome2024: "Witaj w CommonRoom 2024!",
     }
 };
