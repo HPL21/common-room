@@ -1,5 +1,7 @@
 {
   "rules": {
+    ".read": false,
+    ".write": false,
     "players": {
       "$playerID": {
         ".read": true,
@@ -7,9 +9,19 @@
       }
     },
     "rooms": {
+      ".read": true,
+      ".write": true,
       "$roomName": {
         ".read": "root.child('players').child(auth.uid).child('room').val() === $roomName",
-        ".write": "root.child('players').child(auth.uid).child('room').val() === $roomName"
+        ".write": "root.child('players').child(auth.uid).child('room').val() === $roomName",
+        "password": {
+          ".read": true,
+          ".write": true
+        },
+        "description": {
+          ".read": true,
+          ".write": true
+        }
       }
     }
   }
