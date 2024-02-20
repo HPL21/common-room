@@ -32,8 +32,41 @@
 
 
 ## Screenshots
-- Will provide soon
+Menu:
 
+[![image.png](https://i.postimg.cc/zfmgT5HB/image.png)](https://postimg.cc/jDX2rpX0)
+
+Canvas:
+
+[![image.png](https://i.postimg.cc/BvqJV78P/image.png)](https://postimg.cc/XrzMZ8kn)
+
+Shuffle:
+
+[![image.png](https://i.postimg.cc/fTnyvKvm/image.png)](https://postimg.cc/7b9qHSdZ)
+
+[![image.png](https://i.postimg.cc/XvJYvDVS/image.png)](https://postimg.cc/WdBvW8FX)
+
+Gotta draw fast!:
+
+[![image.png](https://i.postimg.cc/tCjR6gXz/image.png)](https://postimg.cc/Hj6CDd8J)
+
+[![image.png](https://i.postimg.cc/MGvzwMDz/image.png)](https://postimg.cc/sBdk92qL)
+
+Sign up, log in:
+
+[![image.png](https://i.postimg.cc/66dtBNd4/image.png)](https://postimg.cc/F1s2x8Ch)
+
+User profile updates:
+
+[![image.png](https://i.postimg.cc/1zn12xmt/image.png)](https://postimg.cc/kVmHRpt3)
+
+Separate rooms for players:
+
+[![image.png](https://i.postimg.cc/XJ9SNwy6/image.png)](https://postimg.cc/bDYF3STm)
+
+Chat:
+
+[![image.png](https://i.postimg.cc/Hn3Nj3YR/image.png)](https://postimg.cc/PvpyRW8Q)
 
 ## Setup
 - Will provide soon

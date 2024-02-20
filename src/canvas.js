@@ -144,6 +144,7 @@ export function initCanvas(){
         let btnSave = document.getElementById('btnSave');
         let canvasContainer = document.getElementById('canvasContainer');
         let activeColorDiv = document.getElementById('activeColor');
+        let btnMenu = document.getElementById('btnMenu');
 
         let colorHistory = ["white", "white", "white", "white", "white"];
         let previousColor = pencilColor;
@@ -255,6 +256,11 @@ export function initCanvas(){
         // Saves canvas as png
         btnSave.addEventListener('click', () => {
             p.saveCanvas(canvas, 'canvas', 'png');
+        });
+
+        // Closes canvas when menu button is clicked
+        btnMenu.addEventListener('click', () => {
+            p.remove();
         });
 
     });
