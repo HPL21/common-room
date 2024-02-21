@@ -2,7 +2,6 @@ import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set, get, onValue } from "firebase/database";
 
 import {
-    connectAuthEmulator,
     getAuth,
     onAuthStateChanged,
     signOut,
@@ -15,7 +14,14 @@ import {
 
 export const firebaseConfig = {
     // Your web app's Firebase configuration
-
+    apiKey: "",
+    authDomain: "",
+    databaseURL: "",
+    projectId: "",
+    storageBucket: "",
+    messagingSenderId: "",
+    appId: "",
+    measurementId: ""
 };
 
 export const firebaseApp = initializeApp(firebaseConfig);
@@ -27,7 +33,6 @@ export function getDb() {
 }
 
 export const auth = getAuth(firebaseApp);
-connectAuthEmulator(auth, "http://localhost:9099");
 
 // Login using Firebase authentication
 export const loginEmailPassword = async () => {
@@ -40,6 +45,7 @@ export const loginEmailPassword = async () => {
     }
     catch (error) {
         console.log(`There was an error: ${error}`);
+        alert("Invalid email or password. Please try again.");
     }
 }
 
@@ -61,6 +67,7 @@ export const createAccount = async () => {
     }
     catch (error) {
         console.log(`There was an error: ${error}`);
+        alert("Invalid email or password. Please try again.");
     }
 
 }

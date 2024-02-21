@@ -5,13 +5,13 @@ import { auth,
          loginEmailPassword, 
          createAccount } from './firebase.js';
 import { get, ref } from 'firebase/database';
-
+ 
 import './styles.css';
-
+ 
 import { dict } from './lang.js';
-
+ 
 import { initCanvas } from './canvas.js';
-
+ 
 import { loadMenu, 
         loadCanvas, 
         loadLobby, 
@@ -23,26 +23,26 @@ import { loadMenu,
         loadGottaCreator, 
         loadLogin, 
         loadApp } from './contentloader.js';
-
+ 
 import { handleRoomCreator, handleRoomJoin } from './room.js';
-
+ 
 import { handleProfileSettings, loadUserData } from './user.js';
-
+ 
 import { handleChat } from './chat.js';
-
+ 
 import { handleShuffleCreator, initShuffle } from './shuffle.js';
-
+ 
 import { handleGottaCreator, initGotta } from './gottadrawfast.js'
-
+ 
 (function () {
-    
+ 
     let userID, roomName;
-
+ 
     // Reload current page
     function reloadLanguage() {
-
+ 
         document.getElementById("logoutText").innerHTML = dict[localStorage.getItem('lang') || 'en'].logout;
-
+ 
         let currentPlace = localStorage.getItem('currentPlace');
         switch (currentPlace) {
             case 'menu':
@@ -78,38 +78,42 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
                 break;
         }
     }
-
+ 
     // Handle buttons
     function handleButtons() {
         //Some buttons event listeners
         let btnMenu = document.getElementById('btnMenu');
         btnMenu.addEventListener('click', () => {
-            if (roomName) {
-                menu();  
-            }
-            else {
-                lobby();
+            if (userID) {
+                get(ref(getDb(), 'players/' + userID)).then((snapshot) => {
+                    if (snapshot.val().room) {
+                        menu();
+                    }
+                    else {
+                        lobby();
+                    }
+                });
             }
         });
-
+ 
         let btnEng = document.getElementById('btnEng');
         btnEng.addEventListener('click', () => {
             localStorage.setItem('lang', 'en');
             reloadLanguage();
         });
-
+ 
         let btnPl = document.getElementById('btnPl');
         btnPl.addEventListener('click', () => {
             localStorage.setItem('lang', 'pl');
             reloadLanguage();
         });
-
+ 
         let btnChangeRoom = document.getElementById('btnChangeRoom');
         btnChangeRoom.addEventListener('click', () => {
             lobby();
-            
+ 
         });
-
+ 
         let btnSettings = document.getElementById('btnSettings');
         let settings = document.getElementById('settings');
         let settingsImg = document.getElementById('settingsImg');
@@ -119,7 +123,7 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
             settings.style.display = isSettingsOpen ? 'none' : 'block';
             isSettingsOpen = !isSettingsOpen;
         });
-
+ 
         // Close settings when clicked outside
         window.addEventListener('click', (e) => {
             if (isSettingsOpen && e.target != btnSettings && e.target != settings && e.target != settingsImg) {
@@ -127,24 +131,30 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
                 isSettingsOpen = false;
             }
         });
-
+ 
         let btnProfileSettings = document.getElementById('btnProfile');
         btnProfileSettings.addEventListener('click', () => {
             loadProfileSettings();
             handleProfileSettings();
         });
-
+ 
         let btnLogout = document.getElementById('btnLogout');
         btnLogout.addEventListener("click", logout);
     }
-
+ 
     function handleLoginButtons() {
         let btnLogin = document.getElementById('btnLogin');
         let btnSignup = document.getElementById('btnSignup');
         btnLogin.addEventListener("click", loginEmailPassword);
         btnSignup.addEventListener("click", createAccount);
+        document.getElementById("loginForm").addEventListener("keyup", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                loginEmailPassword();
+            }
+        });
     }
-
+ 
     function handleCards() {
         // Listen for clicks on cards
         let cardCanvas = document.getElementById('card1');
@@ -163,7 +173,7 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
             handleGottaCreator().then((result) => { if (!result) menu(); else { initGotta(); } });
         });
     }
-
+ 
     function handleLobbyButtons() {
         let btnCreateRoom = document.getElementById('btnCreate');
         btnCreateRoom.addEventListener('click', () => {
@@ -175,10 +185,10 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
         btnJoinRoom.addEventListener('click', () => {
             localStorage.setItem('currentPlace', 'roomJoin');
             loadRoomJoin();
-            handleRoomJoin().then((result) => { if (!result) lobby(); else menu(); });
+            handleRoomJoin().then((result) => { if (!result) lobby(); else {menu();}  });
         });
     }
-
+ 
     // Load menu
     function menu() {
         localStorage.setItem('currentPlace', 'menu');
@@ -188,7 +198,7 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
         handleChat(); 
         handleCards(); // Add event listeners to cards
     }
-
+ 
     //Load lobby (place where you can join or create room)
     function lobby() {
         localStorage.setItem('currentPlace', 'lobby');
@@ -196,20 +206,24 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
         handleButtons(); // Add event listeners to buttons
         handleLobbyButtons(); // Add event listeners to buttons
     }
-
+ 
     // Initialize game
     function initGame(userID) {
         get(ref(getDb(), 'players/' + userID)).then((snapshot) => {
-            roomName = snapshot.val().room;
-            if(roomName) {
-                menu();
-            }
-            else {
+            if (snapshot.exists()) {
+                roomName = snapshot.val().room;
+                if(roomName) {
+                    menu();
+                }
+                else {
+                    lobby();
+                }
+            } else {
                 lobby();
             }
         });
     }
-
+ 
     // Monitor auth state
     auth.onAuthStateChanged((user) => {
         if (user) {
@@ -225,8 +239,8 @@ import { handleGottaCreator, initGotta } from './gottadrawfast.js'
             handleLoginButtons();
         }
     });
-
+ 
     // Load user data
     loadUserData();
-
+ 
 })();

@@ -17,7 +17,7 @@ export function loadLogin() {
     let app = document.getElementById('app');
     app.innerHTML = `<div class="login">
                         <div class="header1">${dictLang.welcome}</div>
-                        <form>
+                        <form id="loginForm">
                             <div class="group">
                                 <label class="d-block">${dictLang.email}</label>
                                 <input id="txtEmail" type="email" class="input-text">

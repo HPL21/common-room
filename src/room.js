@@ -18,6 +18,11 @@ export async function handleRoomCreator() {
             let btnCancel = document.getElementById("btnCancelRoom");
             btnCreate.addEventListener("click", checkInput);
             btnCancel.addEventListener("click", returnToLobby);
+            document.getElementById("roomCreator").addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === "NumpadEnter") {
+                    checkInput();
+                }
+            });
         }
 
         async function checkInput() {
@@ -81,6 +86,11 @@ export async function handleRoomJoin() {
             let btnCancel = document.getElementById("btnCancelJoinRoom");
             btnJoin.addEventListener("click", checkInput);
             btnCancel.addEventListener("click", returnToLobby);
+            document.getElementById("roomJoin").addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === "NumpadEnter") {
+                    checkInput();
+                }
+            });
         }
 
         function checkInput() {

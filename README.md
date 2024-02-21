@@ -70,27 +70,23 @@ Chat:
 
 ## Setup
 
-Clone the Repository:
+Clone the repository:
 
     git clone https://github.com/HPL21/common-room.git
 
-Install Dependencies:
+Install dependencies:
 
     npm install
 
-Set Up Environment Variables:
+Set up environment variables:
 
 - Create a .env file and provide the required OpenAI API key.
 
-Bundle the Application:
-
-    npx webpack
-
 Create Firebase Project:
 
-- Set up a Firebase project.
+- Set up a [_Firebase_](https://firebase.google.com/) project, register app, copy firebaseConfig and paste it in firebase.js file, then set up authentication method (Email/Password) and Realtime Database with rules from database.rules.json file. Then copy your database URL and modify your firebase config: databaseURL: "yourURL". Also modify .firebaserc file with your projectId.
 
-Install Firebase Tools Globally:
+Install Firebase Tools globally:
 
     npm install -g firebase-tools
 
@@ -98,16 +94,17 @@ Authenticate Firebase:
 
     firebase login
 
-Resolve Permission Issues (if any):
+Resolve permission issues (if any):
 
 - If facing issues, run PowerShell as an administrator and execute the command:
 
         Set-ExecutionPolicy RemoteSigned
 
-Serve the Application Locally:
+Bundle the application:
+
+    npx webpack
+
+Serve the application locally:
 
     firebase serve --only hosting
 
-Start Firebase Emulators for Authentication:
-
-    firebase emulators:start --only auth
