@@ -69,4 +69,45 @@ Chat:
 [![image.png](https://i.postimg.cc/Hn3Nj3YR/image.png)](https://postimg.cc/PvpyRW8Q)
 
 ## Setup
-- Will provide soon
+
+Clone the Repository:
+
+    git clone https://github.com/HPL21/common-room.git
+
+Install Dependencies:
+
+    npm install
+
+Set Up Environment Variables:
+
+- Create a .env file and provide the required OpenAI API key.
+
+Bundle the Application:
+
+    npx webpack
+
+Create Firebase Project:
+
+- Set up a Firebase project.
+
+Install Firebase Tools Globally:
+
+    npm install -g firebase-tools
+
+Authenticate Firebase:
+
+    firebase login
+
+Resolve Permission Issues (if any):
+
+- If facing issues, run PowerShell as an administrator and execute the command:
+
+        Set-ExecutionPolicy RemoteSigned
+
+Serve the Application Locally:
+
+    firebase serve --only hosting
+
+Start Firebase Emulators for Authentication:
+
+    firebase emulators:start --only auth

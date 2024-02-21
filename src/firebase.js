@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set, get, onValue } from "firebase/database";
 
 import {
+    connectAuthEmulator,
     getAuth,
     onAuthStateChanged,
     signOut,
@@ -13,14 +14,8 @@ import {
 // Firebase initialization
 
 export const firebaseConfig = {
-    apiKey: "AIzaSyCDbQxGk2gMb8GHlSAsTj2QQzvIE5izQJs",
-    authDomain: "commonroom-d0a42.firebaseapp.com",
-    databaseURL: "https://commonroom-d0a42-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "commonroom-d0a42",
-    storageBucket: "commonroom-d0a42.appspot.com",
-    messagingSenderId: "890131247429",
-    appId: "1:890131247429:web:d57833501c63fd7528ce2c",
-    measurementId: "G-ZS2BYMW5B7"
+    // Your web app's Firebase configuration
+
 };
 
 export const firebaseApp = initializeApp(firebaseConfig);
@@ -32,6 +27,7 @@ export function getDb() {
 }
 
 export const auth = getAuth(firebaseApp);
+connectAuthEmulator(auth, "http://localhost:9099");
 
 // Login using Firebase authentication
 export const loginEmailPassword = async () => {
